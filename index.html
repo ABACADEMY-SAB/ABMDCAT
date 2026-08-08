@@ -1,0 +1,7797 @@
+"use client";
+
+import { useState } from "react";
+
+export default function LoginPage() {
+  const [darkMode, setDarkMode] = useState(false);
+
+  return (
+    <div
+      className={`min-h-screen flex flex-col items-center justify-center ${
+        darkMode ? "bg-black text-white" : "bg-white text-black"
+      }`}
+    >
+      {/* Theme Toggle */}
+      <button
+        className="absolute top-5 right-5 px-3 py-2 rounded-lg bg-sky-500 text-white"
+        onClick={() => setDarkMode(!darkMode)}
+      >
+        {darkMode ? "☀ Light" : "🌙 Dark"}
+      </button>
+
+      {/* Logo */}
+      <img
+        src="/logo.png"
+        alt="ABMDCAT Logo"
+        className="w-40 mb-4"
+      />
+
+      <h1
+        className={`text-4xl font-bold ${
+          darkMode ? "text-red-500" : "text-sky-600"
+        }`}
+      >
+        ABMDCAT.COM
+      </h1>
+
+      <p className="mt-2 mb-8 text-center">
+        Prepare Smarter. Perform Better.
+      </p>
+
+      <div
+        className={`w-80 p-6 rounded-xl shadow-xl ${
+          darkMode ? "bg-gray-900" : "bg-sky-50"
+        }`}
+      >
+        <input
+          type="text"
+          placeholder="Username"
+          className="w-full p-3 mb-4 rounded-lg border"
+        />
+
+        <input
+          type="password"
+          placeholder="Password"
+          className="w-full p-3 mb-6 rounded-lg border"
+        />
+
+        <button
+          className={`w-full p-3 rounded-lg text-white font-bold ${
+            darkMode ? "bg-red-600" : "bg-sky-500"
+          }`}
+        >
+          LOGIN
+        </button>
+      </div>
+
+      <p className="mt-10 text-sm">
+        © 2026 ABMDCAT.COM
+      </p>
+    </div>
+  );
+}"use client";
+
+import Link from "next/link";
+
+export default function Dashboard() {
+  return (
+    <div className="min-h-screen bg-white dark:bg-black">
+
+      {/* Top Header */}
+
+      <header className="flex justify-between items-center p-4 shadow">
+
+        <div className="flex items-center">
+
+          <img
+            src="/logo.png"
+            className="w-14 h-14 rounded-full"
+            alt="logo"
+          />
+
+          <h1 className="text-xl font-bold ml-3 text-sky-600 dark:text-red-500">
+            ABMDCAT.COM
+          </h1>
+
+        </div>
+
+        <button className="bg-sky-500 dark:bg-red-600 text-white px-3 py-2 rounded-lg">
+          Theme
+        </button>
+
+      </header>
+
+      {/* Welcome */}
+
+      <div className="p-5">
+
+        <h2 className="text-2xl font-bold dark:text-white">
+          Welcome, Student 👋
+        </h2>
+
+        <p className="text-gray-500">
+          Keep practicing every day.
+        </p>
+
+      </div>
+
+      {/* Statistics */}
+
+      <div className="grid grid-cols-2 gap-4 p-4">
+
+        <Card title="Tests Attempted" value="45" />
+
+        <Card title="MCQs Solved" value="5820" />
+
+        <Card title="Correct" value="4821" />
+
+        <Card title="Wrong" value="999" />
+
+      </div>
+
+      {/* Accuracy */}
+
+      <div className="mx-4 mt-2 rounded-xl p-5 bg-sky-50 dark:bg-gray-900">
+
+        <h3 className="font-bold text-lg dark:text-white">
+          Overall Accuracy
+        </h3>
+
+        <p className="text-3xl font-bold text-green-600">
+          82.8%
+        </p>
+
+      </div>
+
+      {/* Subject Performance */}
+
+      <div className="m-4 rounded-xl p-5 bg-sky-50 dark:bg-gray-900">
+
+        <h3 className="font-bold mb-4 dark:text-white">
+          Subject Performance
+        </h3>
+
+        <Subject name="Biology" value="89%" />
+
+        <Subject name="Chemistry" value="81%" />
+
+        <Subject name="Physics" value="91%" />
+
+        <Subject name="English" value="76%" />
+
+        <Subject name="Logical" value="83%" />
+
+      </div>
+
+      {/* Main Buttons */}
+
+      <div className="grid grid-cols-2 gap-4 p-4">
+
+        <Menu title="Practice MCQs" link="/practice" />
+
+        <Menu title="Online Tests" link="/tests" />
+
+        <Menu title="Wrong Questions" link="/wrong" />
+
+        <Menu title="Test History" link="/history" />
+
+        <Menu title="Buy Notes" link="/notes" />
+
+        <Menu title="Bookmarks" link="/bookmarks" />
+
+      </div>
+
+      {/* Announcements */}
+
+      <div className="m-4 p-4 rounded-xl bg-yellow-100 dark:bg-gray-800">
+
+        <h3 className="font-bold dark:text-white">
+          Announcements
+        </h3>
+
+        <p className="mt-2 dark:text-gray-300">
+          No announcements yet.
+        </p>
+
+      </div>
+
+    </div>
+  );
+}
+
+function Card({ title, value }) {
+  return (
+    <div className="rounded-xl bg-sky-50 dark:bg-gray-900 p-5 shadow">
+      <h3 className="text-sm text-gray-500">{title}</h3>
+      <p className="text-3xl font-bold text-sky-600 dark:text-red-500">
+        {value}
+      </p>
+    </div>
+  );
+}
+
+function Subject({ name, value }) {
+  return (
+    <div className="flex justify-between py-2 dark:text-white">
+      <span>{name}</span>
+      <span className="font-bold">{value}</span>
+    </div>
+  );
+}
+
+function Menu({ title, link }) {
+  return (
+    <Link href={link}>
+      <div className="bg-sky-500 dark:bg-red-600 text-white rounded-xl p-5 text-center font-bold shadow">
+        {title}
+      </div>
+    </Link>
+  );
+}"use client";
+
+import { useState } from "react";
+
+export default function PracticePage() {
+
+  const [subject, setSubject] = useState("");
+  const [chapter, setChapter] = useState("");
+  const [topic, setTopic] = useState(""
+<
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ABMDCAT Dashboard</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,Helvetica,sans-serif;
+}
+
+body{
+background:#eef9ff;
+}
+
+header{
+background:#ffffff;
+padding:15px;
+display:flex;
+align-items:center;
+justify-content:space-between;
+box-shadow:0 2px 10px rgba(0,0,0,.1);
+}
+
+.logo{
+display:flex;
+align-items:center;
+}
+
+.logo img{
+width:55px;
+height:55px;
+border-radius:50%;
+border:3px solid #29b6f6;
+}
+
+.logo h2{
+margin-left:12px;
+color:#0288d1;
+}
+
+.profile{
+width:45px;
+height:45px;
+border-radius:50%;
+background:#29b6f6;
+color:white;
+display:flex;
+align-items:center;
+justify-content:center;
+font-weight:bold;
+}
+
+.welcome{
+padding:20px;
+}
+
+.welcome h1{
+color:#0288d1;
+font-size:26px;
+}
+
+.welcome p{
+margin-top:5px;
+color:gray;
+}
+
+.stats{
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:15px;
+padding:15px;
+}
+
+.card{
+background:white;
+padding:20px;
+border-radius:15px;
+text-align:center;
+box-shadow:0 5px 10px rgba(0,0,0,.1);
+}
+
+.card h3{
+color:#666;
+font-size:15px;
+}
+
+.card h1{
+margin-top:10px;
+color:#29b6f6;
+}
+
+.menu{
+padding:15px;
+}
+
+.option{
+background:white;
+margin-bottom:15px;
+padding:18px;
+border-radius:15px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+font-size:18px;
+font-weight:bold;
+box-shadow:0 4px 10px rgba(0,0,0,.08);
+cursor:pointer;
+transition:.3s;
+}
+
+.option:hover{
+background:#29b6f6;
+color:white;
+}
+
+.bottom{
+position:fixed;
+bottom:0;
+width:100%;
+background:white;
+display:flex;
+justify-content:space-around;
+padding:12px;
+box-shadow:0 -2px 10px rgba(0,0,0,.15);
+}
+
+.bottom div{
+text-align:center;
+font-size:14px;
+color:#0288d1;
+font-weight:bold;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<div class="logo">
+
+<img src="logo.png">
+
+<h2>ABMDCAT.COM</h2>
+
+</div>
+
+<div class="profile">
+
+S
+
+</div>
+
+</header>
+
+<div class="welcome">
+
+<h1>Welcome Student 👋</h1>
+
+<p>Keep Practicing Everyday.</p>
+
+</div>
+
+<div class="stats">
+
+<div class="card">
+
+<h3>Tests Attempted</h3>
+
+<h1>12</h1>
+
+</div>
+
+<div class="card">
+
+<h3>Overall %</h3>
+
+<h1>84%</h1>
+
+</div>
+
+<div class="card">
+
+<h3>Correct MCQs</h3>
+
+<h1>845</h1>
+
+</div>
+
+<div class="card">
+
+<h3>Wrong MCQs</h3>
+
+<h1>163</h1>
+
+</div>
+
+</div>
+
+<div class="menu">
+
+<div class="option">
+
+<span>📚 Practice MCQs</span>
+
+<span>➜</span>
+
+</div>
+
+<div class="option">
+
+<span>📝 Online Tests</span>
+
+<span>➜</span>
+
+</div>
+
+<div class="option">
+
+<span>❌ Wrong Questions</span>
+
+<span>➜</span>
+
+</div>
+
+<div class="option">
+
+<span>📊 Test History</span>
+
+<span>➜</span>
+
+</div>
+
+<div class="option">
+
+<span>⭐ Bookmarks</span>
+
+<span>➜</span>
+
+</div>
+
+<div class="option">
+
+<span>📖 Buy Notes</span>
+
+<span>➜</span>
+
+</div>
+
+<div class="option">
+
+<span>🏆 Rankings</span>
+
+<span>➜</span>
+
+</div>
+
+<div class="option">
+
+<span>👤 Profile</span>
+
+<span>➜</span>
+
+</div>
+
+</div>
+
+<div class="bottom">
+
+<div>🏠<br>Home</div>
+
+<div>📚<br>Practice</div>
+
+<div>📝<br>Tests</div>
+
+<div>👤<br>Profile</div>
+
+</div>
+
+</body>
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Practice MCQs - ABMDCAT.COM</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial, sans-serif;
+}
+
+body{
+background:#eef8ff;
+}
+
+header{
+background:white;
+padding:15px;
+display:flex;
+align-items:center;
+box-shadow:0 2px 8px rgba(0,0,0,.15);
+}
+
+header img{
+width:60px;
+height:60px;
+border-radius:50%;
+border:3px solid skyblue;
+}
+
+header h2{
+margin-left:15px;
+color:#008dd5;
+}
+
+.container{
+padding:20px;
+}
+
+.card{
+background:white;
+padding:18px;
+border-radius:15px;
+margin-bottom:18px;
+box-shadow:0 3px 10px rgba(0,0,0,.1);
+}
+
+label{
+display:block;
+font-weight:bold;
+margin-bottom:8px;
+color:#333;
+}
+
+select,input{
+width:100%;
+padding:14px;
+border-radius:10px;
+border:2px solid skyblue;
+font-size:16px;
+}
+
+.mode{
+margin-top:10px;
+}
+
+.mode label{
+display:block;
+margin:10px 0;
+font-size:17px;
+}
+
+button{
+width:100%;
+padding:16px;
+background:skyblue;
+border:none;
+border-radius:12px;
+color:white;
+font-size:18px;
+font-weight:bold;
+cursor:pointer;
+}
+
+button:hover{
+background:#0099dd;
+}
+
+.info{
+margin-top:20px;
+padding:15px;
+background:#dff4ff;
+border-radius:12px;
+}
+
+.info h3{
+color:#008dd5;
+margin-bottom:10px;
+}
+
+.info p{
+margin:5px 0;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<img src="logo.png">
+
+<h2>ABMDCAT.COM</h2>
+
+</header>
+
+<div class="container">
+
+<div class="card">
+
+<label>Select Subject</label>
+
+<select>
+
+<option>Choose Subject</option>
+
+<option>Biology</option>
+
+<option>Chemistry</option>
+
+<option>Physics</option>
+
+<option>English</option>
+
+<option>Logical Reasoning</option>
+
+</select>
+
+</div>
+
+<div class="card">
+
+<label>Select Chapter</label>
+
+<select>
+
+<option>Select Chapter</option>
+
+</select>
+
+</div>
+
+<div class="card">
+
+<label>Select Topic</label>
+
+<select>
+
+<option>Select Topic</option>
+
+</select>
+
+</div>
+
+<div class="card">
+
+<label>Number of MCQs</label>
+
+<input type="number" value="20" min="1" max="180">
+
+</div>
+
+<div class="card">
+
+<label>Select Mode</label>
+
+<div class="mode">
+
+<label>
+
+<input type="radio" name="mode" checked>
+
+Practice Mode (No Time Limit)
+
+</label>
+
+<label>
+
+<input type="radio" name="mode">
+
+Timed Mode (1 Minute per MCQ)
+
+</label>
+
+</div>
+
+</div>
+
+<button>
+
+START PRACTICE
+
+</button>
+
+<div class="info">
+
+<h3>Instructions</h3>
+
+<p>✔ Maximum MCQs : 180</p>
+
+<p>✔ No Negative Marking</p>
+
+<p>✔ Review Available After Test</p>
+
+<p>✔ Wrong Questions Saved Automatically</p>
+
+<p>✔ Results Display Immediately</p>
+
+</div>
+
+</div>
+
+</body>
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Online Tests | ABMDCAT.COM</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#eef8ff;
+}
+
+header{
+background:white;
+padding:15px;
+display:flex;
+align-items:center;
+box-shadow:0 2px 10px rgba(0,0,0,.1);
+}
+
+header img{
+width:55px;
+height:55px;
+border-radius:50%;
+border:3px solid skyblue;
+}
+
+header h2{
+margin-left:15px;
+color:#0095d9;
+}
+
+.container{
+padding:20px;
+}
+
+.card{
+
+background:white;
+
+border-radius:15px;
+
+padding:20px;
+
+margin-bottom:20px;
+
+box-shadow:0 3px 10px rgba(0,0,0,.1);
+
+}
+
+.title{
+
+font-size:22px;
+
+font-weight:bold;
+
+color:#0095d9;
+
+margin-bottom:10px;
+
+}
+
+.info{
+
+color:#555;
+
+margin:5px 0;
+
+}
+
+button{
+
+width:100%;
+
+margin-top:15px;
+
+padding:14px;
+
+border:none;
+
+border-radius:12px;
+
+background:skyblue;
+
+color:white;
+
+font-size:18px;
+
+font-weight:bold;
+
+cursor:pointer;
+
+}
+
+button:hover{
+
+background:#0095d9;
+
+}
+
+.instructions{
+
+margin-top:20px;
+
+background:#dff3ff;
+
+padding:15px;
+
+border-radius:15px;
+
+}
+
+.instructions h3{
+
+color:#0095d9;
+
+margin-bottom:10px;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<img src="logo.png">
+
+<h2>ABMDCAT.COM</h2>
+
+</header>
+
+<div class="container">
+
+<div class="card">
+
+<div class="title">
+
+Biology Grand Test
+
+</div>
+
+<p class="info">
+
+📘 Subject : Biology
+
+</p>
+
+<p class="info">
+
+📝 Questions : 180
+
+</p>
+
+<p class="info">
+
+⏰ Duration : 180 Minutes
+
+</p>
+
+<p class="info">
+
+📅 Available Until : 25 July
+
+</p>
+
+<button>
+
+START TEST
+
+</button>
+
+</div>
+
+<div class="card">
+
+<div class="title">
+
+Chemistry Weekly Test
+
+</div>
+
+<p class="info">
+
+📘 Subject : Chemistry
+
+</p>
+
+<p class="info">
+
+📝 Questions : 100
+
+</p>
+
+<p class="info">
+
+⏰ Duration : 100 Minutes
+
+</p>
+
+<p class="info">
+
+📅 Available Until : 28 July
+
+</p>
+
+<button>
+
+START TEST
+
+</button>
+
+</div>
+
+<div class="instructions">
+
+<h3>
+
+Instructions
+
+</h3>
+
+<p>✔ Login Required Before Starting</p>
+
+<p>✔ Timer Cannot Be Paused</p>
+
+<p>✔ Auto Submit When Time Ends</p>
+
+<p>✔ Result Available Immediately</p>
+
+<p>✔ Ranking Generated Automatically</p>
+
+</div>
+
+</div>
+
+</body>
+
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Buy Notes - ABMDCAT.COM</title>
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#eef8ff;
+}
+
+header{
+background:white;
+padding:15px;
+display:flex;
+align-items:center;
+box-shadow:0 2px 10px rgba(0,0,0,.1);
+}
+
+header img{
+width:55px;
+height:55px;
+border-radius:50%;
+border:3px solid skyblue;
+}
+
+header h2{
+margin-left:15px;
+color:#0095d9;
+}
+
+.container{
+padding:20px;
+}
+
+.card{
+background:white;
+padding:20px;
+border-radius:15px;
+margin-bottom:20px;
+box-shadow:0 3px 10px rgba(0,0,0,.1);
+}
+
+.note-img{
+width:100%;
+height:180px;
+background:#ddd;
+border-radius:10px;
+display:flex;
+align-items:center;
+justify-content:center;
+color:#666;
+margin-bottom:15px;
+}
+
+.title{
+font-size:22px;
+font-weight:bold;
+color:#0095d9;
+}
+
+.price{
+font-size:20px;
+color:green;
+margin:10px 0;
+font-weight:bold;
+}
+
+.desc{
+color:#555;
+margin-bottom:15px;
+}
+
+button{
+width:100%;
+padding:15px;
+background:#25D366;
+color:white;
+border:none;
+border-radius:12px;
+font-size:18px;
+font-weight:bold;
+cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<img src="logo.png">
+<h2>ABMDCAT.COM</h2>
+</header>
+
+<div class="container">
+
+<div class="card">
+
+<div class="note-img">
+Notes Preview
+</div>
+
+<div class="title">
+MDCAT Biology Notes
+</div>
+
+<div class="price">
+Rs.1200
+</div>
+
+<div class="desc">
+Complete chapter-wise notes with diagrams and MCQs.
+</div>
+
+<button>
+Buy on WhatsApp
+</button>
+
+</div>
+
+<div class="card">
+
+<div class="note-img">
+Notes Preview
+</div>
+
+<div class="title">
+MDCAT Chemistry Notes
+</div>
+
+<div class="price">
+Rs.1000
+</div>
+
+<div class="desc">
+Complete chemistry preparation notes.
+</div>
+
+<button>
+Buy on WhatsApp
+</button>
+
+</div>
+
+</div>
+
+</body>
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wrong Questions | ABMDCAT.COM</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#eef8ff;
+}
+
+header{
+background:#fff;
+padding:15px;
+display:flex;
+align-items:center;
+box-shadow:0 2px 10px rgba(0,0,0,.1);
+}
+
+header img{
+width:55px;
+height:55px;
+border-radius:50%;
+border:3px solid skyblue;
+}
+
+header h2{
+margin-left:15px;
+color:#0095d9;
+}
+
+.container{
+padding:20px;
+}
+
+.card{
+background:white;
+padding:18px;
+border-radius:15px;
+margin-bottom:18px;
+box-shadow:0 3px 10px rgba(0,0,0,.1);
+}
+
+.card h3{
+color:#0095d9;
+margin-bottom:10px;
+}
+
+.card p{
+color:#666;
+margin:6px 0;
+}
+
+button{
+width:100%;
+padding:14px;
+margin-top:12px;
+background:skyblue;
+color:white;
+border:none;
+border-radius:10px;
+font-size:17px;
+font-weight:bold;
+cursor:pointer;
+}
+
+button:hover{
+background:#0095d9;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<img src="logo.png">
+
+<h2>ABMDCAT.COM</h2>
+
+</header>
+
+<div class="container">
+
+<div class="card">
+
+<h3>🧬 Biology</h3>
+
+<p>Wrong MCQs : 32</p>
+
+<button>Open Biology</button>
+
+</div>
+
+<div class="card">
+
+<h3>⚗ Chemistry</h3>
+
+<p>Wrong MCQs : 18</p>
+
+<button>Open Chemistry</button>
+
+</div>
+
+<div class="card">
+
+<h3>⚡ Physics</h3>
+
+<p>Wrong MCQs : 25</p>
+
+<button>Open Physics</button>
+
+</div>
+
+<div class="card">
+
+<h3>📖 English</h3>
+
+<p>Wrong MCQs : 9</p>
+
+<button>Open English</button>
+
+</div>
+
+<div class="card">
+
+<h3>🧠 Logical Reasoning</h3>
+
+<p>Wrong MCQs : 7</p>
+
+<button>Open Logical Reasoning</button>
+
+</div>
+
+</div>
+
+</body>
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Test History | ABMDCAT.COM</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#eef8ff;
+}
+
+header{
+background:white;
+padding:15px;
+display:flex;
+align-items:center;
+box-shadow:0 2px 10px rgba(0,0,0,.1);
+}
+
+header img{
+width:55px;
+height:55px;
+border-radius:50%;
+border:3px solid skyblue;
+}
+
+header h2{
+margin-left:15px;
+color:#0095d9;
+}
+
+.container{
+padding:20px;
+}
+
+.card{
+background:white;
+padding:18px;
+border-radius:15px;
+margin-bottom:18px;
+box-shadow:0 3px 10px rgba(0,0,0,.1);
+}
+
+.subject{
+font-size:22px;
+font-weight:bold;
+color:#0095d9;
+margin-bottom:10px;
+}
+
+.info{
+margin:6px 0;
+color:#555;
+font-size:16px;
+}
+
+.buttons{
+display:flex;
+gap:10px;
+margin-top:15px;
+}
+
+button{
+flex:1;
+padding:12px;
+border:none;
+border-radius:10px;
+font-size:16px;
+font-weight:bold;
+cursor:pointer;
+}
+
+.review{
+background:#29b6f6;
+color:white;
+}
+
+.retake{
+background:#4CAF50;
+color:white;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<img src="logo.png">
+
+<h2>ABMDCAT.COM</h2>
+
+</header>
+
+<div class="container">
+
+<div class="card">
+
+<div class="subject">
+
+🧬 Biology Practice Test
+
+</div>
+
+<p class="info">📅 Date : 20 July 2026</p>
+
+<p class="info">📝 MCQs : 180</p>
+
+<p class="info">✅ Correct : 168</p>
+
+<p class="info">❌ Wrong : 12</p>
+
+<p class="info">📊 Percentage : 93.3%</p>
+
+<p class="info">⏱ Time : 170 Minutes</p>
+
+<div class="buttons">
+
+<button class="review">
+
+Review
+
+</button>
+
+<button class="retake">
+
+Retake
+
+</button>
+
+</div>
+
+</div>
+
+<div class="card">
+
+<div class="subject">
+
+⚗ Chemistry Practice Test
+
+</div>
+
+<p class="info">📅 Date : 18 July 2026</p>
+
+<p class="info">📝 MCQs : 100</p>
+
+<p class="info">✅ Correct : 88</p>
+
+<p class="info">❌ Wrong : 12</p>
+
+<p class="info">📊 Percentage : 88%</p>
+
+<p class="info">⏱ Time : 92 Minutes</p>
+
+<div class="buttons">
+
+<button class="review">
+
+Review
+
+</button>
+
+<button class="retake">
+
+Retake
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+</body>
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Bookmarks | ABMDCAT.COM</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#eef8ff;
+}
+
+header{
+background:white;
+padding:15px;
+display:flex;
+align-items:center;
+box-shadow:0 2px 10px rgba(0,0,0,.1);
+}
+
+header img{
+width:55px;
+height:55px;
+border-radius:50%;
+border:3px solid skyblue;
+}
+
+header h2{
+margin-left:15px;
+color:#0095d9;
+}
+
+.container{
+padding:20px;
+}
+
+.card{
+background:white;
+border-radius:15px;
+padding:20px;
+margin-bottom:18px;
+box-shadow:0 3px 10px rgba(0,0,0,.1);
+}
+
+.subject{
+font-size:22px;
+font-weight:bold;
+color:#0095d9;
+margin-bottom:15px;
+}
+
+.chapter{
+font-size:18px;
+font-weight:bold;
+margin-bottom:8px;
+color:#444;
+}
+
+.topic{
+margin-bottom:10px;
+color:#666;
+}
+
+.count{
+color:#4CAF50;
+font-weight:bold;
+margin-bottom:15px;
+}
+
+button{
+width:100%;
+padding:14px;
+background:skyblue;
+color:white;
+border:none;
+border-radius:10px;
+font-size:17px;
+font-weight:bold;
+cursor:pointer;
+}
+
+button:hover{
+background:#0095d9;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<img src="logo.png">
+
+<h2>ABMDCAT.COM</h2>
+
+</header>
+
+<div class="container">
+
+<div class="card">
+
+<div class="subject">
+
+🧬 Biology
+
+</div>
+
+<div class="chapter">
+
+Chapter : Cell Biology
+
+</div>
+
+<div class="topic">
+
+Topic : Cell Membrane
+
+</div>
+
+<div class="count">
+
+⭐ 15 Bookmarked MCQs
+
+</div>
+
+<button>
+
+Open Bookmarks
+
+</button>
+
+</div>
+
+<div class="card">
+
+<div class="subject">
+
+⚗ Chemistry
+
+</div>
+
+<div class="chapter">
+
+Chapter : Chemical Bonding
+
+</div>
+
+<div class="topic">
+
+Topic : Hybridization
+
+</div>
+
+<div class="count">
+
+⭐ 9 Bookmarked MCQs
+
+</div>
+
+<button>
+
+Open Bookmarks
+
+</button>
+
+</div>
+
+<div class="card">
+
+<div class="subject">
+
+⚡ Physics
+
+</div>
+
+<div class="chapter">
+
+Chapter : Work & Energy
+
+</div>
+
+<div class="topic">
+
+Topic : Power
+
+</div>
+
+<div class="count">
+
+⭐ 7 Bookmarked MCQs
+
+</div>
+
+<button>
+
+Open Bookmarks
+
+</button>
+
+</div>
+
+</div>
+
+</body>
+</html><!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Rankings | ABMDCAT.COM</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#eef8ff;
+}
+
+header{
+background:white;
+padding:15px;
+display:flex;
+align-items:center;
+box-shadow:0 2px 10px rgba(0,0,0,.1);
+}
+
+header img{
+width:55px;
+height:55px;
+border-radius:50%;
+border:3px solid skyblue;
+}
+
+header h2{
+margin-left:15px;
+color:#0095d9;
+}
+
+.container{
+padding:20px;
+}
+
+.tabs{
+display:flex;
+gap:10px;
+margin-bottom:20px;
+overflow:auto;
+}
+
+.tab{
+background:white;
+padding:12px 18px;
+border-radius:10px;
+font-weight:bold;
+color:#0095d9;
+box-shadow:0 2px 8px rgba(0,0,0,.1);
+cursor:pointer;
+white-space:nowrap;
+}
+
+.current{
+background:#0095d9;
+color:white;
+}
+
+.rank-card{
+background:white;
+padding:18px;
+border-radius:15px;
+margin-bottom:15px;
+display:flex;
+align-items:center;
+justify-content:space-between;
+box-shadow:0 3px 10px rgba(0,0,0,.1);
+}
+
+.left{
+display:flex;
+align-items:center;
+}
+
+.rank{
+width:45px;
+height:45px;
+background:#0095d9;
+color:white;
+border-radius:50%;
+display:flex;
+justify-content:center;
+align-items:center;
+font-size:20px;
+font-weight:bold;
+margin-right:15px;
+}
+
+.student h3{
+color:#333;
+}
+
+.student p{
+color:gray;
+font-size:14px;
+margin-top:3px;
+}
+
+.score{
+text-align:right;
+}
+
+.score h2{
+color:green;
+}
+
+.me{
+border:3px solid orange;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<img src="logo.png">
+
+<h2>ABMDCAT.COM</h2>
+
+</header>
+
+<div class="container">
+
+<div class="tabs">
+
+<div class="tab current">
+Overall
+</div>
+
+<div class="tab">
+Biology
+</div>
+
+<div class="tab">
+Chemistry
+</div>
+
+<div class="tab">
+Physics
+</div>
+
+<div class="tab">
+English
+</div>
+
+</div>
+
+<div class="rank-card">
+
+<div class="left">
+
+<div class="rank">1</div>
+
+<div class="student">
+
+<h3>Ali Ahmed</h3>
+
+<p>180 Tests</p>
+
+</div>
+
+</div>
+
+<div class="score">
+
+<h2>98.6%</h2>
+
+</div>
+
+</div>
+
+<div class="rank-card">
+
+<div class="left">
+
+<div class="rank">2</div>
+
+<div class="student">
+
+<h3>Ahmed Khan</h3>
+
+<p>165 Tests</p>
+
+</div>
+
+</div>
+
+<div class="score">
+
+<h2>97.8%</h2>
+
+</div>
+
+</div>
+
+<div<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Profile | ABMDCAT.COM</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#eef8ff;
+}
+
+header{
+background:white;
+padding:15px;
+display:flex;
+align-items:center;
+box-shadow:0 2px 10px rgba(0,0,0,.1);
+}
+
+header img{
+width:55px;
+height:55px;
+border-radius:50%;
+border:3px solid skyblue;
+}
+
+header h2{
+margin-left:15px;
+color:#0095d9;
+}
+
+.profile{
+text-align:center;
+padding:25px;
+}
+
+.profile img{
+width:120px;
+height:120px;
+border-radius:50%;
+border:5px solid skyblue;
+margin-bottom:15px;
+}
+
+.profile h1{
+color:#0095d9;
+}
+
+.profile p{
+color:gray;
+margin-top:5px;
+}
+
+.stats{
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:15px;
+padding:20px;
+}
+
+.card{
+background:white;
+padding:20px;
+border-radius:15px;
+text-align:center;
+box-shadow:0 3px 10px rgba(0,0,0,.1);
+}
+
+.card h3{
+color:#666;
+font-size:15px;
+}
+
+.card h1{
+margin-top:10px;
+color:#0095d9;
+}
+
+.menu{
+padding:20px;
+}
+
+.option{
+background:white;
+padding:18px;
+margin-bottom:15px;
+border-radius:15px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+font-size:18px;
+font-weight:bold;
+box-shadow:0 3px 10px rgba(0,0,0,.1);
+cursor:pointer;
+}
+
+.option:hover{
+background:skyblue;
+color:white;
+}
+
+.logout{
+
+background:#ff4d4d;
+
+color:white;
+
+}
+
+.logout:hover{
+
+background:#d60000;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<img src="logo.png">
+
+<h2>ABMDCAT.COM</h2>
+
+</header>
+
+<div class="profile">
+
+<img src="student.png">
+
+<h1>Shayan Ali</h1>
+
+<p>Username : shayan01</p>
+
+</div>
+
+<div class="stats">
+
+<div class="card">
+
+<h3>Total Tests</h3>
+
+<h1>125</h1>
+
+</div>
+
+<div class="card">
+
+<h3>Overall %</h3>
+
+<h1>92%</h1>
+
+</div>
+
+<div class="card">
+
+<h3>Correct MCQs</h3>
+
+<h1>5421</h1>
+
+</div>
+
+<div class="card">
+
+<h3>Wrong MCQs</h3>
+
+<h1>486</h1>
+
+</div>
+
+<div class="card">
+
+<h3>Current Rank</h3>
+
+<h1>#15</h1>
+
+</div>
+
+<div class="card">
+
+<h3>Member Since</h3>
+
+<h1>2026</h1>
+
+</div>
+
+</div>
+
+<div class="menu">
+
+<div class="option">
+
+<span>🔑 Change Password</span>
+
+<span>➜</span>
+
+</div>
+
+<div class="option">
+
+<span>🎨 Theme</span>
+
+<span>➜</span>
+
+</div>
+
+<div class="option">
+
+<span>🔔 Notifications</span>
+
+<span>➜</span>
+
+</div>
+
+<div class="option logout">
+
+<span>🚪 Logout</span>
+
+<span>➜</span>
+
+</div>
+
+</div>
+
+</body>
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Online Test | ABMDCAT.COM</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#eef8ff;
+}
+
+header{
+background:white;
+padding:15px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+box-shadow:0 2px 10px rgba(0,0,0,.1);
+}
+
+.logo{
+display:flex;
+align-items:center;
+}
+
+.logo img{
+width:50px;
+height:50px;
+border-radius:50%;
+border:3px solid skyblue;
+margin-right:10px;
+}
+
+.logo h2{
+color:#0095d9;
+}
+
+.timer{
+background:red;
+color:white;
+padding:10px 18px;
+border-radius:10px;
+font-weight:bold;
+}
+
+.container{
+padding:20px;
+}
+
+.question-card{
+background:white;
+padding:20px;
+border-radius:15px;
+box-shadow:0 3px 10px rgba(0,0,0,.1);
+}
+
+.question-no{
+color:#0095d9;
+font-weight:bold;
+margin-bottom:15px;
+}
+
+.question{
+font-size:22px;
+margin-bottom:20px;
+}
+
+.option{
+
+padding:15px;
+
+border:2px solid #ddd;
+
+border-radius:12px;
+
+margin-bottom:15px;
+
+cursor:pointer;
+
+transition:.3s;
+
+}
+
+.option:hover{
+
+background:skyblue;
+
+color:white;
+
+border-color:skyblue;
+
+}
+
+.buttons{
+
+display:flex;
+
+justify-content:space-between;
+
+margin-top:25px;
+
+}
+
+button{
+
+padding:15px 25px;
+
+border:none;
+
+border-radius:12px;
+
+font-size:16px;
+
+font-weight:bold;
+
+cursor:pointer;
+
+}
+
+.previous{
+
+background:#999;
+
+color:white;
+
+}
+
+.next{
+
+background:skyblue;
+
+color:white;
+
+}
+
+.submit{
+
+width:100%;
+
+margin-top:20px;
+
+background:green;
+
+color:white;
+
+padding:16px;
+
+font-size:18px;
+
+}
+
+.palette{
+
+margin-top:30px;
+
+display:grid;
+
+grid-template-columns:repeat(5,1fr);
+
+gap:10px;
+
+}
+
+.palette button{
+
+background:white;
+
+border:2px solid skyblue;
+
+color:#0095d9;
+
+}
+
+.bookmark{
+
+margin-top:20px;
+
+background:orange;
+
+color:white;
+
+padding:14px;
+
+border-radius:12px;
+
+text-align:center;
+
+font-weight:bold;
+
+cursor:pointer;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<div class="logo">
+
+<img src="logo.png">
+
+<h2>ABMDCAT.COM</h2>
+
+</div>
+
+<div class="timer">
+
+02:59:45
+
+</div>
+
+</header>
+
+<div class="container">
+
+<div class="question-card">
+
+<div class="question-no">
+
+Question 1 / 180
+
+</div>
+
+<div class="question">
+
+Which organelle is called the powerhouse of the cell?
+
+</div>
+
+<div class="option">
+
+A. Ribosome
+
+</div>
+
+<div class="option">
+
+B. N<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Result | ABMDCAT.COM</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#eef8ff;
+}
+
+header{
+background:white;
+padding:15px;
+display:flex;
+align-items:center;
+box-shadow:0 2px 10px rgba(0,0,0,.1);
+}
+
+header img{
+width:55px;
+height:55px;
+border-radius:50%;
+border:3px solid skyblue;
+}
+
+header h2{
+margin-left:15px;
+color:#0095d9;
+}
+
+.container{
+padding:20px;
+}
+
+.result-card{
+
+background:white;
+
+border-radius:20px;
+
+padding:25px;
+
+box-shadow:0 5px 15px rgba(0,0,0,.1);
+
+text-align:center;
+
+}
+
+.circle{
+
+width:150px;
+
+height:150px;
+
+margin:auto;
+
+border-radius:50%;
+
+border:12px solid #29b6f6;
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+font-size:40px;
+
+font-weight:bold;
+
+color:#29b6f6;
+
+margin-bottom:20px;
+
+}
+
+.result-card h1{
+
+color:#0095d9;
+
+margin-bottom:20px;
+
+}
+
+.stats{
+
+margin-top:20px;
+
+}
+
+.stat{
+
+display:flex;
+
+justify-content:space-between;
+
+padding:12px;
+
+border-bottom:1px solid #ddd;
+
+font-size:18px;
+
+}
+
+.buttons{
+
+margin-top:25px;
+
+}
+
+button{
+
+width:100%;
+
+padding:16px;
+
+margin-bottom:15px;
+
+border:none;
+
+border-radius:12px;
+
+font-size:18px;
+
+font-weight:bold;
+
+cursor:pointer;
+
+}
+
+.review{
+
+background:#29b6f6;
+
+color:white;
+
+}
+
+.wrong{
+
+background:#ff9800;
+
+color:white;
+
+}
+
+.retake{
+
+background:#4CAF50;
+
+color:white;
+
+}
+
+.dashboard{
+
+background:#555;
+
+color:white;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<img src="logo.png">
+
+<h2>ABMDCAT.COM</h2>
+
+</header>
+
+<div class="container">
+
+<div class="result-card">
+
+<div class="circle">
+
+92%
+
+</div>
+
+<h1>Practice Test Result</h1>
+
+<div class="stats">
+
+<div class="stat">
+
+<span>Total MCQs</span><!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ABMDCAT Admin Login</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,Helvetica,sans-serif;
+}
+
+body{
+background:#111;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+}
+
+.container{
+width:95%;
+max-width:420px;
+background:#1e1e1e;
+padding:30px;
+border-radius:20px;
+box-shadow:0 0 25px rgba(255,0,0,.35);
+text-align:center;
+}
+
+.logo{
+width:120px;
+height:120px;
+border-radius:50%;
+border:4px solid red;
+object-fit:cover;
+margin-bottom:15px;
+}
+
+h1{
+color:red;
+margin-bottom:5px;
+}
+
+.subtitle{
+color:#bbb;
+margin-bottom:25px;
+}
+
+input{
+width:100%;
+padding:15px;
+margin-bottom:15px;
+border-radius:10px;
+border:2px solid red;
+background:#2b2b2b;
+color:white;
+font-size:16px;
+outline:none;
+}
+
+input::placeholder{
+color:#aaa;
+}
+
+button{
+width:100%;
+padding:15px;
+background:red;
+color:white;
+border:none;
+border-radius:10px;
+font-size:18px;
+font-weight:bold;
+cursor:pointer;
+}
+
+button:hover{
+background:#cc0000;
+}
+
+.footer{
+margin-top:20px;
+color:#888;
+font-size:13px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<img src="logo.png" class="logo">
+
+<h1>ABMDCAT.COM</h1>
+
+<p class="subtitle">Administrator Login</p>
+
+<input
+type="text"
+placeholder="Admin Username">
+
+<input
+type="password"
+placeholder="Admin Password">
+
+<button>
+
+LOGIN
+
+</button>
+
+<div class="footer">
+
+Authorized Administrators Only
+
+</div>
+
+</div>
+
+</body>
+
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Dashboard - ABMDCAT.COM</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#111;
+}
+
+header{
+background:#1d1d1d;
+padding:15px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+border-bottom:3px solid red;
+}
+
+.logo{
+display:flex;
+align-items:center;
+}
+
+.logo img{
+width:55px;
+height:55px;
+border-radius:50%;
+border:3px solid red;
+margin-right:12px;
+}
+
+.logo h2{
+color:red;
+}
+
+.admin{
+color:white;
+font-size:18px;
+font-weight:bold;
+}
+
+.container{
+padding:20px;
+}
+
+.cards{
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:15px;
+margin-bottom:25px;
+}
+
+.card{
+background:#222;
+border-radius:15px;
+padding:20px;
+text-align:center;
+border:2px solid red;
+}
+
+.card h3{
+color:#ccc;
+margin-bottom:10px;
+}
+
+.card h1{
+color:red;
+}
+
+.menu{
+display:grid;
+grid-template-columns:1fr;
+gap:15px;
+}
+
+.option{
+background:#222;
+padding:18px;
+border-radius:15px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+font-size:18px;
+font-weight:bold;
+color:white;
+border-left:5px solid red;
+cursor:pointer;
+}
+
+.option:hover{
+background:#2f2f2f;
+}
+
+.footer{
+margin-top:25px;
+text-align:center;
+color:#888;
+font-size:14px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<div class="logo">
+
+<img src="logo.png">
+
+<h2>ABMDCAT.COM</h2>
+
+</div>
+
+<div class="admin">
+
+ADMIN
+
+</div>
+
+</header>
+
+<div class="container">
+
+<div class="cards">
+
+<div class="card">
+
+<h3>Total Students</h3>
+
+<h1>1025</h1>
+
+</div>
+
+<div class="card">
+
+<h3>Total MCQs</h3>
+
+<h1>18,420</h1>
+
+</div>
+
+<div class="card">
+
+<h3>Today's Tests</h3>
+
+<h1>214</h1>
+
+</div>
+
+<div class="card">
+
+<h3>Notes Sold</h3>
+
+<h1>146</h1>
+
+</div>
+
+</div>
+
+<div class="menu">
+
+<div class="option">
+👨 Student Management
+<span>➜</span>
+</div>
+
+<div class="option">
+📚 MCQ Management
+<span>➜</span>
+</div>
+
+<div class="option">
+📥 Excel Upload
+<span>➜</span>
+</div>
+
+<div class="option">
+📝 Online Test Creator
+<span>➜</span>
+</div>
+
+<div class="option">
+📊 Results
+<span>➜</span>
+</div>
+
+<div class="option">
+🏆 Rankings
+<span>➜</span>
+</div>
+
+<div class="option">
+📖 Notes Management
+<span>➜</span>
+</div>
+
+<div class="option">
+📢 Announcements
+<span>➜</span>
+</div>
+
+<div class="option">
+📈 Analytics
+<span>➜</span>
+</div>
+
+<div class="option">
+⚙ Website Settings
+<span>➜</span>
+</div>
+
+<div class="option">
+💾 Backup Database
+<span>➜</span>
+</div>
+
+<div class="option">
+🚪 Logout
+<span>➜</span>
+</div>
+
+</div>
+
+<div class="footer">
+
+ABMDCAT.COM Administrator Panel
+
+</div>
+
+</div>
+
+</body>
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Management</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#111;
+color:white;
+}
+
+header{
+background:#1f1f1f;
+padding:15px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+border-bottom:3px solid red;
+}
+
+.logo{
+display:flex;
+align-items:center;
+}
+
+.logo img{
+width:55px;
+height:55px;
+border-radius:50%;
+border:3px solid red;
+margin-right:10px;
+}
+
+.logo h2{
+color:red;
+}
+
+.container{
+padding:20px;
+}
+
+.top-buttons{
+
+display:grid;
+
+grid-template-columns:repeat(2,1fr);
+
+gap:10px;
+
+margin-bottom:20px;
+
+}
+
+.top-buttons button{
+
+padding:15px;
+
+border:none;
+
+border-radius:10px;
+
+font-size:16px;
+
+font-weight:bold;
+
+background:red;
+
+color:white;
+
+cursor:pointer;
+
+}
+
+.search{
+
+width:100%;
+
+padding:15px;
+
+margin-bottom:20px;
+
+border-radius:10px;
+
+border:none;
+
+font-size:16px;
+
+}
+
+.student{
+
+background:#222;
+
+padding:15px;
+
+border-radius:12px;
+
+margin-bottom:15px;
+
+}
+
+.student h3{
+
+color:red;
+
+margin-bottom:8px;
+
+}
+
+.student p{
+
+margin:4px 0;
+
+}
+
+.actions{
+
+display:grid;
+
+grid-template-columns:repeat(2,1fr);
+
+gap:10px;
+
+margin-top:15px;
+
+}
+
+.actions button{
+
+padding:12px;
+
+border:none;
+
+border-radius:8px;
+
+font-weight:bold;
+
+cursor:pointer;
+
+}
+
+.reset{
+
+background:orange;
+
+color:white;
+
+}
+
+.block{
+
+background:#444;
+
+color:white;
+
+}
+
+.delete{
+
+background:#cc0000;
+
+color:white;
+
+}
+
+.view{
+
+background:#0099ff;
+
+color:white;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<div class="logo">
+
+<img src="logo.png">
+
+<h2>ABMDCAT.COM</h2>
+
+</div>
+
+</header>
+
+<div class="container">
+
+<div class="top-buttons">
+
+<button>Add Student</button>
+
+<button>Create Login</button>
+
+<button>Import Excel</button>
+
+<button>Export List</button>
+
+</div>
+
+<input
+class="search"
+type="text"
+placeholder="Search Student Username">
+
+<div class="student">
+
+<h3>Shayan Ali</h3>
+
+<p>Username : shayan01</p>
+
+<p>Status : Active</p>
+
+<p>Device : Samsung A34</p>
+
+<p>Total Tests : 152</p>
+
+<p>Overall % : 91%</p>
+
+<div class="actions">
+
+<button class="view">View</button>
+
+<button class="reset">Reset Password</button>
+
+<button class="block">Block</button>
+
+<button class="delete">Delete</button>
+
+</div>
+
+</div>
+
+</div>
+
+</body>
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MCQ Management | ABMDCAT.COM</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#111;
+color:white;
+}
+
+header{
+background:#1f1f1f;
+padding:15px;
+display:flex;
+align-items:center;
+border-bottom:3px solid red;
+}
+
+header img{
+width:55px;
+height:55px;
+border-radius:50%;
+border:3px solid red;
+margin-right:12px;
+}
+
+header h2{
+color:red;
+}
+
+.container{
+padding:20px;
+}
+
+.card{
+background:#222;
+padding:20px;
+border-radius:15px;
+margin-bottom:20px;
+}
+
+label{
+display:block;
+margin-bottom:8px;
+font-weight:bold;
+color:#ddd;
+}
+
+input,select,textarea{
+
+width:100%;
+
+padding:14px;
+
+margin-bottom:15px;
+
+border:none;
+
+border-radius:10px;
+
+font-size:16px;
+
+}
+
+textarea{
+
+height:120px;
+
+resize:none;
+
+}
+
+.option{
+
+display:flex;
+
+align-items:center;
+
+margin-bottom:12px;
+
+}
+
+.option input[type=text]{
+
+flex:1;
+
+margin-left:10px;
+
+margin-bottom:0;
+
+}
+
+.buttons{
+
+display:grid;
+
+grid-template-columns:repeat(2,1fr);
+
+gap:15px;
+
+}
+
+button{
+
+padding:15px;
+
+border:none;
+
+border-radius:10px;
+
+font-size:16px;
+
+font-weight:bold;
+
+cursor:pointer;
+
+}
+
+.save{
+
+background:green;
+
+color:white;
+
+}
+
+.clear{
+
+background:#555;
+
+color:white;
+
+}
+
+.edit{
+
+background:orange;
+
+color:white;
+
+}
+
+.delete{
+
+background:red;
+
+color:white;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<img src="logo.png">
+
+<h2>ABMDCAT.COM</h2>
+
+</header>
+
+<div class="container">
+
+<div class="card">
+
+<label>Subject</label>
+
+<select>
+
+<option>Biology</option>
+
+<option>Chemistry</option>
+
+<option>Physics</option>
+
+<option>English</option>
+
+<option>Logical Reasoning</option>
+
+</select>
+
+<label>Chapter</label>
+
+<input type="text" placeholder="Enter Chapter">
+
+<label>Topic</label>
+
+<input type="text" placeholder="Enter Topic">
+
+<label>Question</label>
+
+<textarea placeholder="Write MCQ Here"></textarea>
+
+<label>Options</label>
+
+<div class="option">
+<input type="radio" name="correct">
+<input type="text" placeholder="Option A">
+</div>
+
+<div class="option">
+<input type="radio" name="correct">
+<input type="text" placeholder="Option B">
+</div>
+
+<div class="option">
+<input type="radio" name="correct">
+<input type="text" placeholder="Option C">
+</div>
+
+<div class="option">
+<input type="radio" name="correct">
+<input type="text" placeholder="Option D">
+</div>
+
+<label>Explanation</label>
+
+<textarea placeholder="Explanation (Optional)"></textarea>
+
+<div class="buttons">
+
+<button class="save">Save MCQ</button>
+
+<button class="clear">Clear</button>
+
+<button class="edit">Edit MCQ</button>
+
+<button class="delete">Delete MCQ</button>
+
+</div>
+
+</div>
+
+</div>
+
+</body>
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Excel Upload | ABMDCAT.COM</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#111;
+color:white;
+}
+
+header{
+background:#1f1f1f;
+padding:15px;
+display:flex;
+align-items:center;
+border-bottom:3px solid red;
+}
+
+header img{
+width:55px;
+height:55px;
+border-radius:50%;
+border:3px solid red;
+margin-right:12px;
+}
+
+header h2{
+color:red;
+}
+
+.container{
+padding:20px;
+}
+
+.card{
+background:#222;
+padding:20px;
+border-radius:15px;
+margin-bottom:20px;
+}
+
+.card h3{
+margin-bottom:15px;
+color:red;
+}
+
+input[type=file]{
+width:100%;
+padding:15px;
+background:#333;
+border-radius:10px;
+margin-bottom:20px;
+color:white;
+}
+
+button{
+width:100%;
+padding:15px;
+margin-top:10px;
+border:none;
+border-radius:10px;
+font-size:16px;
+font-weight:bold;
+cursor:pointer;
+}
+
+.upload{
+background:green;
+color:white;
+}
+
+.download{
+background:#0099ff;
+color:white;
+}
+
+.progress{
+margin-top:20px;
+background:#333;
+height:25px;
+border-radius:20px;
+overflow:hidden;
+}
+
+.bar{
+height:100%;
+width:60%;
+background:red;
+text-align:center;
+line-height:25px;
+font-weight:bold;
+}
+
+.info{
+margin-top:20px;
+background:#333;
+padding:15px;
+border-radius:10px;
+}
+
+.info p{
+margin:8px 0;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<img src="logo.png">
+
+<h2>ABMDCAT.COM</h2>
+
+</header>
+
+<div class="container">
+
+<div class="card">
+
+<h3>Upload MCQs Excel File</h3>
+
+<input type="file">
+
+<button class="upload">
+Upload Excel
+</button>
+
+<button class="download">
+Download Sample Excel
+</button>
+
+<div class="progress">
+
+<div class="bar">
+60%
+</div>
+
+</div>
+
+<div class="info">
+
+<p>Total MCQs : 5000</p>
+
+<p>Uploaded : 3000</p>
+
+<p>Remaining : 2000</p>
+
+<p>Status : Uploading...</p>
+
+</div>
+
+</div>
+
+</div>
+
+</body>
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Online Test Creator | ABMDCAT.COM</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#111;
+color:white;
+}
+
+header{
+background:#1f1f1f;
+padding:15px;
+display:flex;
+align-items:center;
+border-bottom:3px solid red;
+}
+
+header img{
+width:55px;
+height:55px;
+border-radius:50%;
+border:3px solid red;
+margin-right:12px;
+}
+
+header h2{
+color:red;
+}
+
+.container{
+padding:20px;
+}
+
+.card{
+background:#222;
+padding:20px;
+border-radius:15px;
+margin-bottom:20px;
+}
+
+label{
+display:block;
+margin-bottom:8px;
+font-weight:bold;
+}
+
+input,select,textarea{
+width:100%;
+padding:14px;
+margin-bottom:15px;
+border:none;
+border-radius:10px;
+font-size:16px;
+}
+
+textarea{
+height:100px;
+resize:none;
+}
+
+button{
+width:100%;
+padding:15px;
+margin-top:10px;
+border:none;
+border-radius:10px;
+font-size:16px;
+font-weight:bold;
+cursor:pointer;
+}
+
+.create{
+background:green;
+color:white;
+}
+
+.preview{
+background:#0099ff;
+color:white;
+}
+
+.delete{
+background:red;
+color:white;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<img src="logo.png">
+
+<h2>ABMDCAT.COM</h2>
+
+</header>
+
+<div class="container">
+
+<div class="card">
+
+<label>Test Name</label>
+<input type="text" placeholder="Biology Grand Test">
+
+<label>Description</label>
+<textarea placeholder="Write test details"></textarea>
+
+<label>Subject</label>
+<select>
+<option>Biology</option>
+<option>Chemistry</option>
+<option>Physics</option>
+<option>English</option>
+<option>Logical Reasoning</option>
+</select>
+
+<label>Number of MCQs</label>
+<input type="number" placeholder="180">
+
+<label>Duration (Minutes)</label>
+<input type="number" placeholder="180">
+
+<label>Opening Date</label>
+<input type="date">
+
+<label>Closing Date</label>
+<input type="date">
+
+<label>Status</label>
+<select>
+<option>Draft</option>
+<option>Published</option>
+<option>Hidden</option>
+</select>
+
+<button class="create">
+Create Test
+</button>
+
+<button class="preview">
+Preview Test
+</button>
+
+<button class="delete">
+Delete Test
+</button>
+
+</div>
+
+</div>
+
+</body>
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Results Management | ABMDCAT.COM</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#111;
+color:white;
+}
+
+header{
+background:#1f1f1f;
+padding:15px;
+display:flex;
+align-items:center;
+border-bottom:3px solid red;
+}
+
+header img{
+width:55px;
+height:55px;
+border-radius:50%;
+border:3px solid red;
+margin-right:12px;
+}
+
+header h2{
+color:red;
+}
+
+.container{
+padding:20px;
+}
+
+.card{
+background:#222;
+padding:20px;
+border-radius:15px;
+margin-bottom:20px;
+}
+
+label{
+display:block;
+margin-bottom:8px;
+font-weight:bold;
+}
+
+input,select{
+width:100%;
+padding:14px;
+margin-bottom:15px;
+border:none;
+border-radius:10px;
+font-size:16px;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+margin-top:20px;
+}
+
+th{
+background:red;
+padding:12px;
+}
+
+td{
+background:#333;
+padding:12px;
+text-align:center;
+}
+
+button{
+width:100%;
+padding:15px;
+margin-top:12px;
+border:none;
+border-radius:10px;
+font-size:16px;
+font-weight:bold;
+cursor:pointer;
+}
+
+.exportpdf{
+background:#0099ff;
+color:white;
+}
+
+.exportexcel{
+background:green;
+color:white;
+}
+
+.refresh{
+background:orange;
+color:white;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<img src="logo.png">
+
+<h2>ABMDCAT.COM</h2>
+
+</header>
+
+<div class="container">
+
+<div class="card">
+
+<label>Select Test</label>
+
+<select>
+
+<option>Biology Grand Test</option>
+
+<option>Chemistry Weekly Test</option>
+
+<option>Physics Mock Test</option>
+
+</select>
+
+<label>Search Student</label>
+
+<input type="text" placeholder="Enter Username">
+
+<table>
+
+<tr>
+
+<th>Rank</th>
+
+<th>Student</th>
+
+<th>%</th>
+
+</tr>
+
+<tr>
+
+<td>1</td>
+
+<td>Ali</td>
+
+<td>98%</td>
+
+</tr>
+
+<tr>
+
+<td>2</td>
+
+<td>Ahmed</td>
+
+<td>97%</td>
+
+</tr>
+
+<tr>
+
+<td>3</td>
+
+<td>Shayan</td>
+
+<td>96%</td>
+
+</tr>
+
+</table>
+
+<button class="exportpdf">
+
+Export PDF
+
+</button>
+
+<button class="exportexcel">
+
+Export Excel
+
+</button>
+
+<button class="refresh">
+
+Refresh Results
+
+</button>
+
+</div>
+
+</div>
+
+</body>
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Notes Management | ABMDCAT.COM</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#111;
+color:white;
+}
+
+header{
+background:#1f1f1f;
+padding:15px;
+display:flex;
+align-items:center;
+border-bottom:3px solid red;
+}
+
+header img{
+width:55px;
+height:55px;
+border-radius:50%;
+border:3px solid red;
+margin-right:12px;
+}
+
+header h2{
+color:red;
+}
+
+.container{
+padding:20px;
+}
+
+.card{
+background:#222;
+padding:20px;
+border-radius:15px;
+margin-bottom:20px;
+}
+
+label{
+display:block;
+margin-bottom:8px;
+font-weight:bold;
+}
+
+input,
+textarea,
+select{
+width:100%;
+padding:14px;
+margin-bottom:15px;
+border:none;
+border-radius:10px;
+font-size:16px;
+}
+
+textarea{
+height:120px;
+resize:none;
+}
+
+input[type=file]{
+background:#333;
+color:white;
+}
+
+button{
+width:100%;
+padding:15px;
+margin-top:10px;
+border:none;
+border-radius:10px;
+font-size:16px;
+font-weight:bold;
+cursor:pointer;
+}
+
+.save{
+background:green;
+color:white;
+}
+
+.update{
+background:#0099ff;
+color:white;
+}
+
+.delete{
+background:red;
+color:white;
+}
+
+.preview{
+background:orange;
+color:white;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<img src="logo.png">
+
+<h2>ABMDCAT.COM</h2>
+
+</header>
+
+<div class="container">
+
+<div class="card">
+
+<label>Notes Title</label>
+
+<input type="text" placeholder="Biology Complete Notes">
+
+<label>Subject</label>
+
+<select>
+
+<option>Biology</option>
+<option>Chemistry</option>
+<option>Physics</option>
+<option>English</option>
+<option>Logical Reasoning</option>
+
+</select>
+
+<label>Price (Rs)</label>
+
+<input type="number" placeholder="1200">
+
+<label>WhatsApp Number</label>
+
+<input type="text" placeholder="+92XXXXXXXXXX">
+
+<label>Upload Notes Image</label>
+
+<input type="file">
+
+<label>Description</label>
+
+<textarea placeholder="Write notes description"></textarea>
+
+<button class="save">
+
+Save Notes
+
+</button>
+
+<button class="update">
+
+Update Notes
+
+</button>
+
+<button class="preview">
+
+Preview Notes
+
+</button>
+
+<button class="delete">
+
+Delete Notes
+
+</button>
+
+</div>
+
+</div>
+
+</body>
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Announcements | ABMDCAT.COM</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#111;
+color:white;
+}
+
+header{
+background:#1f1f1f;
+padding:15px;
+display:flex;
+align-items:center;
+border-bottom:3px solid red;
+}
+
+header img{
+width:55px;
+height:55px;
+border-radius:50%;
+border:3px solid red;
+margin-right:12px;
+}
+
+header h2{
+color:red;
+}
+
+.container{
+padding:20px;
+}
+
+.card{
+background:#222;
+padding:20px;
+border-radius:15px;
+margin-bottom:20px;
+}
+
+label{
+display:block;
+margin-bottom:8px;
+font-weight:bold;
+}
+
+input,select,textarea{
+width:100%;
+padding:14px;
+margin-bottom:15px;
+border:none;
+border-radius:10px;
+font-size:16px;
+}
+
+textarea{
+height:150px;
+resize:none;
+}
+
+button{
+width:100%;
+padding:15px;
+margin-top:10px;
+border:none;
+border-radius:10px;
+font-size:16px;
+font-weight:bold;
+cursor:pointer;
+}
+
+.publish{
+background:green;
+color:white;
+}
+
+.update{
+background:#0099ff;
+color:white;
+}
+
+.delete{
+background:red;
+color:white;
+}
+
+.preview{
+background:orange;
+color:white;
+}
+
+.notice{
+background:#333;
+padding:15px;
+border-radius:10px;
+margin-top:20px;
+}
+
+.notice h3{
+color:red;
+margin-bottom:10px;
+}
+
+.notice p{
+line-height:1.6;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<img src="logo.png">
+
+<h2>ABMDCAT.COM</h2>
+
+</header>
+
+<div class="container">
+
+<div class="card">
+
+<label>Announcement Title</label>
+
+<input type="text" placeholder="Biology Grand Test">
+
+<label>Announcement Type</label>
+
+<select>
+
+<option>General</option>
+
+<option>Test</option>
+
+<option>Notes</option>
+
+<option>Important</option>
+
+</select>
+
+<label>Message</label>
+
+<textarea placeholder="Write announcement here..."></textarea>
+
+<button class="publish">
+
+Publish Announcement
+
+</button>
+
+<button class="update">
+
+Update Announcement
+
+</button>
+
+<button class="preview">
+
+Preview Announcement
+
+</button>
+
+<button class="delete">
+
+Delete Announcement
+
+</button>
+
+</div>
+
+<div class="notice">
+
+<h3>Latest Announcement</h3>
+
+<p>
+
+Biology Grand Test will be held on Sunday at 10:00 AM. All enrolled students should attempt the test before the deadline.
+
+</p>
+
+</div>
+
+</div>
+
+</body>
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Analytics Dashboard | ABMDCAT.COM</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#111;
+color:white;
+}
+
+header{
+background:#1f1f1f;
+padding:15px;
+display:flex;
+align-items:center;
+border-bottom:3px solid red;
+}
+
+header img{
+width:55px;
+height:55px;
+border-radius:50%;
+border:3px solid red;
+margin-right:12px;
+}
+
+header h2{
+color:red;
+}
+
+.container{
+padding:20px;
+}
+
+.cards{
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:15px;
+margin-bottom:20px;
+}
+
+.card{
+background:#222;
+padding:20px;
+border-radius:15px;
+text-align:center;
+}
+
+.card h3{
+color:#ccc;
+margin-bottom:10px;
+}
+
+.card h1{
+color:red;
+font-size:32px;
+}
+
+.section{
+background:#222;
+padding:20px;
+border-radius:15px;
+margin-bottom:20px;
+}
+
+.section h2{
+color:red;
+margin-bottom:15px;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+}
+
+th{
+background:red;
+padding:12px;
+}
+
+td{
+background:#333;
+padding:12px;
+text-align:center;
+}
+
+.progress{
+width:100%;
+height:20px;
+background:#444;
+border-radius:20px;
+margin-top:10px;
+overflow:hidden;
+}
+
+.bar{
+width:82%;
+height:100%;
+background:red;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<img src="logo.png">
+
+<h2>ABMDCAT.COM</h2>
+
+</header>
+
+<div class="container">
+
+<div class="cards">
+
+<div class="card">
+<h3>Total Students</h3>
+<h1>1025</h1>
+</div>
+
+<div class="card">
+<h3>Tests Attempted</h3>
+<h1>8540</h1>
+</div>
+
+<div class="card">
+<h3>Total MCQs</h3>
+<h1>18420</h1>
+</div>
+
+<div class="card">
+<h3>Average Score</h3>
+<h1>82%</h1>
+</div>
+
+</div>
+
+<div class="section">
+
+<h2>Most Practiced Subjects</h2>
+
+<table>
+
+<tr>
+<th>Subject</th>
+<th>Attempts</th>
+</tr>
+
+<tr>
+<td>Biology</td>
+<td>3560</td>
+</tr>
+
+<tr>
+<td>Chemistry</td>
+<td>2425</td>
+</tr>
+
+<tr>
+<td>Physics</td>
+<td>1760</td>
+</tr>
+
+<tr>
+<td>English</td>
+<td>795</td>
+</tr>
+
+</table>
+
+</div>
+
+<div class="section">
+
+<h2>Website Performance</h2>
+
+<p>Student Activity</p>
+
+<div class="progress">
+
+<div class="bar"></div>
+
+</div>
+
+</div>
+
+</div>
+
+</body>
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Website Settings | ABMDCAT.COM</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#111;
+color:white;
+}
+
+header{
+background:#1f1f1f;
+padding:15px;
+display:flex;
+align-items:center;
+border-bottom:3px solid red;
+}
+
+header img{
+width:55px;
+height:55px;
+border-radius:50%;
+border:3px solid red;
+margin-right:12px;
+}
+
+header h2{
+color:red;
+}
+
+.container{
+padding:20px;
+}
+
+.card{
+background:#222;
+padding:20px;
+border-radius:15px;
+margin-bottom:20px;
+}
+
+label{
+display:block;
+margin-bottom:8px;
+font-weight:bold;
+}
+
+input,select{
+width:100%;
+padding:14px;
+margin-bottom:15px;
+border:none;
+border-radius:10px;
+font-size:16px;
+}
+
+input[type=file]{
+background:#333;
+color:white;
+}
+
+button{
+width:100%;
+padding:15px;
+margin-top:10px;
+border:none;
+border-radius:10px;
+font-size:16px;
+font-weight:bold;
+cursor:pointer;
+}
+
+.save{
+background:green;
+color:white;
+}
+
+.reset{
+background:orange;
+color:white;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<img src="logo.png">
+
+<h2>ABMDCAT.COM</h2>
+
+</header>
+
+<div class="container">
+
+<div class="card">
+
+<label>Website Name</label>
+
+<input type="text" value="ABMDCAT.COM">
+
+<label>Upload Logo</label>
+
+<input type="file">
+
+<label>Theme</label>
+
+<select>
+
+<option>Light (White + Sky Blue)</option>
+
+<option>Dark (Black + Red)</option>
+
+</select>
+
+<label>WhatsApp Number</label>
+
+<input type="text" placeholder="+92XXXXXXXXXX">
+
+<label>Admin Email</label>
+
+<input type="email" placeholder="admin@example.com">
+
+<label>Website Status</label>
+
+<select>
+
+<option>Online</option>
+
+<option>Maintenance Mode</option>
+
+</select>
+
+<button class="save">
+
+Save Settings
+
+</button>
+
+<button class="reset">
+
+Restore Default Settings
+
+</button>
+
+</div>
+
+</div>
+
+</body>
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Analytics Dashboard | ABMDCAT.COM</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#111;
+color:white;
+}
+
+header{
+background:#1f1f1f;
+padding:15px;
+display:flex;
+align-items:center;
+border-bottom:3px solid red;
+}
+
+header img{
+width:55px;
+height:55px;
+border-radius:50%;
+border:3px solid red;
+margin-right:12px;
+}
+
+header h2{
+color:red;
+}
+
+.container{
+padding:20px;
+}
+
+.cards{
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:15px;
+margin-bottom:20px;
+}
+
+.card{
+background:#222;
+padding:20px;
+border-radius:15px;
+text-align:center;
+border-left:5px solid red;
+}
+
+.card h3{
+color:#bbb;
+margin-bottom:10px;
+}
+
+.card h1{
+color:red;
+font-size:32px;
+}
+
+.section{
+background:#222;
+padding:20px;
+border-radius:15px;
+margin-bottom:20px;
+}
+
+.section h3{
+color:red;
+margin-bottom:15px;
+}
+
+.row{
+display:flex;
+justify-content:space-between;
+padding:10px 0;
+border-bottom:1px solid #333;
+}
+
+button{
+width:100%;
+padding:15px;
+margin-top:10px;
+border:none;
+border-radius:10px;
+background:red;
+color:white;
+font-size:16px;
+font-weight:bold;
+cursor:pointer;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<img src="logo.png">
+
+<h2>ABMDCAT.COM</h2>
+
+</header>
+
+<div class="container">
+
+<div class="cards">
+
+<div class="card">
+<h3>Total Students</h3>
+<h1>1000</h1>
+</div>
+
+<div class="card">
+<h3>Active Today</h3>
+<h1>742</h1>
+</div>
+
+<div class="card">
+<h3>Total MCQs</h3>
+<h1>18500</h1>
+</div>
+
+<div class="card">
+<h3>Tests Today</h3>
+<h1>356</h1>
+</div>
+
+</div>
+
+<div class="section">
+
+<h3>Performance Analytics</h3>
+
+<div class="row">
+<span>Average Percentage</span>
+<span>84%</span>
+</div>
+
+<div class="row">
+<span>Highest Score</span>
+<span>99%</span>
+</div>
+
+<div class="row">
+<span>Lowest Score</span>
+<span>28%</span>
+</div>
+
+<div class="row">
+<span>Most Practiced Subject</span>
+<span>Biology</span>
+</div>
+
+<div class="row">
+<span>Most Difficult Subject</span>
+<span>Physics</span>
+</div>
+
+<div class="row">
+<span>Most Solved MCQ</span>
+<span>BIO-1254</span>
+</div>
+
+</div>
+
+<div class="section">
+
+<h3>Website Statistics</h3>
+
+<div class="row">
+<span>New Students This Month</span>
+<span>124</span>
+</div>
+
+<div class="row">
+<span>Total Practice Tests</span>
+<span>25,462</span>
+</div>
+
+<div class="row">
+<span>Online Tests Conducted</span>
+<span>82</span>
+</div>
+
+<div class="row">
+<span>Notes Sold</span>
+<span>315</span>
+</div>
+
+</div>
+
+<button>
+
+Refresh Analytics
+
+</button>
+
+</div>
+
+</body>
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Website Settings | ABMDCAT.COM</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#111;
+color:white;
+}
+
+header{
+background:#1f1f1f;
+padding:15px;
+display:flex;
+align-items:center;
+border-bottom:3px solid red;
+}
+
+header img{
+width:55px;
+height:55px;
+border-radius:50%;
+border:3px solid red;
+margin-right:12px;
+}
+
+header h2{
+color:red;
+}
+
+.container{
+padding:20px;
+}
+
+.card{
+background:#222;
+padding:20px;
+border-radius:15px;
+margin-bottom:20px;
+}
+
+label{
+display:block;
+margin-bottom:8px;
+font-weight:bold;
+color:#ddd;
+}
+
+input,
+select,
+textarea{
+width:100%;
+padding:14px;
+margin-bottom:15px;
+border:none;
+border-radius:10px;
+font-size:16px;
+}
+
+input[type=file]{
+background:#333;
+color:white;
+}
+
+button{
+width:100%;
+padding:15px;
+margin-top:10px;
+border:none;
+border-radius:10px;
+font-size:16px;
+font-weight:bold;
+cursor:pointer;
+}
+
+.save{
+background:green;
+color:white;
+}
+
+.reset{
+background:orange;
+color:white;
+}
+
+.preview{
+background:#0099ff;
+color:white;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<img src="logo.png">
+
+<h2>ABMDCAT.COM</h2>
+
+</header>
+
+<div class="container">
+
+<div class="card">
+
+<label>Website Name</label>
+
+<input type="text" value="ABMDCAT.COM">
+
+<label>Upload Logo</label>
+
+<input type="file">
+
+<label>WhatsApp Number</label>
+
+<input type="text" placeholder="+92XXXXXXXXXX">
+
+<label>Support Email</label>
+
+<input type="email" placeholder="support@abmdcat.com">
+
+<label>Default Theme</label>
+
+<select>
+
+<option>Light</option>
+
+<option>Dark</option>
+
+</select>
+
+<label>Footer Text</label>
+
+<textarea placeholder="Copyright © ABMDCAT.COM"></textarea>
+
+<button class="save">
+
+Save Settings
+
+</button>
+
+<button class="preview">
+
+Preview Website
+
+</button>
+
+<button class="reset">
+
+Reset Default Settings
+
+</button>
+
+</div>
+
+</div>
+
+</body>
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Backup & Restore | ABMDCAT.COM</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#111;
+color:white;
+}
+
+header{
+background:#1f1f1f;
+padding:15px;
+display:flex;
+align-items:center;
+border-bottom:3px solid red;
+}
+
+header img{
+width:55px;
+height:55px;
+border-radius:50%;
+border:3px solid red;
+margin-right:12px;
+}
+
+header h2{
+color:red;
+}
+
+.container{
+padding:20px;
+}
+
+.card{
+background:#222;
+padding:20px;
+border-radius:15px;
+margin-bottom:20px;
+}
+
+.card h3{
+color:red;
+margin-bottom:15px;
+}
+
+.info{
+background:#333;
+padding:15px;
+border-radius:10px;
+margin-bottom:15px;
+}
+
+.info p{
+margin:8px 0;
+}
+
+input[type=file]{
+width:100%;
+padding:14px;
+background:#333;
+color:white;
+border:none;
+border-radius:10px;
+margin-bottom:15px;
+}
+
+button{
+width:100%;
+padding:15px;
+margin-top:10px;
+border:none;
+border-radius:10px;
+font-size:16px;
+font-weight:bold;
+cursor:pointer;
+}
+
+.download{
+background:green;
+color:white;
+}
+
+.restore{
+background:#0099ff;
+color:white;
+}
+
+.delete{
+background:red;
+color:white;
+}
+
+.auto{
+background:orange;
+color:white;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<img src="logo.png">
+
+<h2>ABMDCAT.COM</h2>
+
+</header>
+
+<div class="container">
+
+<div class="card">
+
+<h3>Database Backup</h3>
+
+<div class="info">
+
+<p>Last Backup : 20 July 2026</p>
+
+<p>Backup Size : 48 MB</p>
+
+<p>Status : Successful</p>
+
+</div>
+
+<button class="download">
+
+Download Backup
+
+</button>
+
+<button class="auto">
+
+Create New Backup
+
+</button>
+
+</div>
+
+<div class="card">
+
+<h3>Restore Database</h3>
+
+<input type="file">
+
+<button class="restore">
+
+Restore Backup
+
+</button>
+
+<button class="delete">
+
+Delete Old Backups
+
+</button>
+
+</div>
+
+</div>
+
+</body>
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Profile | ABMDCAT.COM</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#111;
+color:white;
+}
+
+header{
+background:#1f1f1f;
+padding:15px;
+display:flex;
+align-items:center;
+border-bottom:3px solid red;
+}
+
+header img{
+width:55px;
+height:55px;
+border-radius:50%;
+border:3px solid red;
+margin-right:12px;
+}
+
+header h2{
+color:red;
+}
+
+.container{
+padding:20px;
+}
+
+.card{
+background:#222;
+padding:20px;
+border-radius:15px;
+margin-bottom:20px;
+text-align:center;
+}
+
+.profile{
+width:130px;
+height:130px;
+border-radius:50%;
+border:4px solid red;
+margin:auto;
+display:block;
+margin-bottom:15px;
+}
+
+input{
+width:100%;
+padding:14px;
+margin-bottom:15px;
+border:none;
+border-radius:10px;
+font-size:16px;
+}
+
+input[type=file]{
+background:#333;
+color:white;
+}
+
+button{
+width:100%;
+padding:15px;
+margin-top:10px;
+border:none;
+border-radius:10px;
+font-size:16px;
+font-weight:bold;
+cursor:pointer;
+}
+
+.save{
+background:green;
+color:white;
+}
+
+.password{
+background:#0099ff;
+color:white;
+}
+
+.logout{
+background:red;
+color:white;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<img src="logo.png">
+
+<h2>ABMDCAT.COM</h2>
+
+</header>
+
+<div class="container">
+
+<div class="card">
+
+<img src="admin.png" class="profile">
+
+<h2>Administrator</h2>
+
+<br>
+
+<input type="text" placeholder="Full Name">
+
+<input type="text" placeholder="Username">
+
+<input type="email" placeholder="Email">
+
+<input type="text" placeholder="Phone Number">
+
+<input type="file">
+
+<button class="save">
+
+Save Profile
+
+</button>
+
+<button class="password">
+
+Change Password
+
+</button>
+
+<button class="logout">
+
+Logout
+
+</button>
+
+</div>
+
+</div>
+
+</body>
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Activity Logs | ABMDCAT.COM</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#111;
+color:white;
+}
+
+header{
+background:#1f1f1f;
+padding:15px;
+display:flex;
+align-items:center;
+border-bottom:3px solid red;
+}
+
+header img{
+width:55px;
+height:55px;
+border-radius:50%;
+border:3px solid red;
+margin-right:12px;
+}
+
+header h2{
+color:red;
+}
+
+.container{
+padding:20px;
+}
+
+.card{
+background:#222;
+padding:20px;
+border-radius:15px;
+margin-bottom:20px;
+}
+
+.card h3{
+color:red;
+margin-bottom:15px;
+}
+
+input,select{
+width:100%;
+padding:14px;
+margin-bottom:15px;
+border:none;
+border-radius:10px;
+font-size:16px;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+margin-top:15px;
+}
+
+th{
+background:red;
+padding:12px;
+}
+
+td{
+background:#333;
+padding:12px;
+text-align:center;
+border-bottom:1px solid #444;
+}
+
+button{
+width:100%;
+padding:15px;
+margin-top:15px;
+border:none;
+border-radius:10px;
+font-size:16px;
+font-weight:bold;
+cursor:pointer;
+background:#0099ff;
+color:white;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<img src="logo.png">
+
+<h2>ABMDCAT.COM</h2>
+
+</header>
+
+<div class="container">
+
+<div class="card">
+
+<h3>Activity Logs</h3>
+
+<input type="text" placeholder="Search Username">
+
+<select>
+
+<option>All Activities</option>
+<option>Login</option>
+<option>Logout</option>
+<option>Practice Test</option>
+<option>Online Test</option>
+<option>Buy Notes</option>
+
+</select>
+
+<table>
+
+<tr>
+
+<th>User</th>
+
+<th>Activity</th>
+
+<th>Time</th>
+
+</tr>
+
+<tr>
+
+<td>shayan01</td>
+
+<td>Completed Biology Test</td>
+
+<td>09:45 AM</td>
+
+</tr>
+
+<tr>
+
+<td>ali23</td>
+
+<td>Logged In</td>
+
+<td>09:31 AM</td>
+
+</tr>
+
+<tr>
+
+<td>ahmed12</td>
+
+<td>Purchased Notes</td>
+
+<td>09:10 AM</td>
+
+</tr>
+
+<tr>
+
+<td>fatima07</td>
+
+<td>Practice Test Finished</td>
+
+<td>08:58 AM</td>
+
+</tr>
+
+</table>
+
+<button>
+
+Refresh Logs
+
+</button>
+
+</div>
+
+</div>
+
+</body>
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Notification Center | ABMDCAT.COM</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#111;
+color:white;
+}
+
+header{
+background:#1f1f1f;
+padding:15px;
+display:flex;
+align-items:center;
+border-bottom:3px solid red;
+}
+
+header img{
+width:55px;
+height:55px;
+border-radius:50%;
+border:3px solid red;
+margin-right:12px;
+}
+
+header h2{
+color:red;
+}
+
+.container{
+padding:20px;
+}
+
+.card{
+background:#222;
+padding:20px;
+border-radius:15px;
+margin-bottom:20px;
+}
+
+.card h3{
+color:red;
+margin-bottom:15px;
+}
+
+.notification{
+background:#333;
+padding:15px;
+border-radius:10px;
+margin-bottom:15px;
+border-left:5px solid red;
+}
+
+.notification h4{
+margin-bottom:8px;
+color:white;
+}
+
+.notification p{
+color:#ccc;
+margin-bottom:6px;
+}
+
+.notification span{
+font-size:13px;
+color:#999;
+}
+
+button{
+width:100%;
+padding:15px;
+margin-top:10px;
+border:none;
+border-radius:10px;
+font-size:16px;
+font-weight:bold;
+cursor:pointer;
+}
+
+.send{
+background:green;
+color:white;
+}
+
+.clear{
+background:red;
+color:white;
+}
+
+.refresh{
+background:#0099ff;
+color:white;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<img src="logo.png">
+
+<h2>ABMDCAT.COM</h2>
+
+</header>
+
+<div class="container">
+
+<div class="card">
+
+<h3>Recent Notifications</h3>
+
+<div class="notification">
+
+<h4>New Student Registered</h4>
+
+<p>Username: shayan01</p>
+
+<span>Today • 09:45 AM</span>
+
+</div>
+
+<div class="notification">
+
+<h4>Biology Grand Test Completed</h4>
+
+<p>145 students completed the test.</p>
+
+<span>Today • 08:30 AM</span>
+
+</div>
+
+<div class="notification">
+
+<h4>Notes Purchased</h4>
+
+<p>Physics Complete Notes purchased.</p>
+
+<span>Yesterday • 07:10 PM</span>
+
+</div>
+
+<button class="send">
+
+Send Notification
+
+</button>
+
+<button class="refresh">
+
+Refresh Notifications
+
+</button>
+
+<button class="clear">
+
+Clear All Notifications
+
+</button>
+
+</div>
+
+</div>
+
+</body>
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>System Health | ABMDCAT.COM</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#111;
+color:white;
+}
+
+header{
+background:#1f1f1f;
+padding:15px;
+display:flex;
+align-items:center;
+border-bottom:3px solid red;
+}
+
+header img{
+width:55px;
+height:55px;
+border-radius:50%;
+border:3px solid red;
+margin-right:12px;
+}
+
+header h2{
+color:red;
+}
+
+.container{
+padding:20px;
+}
+
+.card{
+background:#222;
+padding:20px;
+border-radius:15px;
+margin-bottom:20px;
+}
+
+.card h3{
+color:red;
+margin-bottom:15px;
+}
+
+.status{
+display:flex;
+justify-content:space-between;
+padding:15px;
+margin-bottom:10px;
+background:#333;
+border-radius:10px;
+}
+
+.online{
+color:#00ff66;
+font-weight:bold;
+}
+
+.warning{
+color:orange;
+font-weight:bold;
+}
+
+.offline{
+color:red;
+font-weight:bold;
+}
+
+button{
+width:100%;
+padding:15px;
+margin-top:10px;
+border:none;
+border-radius:10px;
+font-size:16px;
+font-weight:bold;
+cursor:pointer;
+}
+
+.refresh{
+background:#0099ff;
+color:white;
+}
+
+.optimize{
+background:green;
+color:white;
+}
+
+.restart{
+background:red;
+color:white;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<img src="logo.png">
+
+<h2>ABMDCAT.COM</h2>
+
+</header>
+
+<div class="container">
+
+<div class="card">
+
+<h3>System Health</h3>
+
+<div class="status">
+<span>Website Status</span>
+<span class="online">ONLINE</span>
+</div>
+
+<div class="status">
+<span>Database</span>
+<span class="online">CONNECTED</span>
+</div>
+
+<div class="status">
+<span>Server Load</span>
+<span class="warning">NORMAL</span>
+</div>
+
+<div class="status">
+<span>Storage</span>
+<span class="online">68% Free</span>
+</div>
+
+<div class="status">
+<span>Daily Backup</span>
+<span class="online">SUCCESSFUL</span>
+</div>
+
+<div class="status">
+<span>SSL Certificate</span>
+<span class="online">ACTIVE</span>
+</div>
+
+<button class="refresh">
+
+Refresh Status
+
+</button>
+
+<button class="optimize">
+
+Optimize System
+
+</button>
+
+<button class="restart">
+
+Restart Server
+
+</button>
+
+</div>
+
+</div>
+
+</body>
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact & Support | ABMDCAT.COM</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#111;
+color:white;
+}
+
+header{
+background:#1f1f1f;
+padding:15px;
+display:flex;
+align-items:center;
+border-bottom:3px solid red;
+}
+
+header img{
+width:55px;
+height:55px;
+border-radius:50%;
+border:3px solid red;
+margin-right:12px;
+}
+
+header h2{
+color:red;
+}
+
+.container{
+padding:20px;
+}
+
+.card{
+background:#222;
+padding:20px;
+border-radius:15px;
+margin-bottom:20px;
+}
+
+label{
+display:block;
+margin-bottom:8px;
+font-weight:bold;
+}
+
+input,
+textarea{
+width:100%;
+padding:14px;
+margin-bottom:15px;
+border:none;
+border-radius:10px;
+font-size:16px;
+}
+
+textarea{
+height:120px;
+resize:none;
+}
+
+.info{
+background:#333;
+padding:15px;
+border-radius:10px;
+margin-bottom:15px;
+line-height:1.8;
+}
+
+button{
+width:100%;
+padding:15px;
+margin-top:10px;
+border:none;
+border-radius:10px;
+font-size:16px;
+font-weight:bold;
+cursor:pointer;
+}
+
+.save{
+background:green;
+color:white;
+}
+
+.test{
+background:#0099ff;
+color:white;
+}
+
+.reset{
+background:red;
+color:white;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<img src="logo.png">
+
+<h2>ABMDCAT.COM</h2>
+
+</header>
+
+<div class="container">
+
+<div class="card">
+
+<h3 style="color:red;margin-bottom:20px;">Contact & Support Settings</h3>
+
+<label>WhatsApp Number</label>
+
+<input type="text" placeholder="+92XXXXXXXXXX">
+
+<label>Support Email</label>
+
+<input type="email" placeholder="support@abmdcat.com">
+
+<label>Facebook Link</label>
+
+<input type="text" placeholder="Facebook URL">
+
+<label>YouTube Channel</label>
+
+<input type="text" placeholder="YouTube URL">
+
+<label>Support Message</label>
+
+<textarea placeholder="Write support message..."></textarea>
+
+<button class="save">
+
+Save Contact Details
+
+</button>
+
+<button class="test">
+
+Send Test Message
+
+</button>
+
+<button class="reset">
+
+Reset Settings
+
+</button>
+
+</div>
+
+<div class="card">
+
+<h3 style="color:red;margin-bottom:15px;">Current Contact Information</h3>
+
+<div class="info">
+
+<p><strong>Website:</strong> ABMDCAT.COM</p>
+
+<p><strong>WhatsApp:</strong> +92XXXXXXXXXX</p>
+
+<p><strong>Email:</strong> support@abmdcat.com</p>
+
+<p><strong>Status:</strong> Active</p>
+
+</div>
+
+</div>
+
+</div>
+
+</body>
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About ABMDCAT | ABMDCAT.COM</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#111;
+color:white;
+}
+
+header{
+background:#1f1f1f;
+padding:15px;
+display:flex;
+align-items:center;
+border-bottom:3px solid red;
+}
+
+header img{
+width:55px;
+height:55px;
+border-radius:50%;
+border:3px solid red;
+margin-right:12px;
+}
+
+header h2{
+color:red;
+}
+
+.container{
+padding:20px;
+}
+
+.card{
+background:#222;
+padding:20px;
+border-radius:15px;
+margin-bottom:20px;
+}
+
+.card h3{
+color:red;
+margin-bottom:15px;
+}
+
+.card p{
+line-height:1.8;
+margin-bottom:15px;
+color:#ddd;
+}
+
+.feature{
+background:#333;
+padding:15px;
+border-radius:10px;
+margin-bottom:12px;
+}
+
+.feature h4{
+color:red;
+margin-bottom:8px;
+}
+
+button{
+width:100%;
+padding:15px;
+margin-top:15px;
+border:none;
+border-radius:10px;
+background:red;
+color:white;
+font-size:16px;
+font-weight:bold;
+cursor:pointer;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<img src="logo.png">
+
+<h2>ABMDCAT.COM</h2>
+
+</header>
+
+<div class="container">
+
+<div class="card">
+
+<h3>About ABMDCAT</h3>
+
+<p>
+
+ABMDCAT.COM is an online MDCAT preparation platform designed to help students practice MCQs, attempt online tests, track their progress, review mistakes, and improve their performance through detailed analytics.
+
+</p>
+
+</div>
+
+<div class="card">
+
+<h3>Features</h3>
+
+<div class="feature">
+
+<h4>Practice MCQs</h4>
+
+<p>Practice unlimited MCQs subject, chapter, and topic wise.</p>
+
+</div>
+
+<div class="feature">
+
+<h4>Online Tests</h4>
+
+<p>Attempt scheduled tests with automatic ranking and results.</p>
+
+</div>
+
+<div class="feature">
+
+<h4>Performance Analysis</h4>
+
+<p>Track accuracy, weak chapters, and complete test history.</p>
+
+</div>
+
+<div class="feature">
+
+<h4>Premium Notes</h4>
+
+<p>Purchase high-quality MDCAT notes directly through WhatsApp.</p>
+
+</div>
+
+<button>
+
+Visit Dashboard
+
+</button>
+
+</div>
+
+</div>
+
+</body>
+
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Feedback & Support | ABMDCAT.COM</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#111;
+color:white;
+}
+
+header{
+background:#1f1f1f;
+padding:15px;
+display:flex;
+align-items:center;
+border-bottom:3px solid red;
+}
+
+header img{
+width:55px;
+height:55px;
+border-radius:50%;
+border:3px solid red;
+margin-right:12px;
+}
+
+header h2{
+color:red;
+}
+
+.container{
+padding:20px;
+}
+
+.card{
+background:#222;
+padding:20px;
+border-radius:15px;
+margin-bottom:20px;
+}
+
+.card h3{
+color:red;
+margin-bottom:20px;
+}
+
+input,
+textarea,
+select{
+width:100%;
+padding:14px;
+margin-bottom:15px;
+border:none;
+border-radius:10px;
+font-size:16px;
+}
+
+textarea{
+height:140px;
+resize:none;
+}
+
+.feedback{
+background:#333;
+padding:15px;
+border-radius:10px;
+margin-bottom:15px;
+border-left:5px solid red;
+}
+
+.feedback h4{
+color:red;
+margin-bottom:8px;
+}
+
+.feedback p{
+color:#ddd;
+margin-bottom:5px;
+}
+
+.feedback span{
+font-size:13px;
+color:#999;
+}
+
+button{
+width:100%;
+padding:15px;
+margin-top:10px;
+border:none;
+border-radius:10px;
+font-size:16px;
+font-weight:bold;
+cursor:pointer;
+}
+
+.reply{
+background:#0099ff;
+color:white;
+}
+
+.delete{
+background:red;
+color:white;
+}
+
+.refresh{
+background:green;
+color:white;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<img src="logo.png">
+
+<h2>ABMDCAT.COM</h2>
+
+</header>
+
+<div class="container">
+
+<div class="card">
+
+<h3>Student Feedback</h3>
+
+<input type="text" placeholder="Search Student">
+
+<select>
+
+<option>All Feedback</option>
+
+<option>Pending</option>
+
+<option>Replied</option>
+
+<option>Resolved</option>
+
+</select>
+
+<div class="feedback">
+
+<h4>Suggestion</h4>
+
+<p><strong>Student:</strong> shayan01</p>
+
+<p>Please add more hard Biology MCQs.</p>
+
+<span>20 July 2026 - 09:30 AM</span>
+
+</div>
+
+<div class="feedback">
+
+<h4>Bug Report</h4>
+
+<p><strong>Student:</strong> ali23</p>
+
+<p>The timer stopped during the Physics test.</p>
+
+<span>20 July 2026 - 08:50 AM</span>
+
+</div>
+
+<button class="reply">
+
+Reply to Student
+
+</button>
+
+<button class="refresh">
+
+Refresh Feedback
+
+</button>
+
+<button class="delete">
+
+Delete Feedback
+
+</button>
+
+</div>
+
+</div>
+
+</body>
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reports | ABMDCAT.COM</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#111;
+color:white;
+}
+
+header{
+background:#1f1f1f;
+padding:15px;
+display:flex;
+align-items:center;
+border-bottom:3px solid red;
+}
+
+header img{
+width:55px;
+height:55px;
+border-radius:50%;
+border:3px solid red;
+margin-right:12px;
+}
+
+header h2{
+color:red;
+}
+
+.container{
+padding:20px;
+}
+
+.card{
+background:#222;
+padding:20px;
+border-radius:15px;
+margin-bottom:20px;
+}
+
+.card h3{
+color:red;
+margin-bottom:20px;
+}
+
+.report{
+background:#333;
+padding:15px;
+border-radius:10px;
+margin-bottom:15px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
+
+.report-title{
+font-weight:bold;
+}
+
+.report-date{
+color:#bbb;
+font-size:14px;
+}
+
+button{
+padding:10px 18px;
+border:none;
+border-radius:8px;
+font-weight:bold;
+cursor:pointer;
+}
+
+.download{
+background:green;
+color:white;
+}
+
+.generate{
+width:100%;
+padding:15px;
+margin-top:15px;
+background:#0099ff;
+color:white;
+font-size:16px;
+border:none;
+border-radius:10px;
+cursor:pointer;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<img src="logo.png">
+
+<h2>ABMDCAT.COM</h2>
+
+</header>
+
+<div class="container">
+
+<div class="card">
+
+<h3>Generated Reports</h3>
+
+<div class="report">
+
+<div>
+
+<div class="report-title">
+
+Student Performance Report
+
+</div>
+
+<div class="report-date">
+
+20 July 2026
+
+</div>
+
+</div>
+
+<button class="download">
+
+Download
+
+</button>
+
+</div>
+
+<div class="report">
+
+<div>
+
+<div class="report-title">
+
+Weekly Ranking Report
+
+</div>
+
+<div class="report-date">
+
+19 July 2026
+
+</div>
+
+</div>
+
+<button class="download">
+
+Download
+
+</button>
+
+</div>
+
+<div class="report">
+
+<div>
+
+<div class="report-title">
+
+MCQ Statistics Report
+
+</div>
+
+<div class="report-date">
+
+18 July 2026
+
+</div>
+
+</div>
+
+<button class="download">
+
+Download
+
+</button>
+
+</div>
+
+<button class="generate">
+
+Generate New Report
+
+</button>
+
+</div>
+
+</div>
+
+</body>
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>User Roles & Permissions | ABMDCAT.COM</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#111;
+color:white;
+}
+
+header{
+background:#1f1f1f;
+padding:15px;
+display:flex;
+align-items:center;
+border-bottom:3px solid red;
+}
+
+header img{
+width:55px;
+height:55px;
+border-radius:50%;
+border:3px solid red;
+margin-right:12px;
+}
+
+header h2{
+color:red;
+}
+
+.container{
+padding:20px;
+}
+
+.card{
+background:#222;
+padding:20px;
+border-radius:15px;
+margin-bottom:20px;
+}
+
+.card h3{
+color:red;
+margin-bottom:20px;
+}
+
+label{
+display:block;
+margin-bottom:8px;
+font-weight:bold;
+}
+
+input,
+select{
+width:100%;
+padding:14px;
+margin-bottom:15px;
+border:none;
+border-radius:10px;
+font-size:16px;
+}
+
+.permission{
+background:#333;
+padding:12px;
+border-radius:10px;
+margin-bottom:10px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
+
+.permission input{
+width:20px;
+height:20px;
+}
+
+button{
+width:100%;
+padding:15px;
+margin-top:12px;
+border:none;
+border-radius:10px;
+font-size:16px;
+font-weight:bold;
+cursor:pointer;
+}
+
+.save{
+background:green;
+color:white;
+}
+
+.reset{
+background:red;
+color:white;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<img src="logo.png">
+
+<h2>ABMDCAT.COM</h2>
+
+</header>
+
+<div class="container">
+
+<div class="card">
+
+<h3>User Roles & Permissions</h3>
+
+<label>Role</label>
+
+<select>
+
+<option>Super Admin</option>
+
+<option>Moderator</option>
+
+<option>Teacher</option>
+
+<option>Viewer</option>
+
+</select>
+
+<div class="permission">
+
+<span>Manage Students</span>
+
+<input type="checkbox" checked>
+
+</div>
+
+<div class="permission">
+
+<span>Manage MCQs</span>
+
+<input type="checkbox" checked>
+
+</div>
+
+<div class="permission">
+
+<span>Create Online Tests</span>
+
+<input type="checkbox" checked>
+
+</div>
+
+<div class="permission">
+
+<span>View Results</span>
+
+<input type="checkbox" checked>
+
+</div>
+
+<div class="permission">
+
+<span>Manage Notes</span>
+
+<input type="checkbox">
+
+</div>
+
+<div class="permission">
+
+<span>Website Settings</span>
+
+<input type="checkbox">
+
+</div>
+
+<button class="save">
+
+Save Permissions
+
+</button>
+
+<button class="reset">
+
+Reset Permissions
+
+</button>
+
+</div>
+
+</div>
+
+</body>
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>System Logs | ABMDCAT.COM</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#111;
+color:white;
+}
+
+header{
+background:#1f1f1f;
+padding:15px;
+display:flex;
+align-items:center;
+border-bottom:3px solid red;
+}
+
+header img{
+width:55px;
+height:55px;
+border-radius:50%;
+border:3px solid red;
+margin-right:12px;
+}
+
+header h2{
+color:red;
+}
+
+.container{
+padding:20px;
+}
+
+.card{
+background:#222;
+padding:20px;
+border-radius:15px;
+margin-bottom:20px;
+}
+
+.card h3{
+color:red;
+margin-bottom:20px;
+}
+
+input,select{
+width:100%;
+padding:14px;
+margin-bottom:15px;
+border:none;
+border-radius:10px;
+font-size:16px;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+margin-top:15px;
+}
+
+th{
+background:red;
+padding:12px;
+}
+
+td{
+background:#333;
+padding:12px;
+text-align:center;
+border-bottom:1px solid #444;
+}
+
+button{
+width:100%;
+padding:15px;
+margin-top:15px;
+border:none;
+border-radius:10px;
+font-size:16px;
+font-weight:bold;
+cursor:pointer;
+}
+
+.refresh{
+background:#0099ff;
+color:white;
+}
+
+.export{
+background:green;
+color:white;
+}
+
+.clear{
+background:red;
+color:white;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<img src="logo.png">
+
+<h2>ABMDCAT.COM</h2>
+
+</header>
+
+<div class="container">
+
+<div class="card">
+
+<h3>System Logs</h3>
+
+<input type="text" placeholder="Search Logs">
+
+<select>
+
+<option>All Logs</option>
+
+<option>Information</option>
+
+<option>Warning</option>
+
+<option>Error</option>
+
+<option>Security</option>
+
+</select>
+
+<table>
+
+<tr>
+
+<th>Date</th>
+
+<th>Event</th>
+
+<th>Status</th>
+
+</tr>
+
+<tr>
+
+<td>20-07-2026</td>
+
+<td>Student Login</td>
+
+<td>Success</td>
+
+</tr>
+
+<tr>
+
+<td>20-07-2026</td>
+
+<td>Database Backup</td>
+
+<td>Completed</td>
+
+</tr>
+
+<tr>
+
+<td>20-07-2026</td>
+
+<td>MCQ Upload</td>
+
+<td>Success</td>
+
+</tr>
+
+<tr>
+
+<td>19-07-2026</td>
+
+<td>Online Test Created</td>
+
+<td>Success</td>
+
+</tr>
+
+</table>
+
+<button class="refresh">
+
+Refresh Logs
+
+</button>
+
+<button class="export">
+
+Export Logs
+
+</button>
+
+<button class="clear">
+
+Clear Logs
+
+</button>
+
+</div>
+
+</div>
+
+</body>
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Database Manager | ABMDCAT.COM</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#111;
+color:white;
+}
+
+header{
+background:#1f1f1f;
+padding:15px;
+display:flex;
+align-items:center;
+border-bottom:3px solid red;
+}
+
+header img{
+width:55px;
+height:55px;
+border-radius:50%;
+border:3px solid red;
+margin-right:12px;
+}
+
+header h2{
+color:red;
+}
+
+.container{
+padding:20px;
+}
+
+.card{
+background:#222;
+padding:20px;
+border-radius:15px;
+margin-bottom:20px;
+}
+
+.card h3{
+color:red;
+margin-bottom:20px;
+}
+
+.status{
+background:#333;
+padding:15px;
+border-radius:10px;
+margin-bottom:15px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
+
+.online{
+color:#00ff66;
+font-weight:bold;
+}
+
+button{
+width:100%;
+padding:15px;
+margin-top:10px;
+border:none;
+border-radius:10px;
+font-size:16px;
+font-weight:bold;
+cursor:pointer;
+}
+
+.optimize{
+background:green;
+color:white;
+}
+
+.backup{
+background:#0099ff;
+color:white;
+}
+
+.restore{
+background:orange;
+color:white;
+}
+
+.delete{
+background:red;
+color:white;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<img src="logo.png">
+
+<h2>ABMDCAT.COM</h2>
+
+</header>
+
+<div class="container">
+
+<div class="card">
+
+<h3>Database Manager</h3>
+
+<div class="status">
+<span>Database Status</span>
+<span class="online">CONNECTED</span>
+</div>
+
+<div class="status">
+<span>Total Students</span>
+<span>1,025</span>
+</div>
+
+<div class="status">
+<span>Total MCQs</span>
+<span>18,542</span>
+</div>
+
+<div class="status">
+<span>Total Online Tests</span>
+<span>126</span>
+</div>
+
+<div class="status">
+<span>Database Size</span>
+<span>86 MB</span>
+</div>
+
+<div class="status">
+<span>Last Backup</span>
+<span>20 Jul 2026</span>
+</div>
+
+<button class="optimize">
+
+Optimize Database
+
+</button>
+
+<button class="backup">
+
+Create Backup
+
+</button>
+
+<button class="restore">
+
+Restore Database
+
+</button>
+
+<button class="delete">
+
+Delete Temporary Data
+
+</button>
+
+</div>
+
+</div>
+
+</body>
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Security Center | ABMDCAT.COM</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#111;
+color:white;
+}
+
+header{
+background:#1f1f1f;
+padding:15px;
+display:flex;
+align-items:center;
+border-bottom:3px solid red;
+}
+
+header img{
+width:55px;
+height:55px;
+border-radius:50%;
+border:3px solid red;
+margin-right:12px;
+}
+
+header h2{
+color:red;
+}
+
+.container{
+padding:20px;
+}
+
+.card{
+background:#222;
+padding:20px;
+border-radius:15px;
+margin-bottom:20px;
+}
+
+.card h3{
+color:red;
+margin-bottom:20px;
+}
+
+.setting{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:15px;
+background:#333;
+border-radius:10px;
+margin-bottom:12px;
+}
+
+.setting label{
+font-weight:bold;
+}
+
+.setting input{
+width:22px;
+height:22px;
+}
+
+button{
+width:100%;
+padding:15px;
+margin-top:10px;
+border:none;
+border-radius:10px;
+font-size:16px;
+font-weight:bold;
+cursor:pointer;
+}
+
+.save{
+background:green;
+color:white;
+}
+
+.reset{
+background:orange;
+color:white;
+}
+
+.lock{
+background:red;
+color:white;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<img src="logo.png">
+
+<h2>ABMDCAT.COM</h2>
+
+</header>
+
+<div class="container">
+
+<div class="card">
+
+<h3>Security Settings</h3>
+
+<div class="setting">
+<label>One Device Login</label>
+<input type="checkbox" checked>
+</div>
+
+<div class="setting">
+<label>Require Admin Login</label>
+<input type="checkbox" checked>
+</div>
+
+<div class="setting">
+<label>Enable Two-Factor Authentication</label>
+<input type="checkbox">
+</div>
+
+<div class="setting">
+<label>Allow Multiple Sessions</label>
+<input type="checkbox">
+</div>
+
+<div class="setting">
+<label>Automatic Logout After 30 Minutes</label>
+<input type="checkbox" checked>
+</div>
+
+<div class="setting">
+<label>Enable Login Activity Tracking</label>
+<input type="checkbox" checked>
+</div>
+
+<button class="save">
+
+Save Security Settings
+
+</button>
+
+<button class="reset">
+
+Reset Default Settings
+
+</button>
+
+<button class="lock">
+
+Lock All Student Accounts
+
+</button>
+
+</div>
+
+</div>
+
+</body>
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Theme Manager | ABMDCAT.COM</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#111;
+color:white;
+}
+
+header{
+background:#1f1f1f;
+padding:15px;
+display:flex;
+align-items:center;
+border-bottom:3px solid red;
+}
+
+header img{
+width:55px;
+height:55px;
+border-radius:50%;
+border:3px solid red;
+margin-right:12px;
+}
+
+header h2{
+color:red;
+}
+
+.container{
+padding:20px;
+}
+
+.card{
+background:#222;
+padding:20px;
+border-radius:15px;
+margin-bottom:20px;
+}
+
+.card h3{
+color:red;
+margin-bottom:20px;
+}
+
+.theme{
+background:#333;
+padding:15px;
+border-radius:10px;
+margin-bottom:15px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
+
+.theme h4{
+margin-bottom:5px;
+}
+
+.theme p{
+font-size:14px;
+color:#bbb;
+}
+
+button{
+width:100%;
+padding:15px;
+margin-top:12px;
+border:none;
+border-radius:10px;
+font-size:16px;
+font-weight:bold;
+cursor:pointer;
+}
+
+.light{
+background:#87CEEB;
+color:black;
+}
+
+.dark{
+background:red;
+color:white;
+}
+
+.save{
+background:green;
+color:white;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<img src="logo.png">
+
+<h2>ABMDCAT.COM</h2>
+
+</header>
+
+<div class="container">
+
+<div class="card">
+
+<h3>Website Theme Manager</h3>
+
+<div class="theme">
+
+<div>
+
+<h4>Light Theme</h4>
+
+<p>White + Sky Blue</p>
+
+</div>
+
+<input type="radio" name="theme" checked>
+
+</div>
+
+<div class="theme">
+
+<div>
+
+<h4>Dark Theme</h4>
+
+<p>Black + Red</p>
+
+</div>
+
+<input type="radio" name="theme">
+
+</div>
+
+<button class="light">
+
+Preview Light Theme
+
+</button>
+
+<button class="dark">
+
+Preview Dark Theme
+
+</button>
+
+<button class="save">
+
+Save Theme
+
+</button>
+
+</div>
+
+</div>
+
+</body>
+</html>
