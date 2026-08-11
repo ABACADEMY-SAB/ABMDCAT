@@ -1,98 +1,33 @@
 const express = require("express");
-
 const router = express.Router();
 
+const rankingController = require("../controllers/rankingController");
+
 // Overall Ranking
-router.get("/overall", (req, res) => {
-
-    res.json({
-        success: true,
-        ranking: []
-    });
-
-});
+router.get("/overall", rankingController.overall);
 
 // Daily Ranking
-router.get("/daily", (req, res) => {
-
-    res.json({
-        success: true,
-        ranking: []
-    });
-
-});
+router.get("/daily", rankingController.daily);
 
 // Weekly Ranking
-router.get("/weekly", (req, res) => {
-
-    res.json({
-        success: true,
-        ranking: []
-    });
-
-});
+router.get("/weekly", rankingController.weekly);
 
 // Monthly Ranking
-router.get("/monthly", (req, res) => {
-
-    res.json({
-        success: true,
-        ranking: []
-    });
-
-});
+router.get("/monthly", rankingController.monthly);
 
 // Subject Ranking
-router.get("/subject/:subject", (req, res) => {
-
-    res.json({
-        success: true,
-        subject: req.params.subject,
-        ranking: []
-    });
-
-});
+router.get("/subject/:subject", rankingController.subject);
 
 // Chapter Ranking
-router.get("/chapter/:chapter", (req, res) => {
-
-    res.json({
-        success: true,
-        chapter: req.params.chapter,
-        ranking: []
-    });
-
-});
+router.get("/chapter/:chapter", rankingController.chapter);
 
 // Top 10 Students
-router.get("/top10", (req, res) => {
-
-    res.json({
-        success: true,
-        students: []
-    });
-
-});
+router.get("/top10", rankingController.top10);
 
 // Student Rank
-router.get("/student/:studentId", (req, res) => {
-
-    res.json({
-        success: true,
-        studentId: req.params.studentId,
-        rank: null
-    });
-
-});
+router.get("/student/:studentId", rankingController.student);
 
 // Merit List
-router.get("/merit-list", (req, res) => {
-
-    res.json({
-        success: true,
-        meritList: []
-    });
-
-});
+router.get("/merit-list", rankingController.meritList);
 
 module.exports = router;
