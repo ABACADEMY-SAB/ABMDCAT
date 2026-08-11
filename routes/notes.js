@@ -1,88 +1,36 @@
 const express = require("express");
-
 const router = express.Router();
 
+const notesController = require("../controllers/notesController");
+
 // Get All Notes
-router.get("/", (req, res) => {
-
-    res.json({
-        success: true,
-        notes: []
-    });
-
-});
+router.get("/", notesController.getAllNotes);
 
 // Get Note By ID
-router.get("/:id", (req, res) => {
-
-    res.json({
-        success: true,
-        noteId: req.params.id
-    });
-
-});
+router.get("/:id", notesController.getNoteById);
 
 // Add Note
-router.post("/add", (req, res) => {
-
-    res.json({
-        success: true,
-        message: "Note Added Successfully"
-    });
-
-});
+router.post("/add", notesController.addNote);
 
 // Update Note
-router.put("/update/:id", (req, res) => {
-
-    res.json({
-        success: true,
-        message: "Note Updated Successfully"
-    });
-
-});
+router.put("/update/:id", notesController.updateNote);
 
 // Delete Note
-router.delete("/delete/:id", (req, res) => {
-
-    res.json({
-        success: true,
-        message: "Note Deleted Successfully"
-    });
-
-});
+router.delete("/delete/:id", notesController.deleteNote);
 
 // Buy Note
-router.post("/buy/:id", (req, res) => {
-
-    res.json({
-        success: true,
-        noteId: req.params.id,
-        message: "Purchase Successful"
-    });
-
-});
+router.post("/buy/:id", notesController.buyNote);
 
 // Download Note
-router.get("/download/:id", (req, res) => {
-
-    res.json({
-        success: true,
-        noteId: req.params.id,
-        download: true
-    });
-
-});
+router.get("/download/:id", notesController.downloadNote);
 
 // Purchase History
-router.get("/purchases/:studentId", (req, res) => {
+router.get("/purchases/:studentId", notesController.purchaseHistory);
 
-    res.json({
-        success: true,
-        studentId: req.params.studentId,
-        purchases: []
-    });
+// Note Categories
+router.get("/categories", notesController.categories);
 
-});
+// Upload PDF
+router.post("/upload-pdf", notesController.uploadPdf);
 
 module.exports = router;
