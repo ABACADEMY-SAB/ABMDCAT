@@ -1,99 +1,33 @@
 const express = require("express");
-
 const router = express.Router();
 
+const testController = require("../controllers/testController");
+
 // Get All Tests
-router.get("/", (req, res) => {
-
-    res.json({
-        success: true,
-        tests: []
-    });
-
-});
+router.get("/", testController.getAllTests);
 
 // Get Test By ID
-router.get("/:id", (req, res) => {
-
-    res.json({
-        success: true,
-        testId: req.params.id
-    });
-
-});
+router.get("/:id", testController.getTestById);
 
 // Create Test
-router.post("/create", (req, res) => {
-
-    res.json({
-        success: true,
-        message: "Test Created Successfully"
-    });
-
-});
+router.post("/create", testController.createTest);
 
 // Update Test
-router.put("/update/:id", (req, res) => {
-
-    res.json({
-        success: true,
-        message: "Test Updated Successfully"
-    });
-
-});
+router.put("/update/:id", testController.updateTest);
 
 // Delete Test
-router.delete("/delete/:id", (req, res) => {
-
-    res.json({
-        success: true,
-        message: "Test Deleted Successfully"
-    });
-
-});
+router.delete("/delete/:id", testController.deleteTest);
 
 // Start Test
-router.post("/start/:id", (req, res) => {
-
-    res.json({
-        success: true,
-        message: "Test Started",
-        testId: req.params.id
-    });
-
-});
+router.post("/start/:id", testController.startTest);
 
 // Submit Test
-router.post("/submit/:id", (req, res) => {
-
-    res.json({
-        success: true,
-        message: "Test Submitted Successfully",
-        score: 0,
-        percentage: 0
-    });
-
-});
+router.post("/submit/:id", testController.submitTest);
 
 // Test History
-router.get("/history/:studentId", (req, res) => {
-
-    res.json({
-        success: true,
-        studentId: req.params.studentId,
-        history: []
-    });
-
-});
+router.get("/history/:studentId", testController.testHistory);
 
 // Leaderboard
-router.get("/leaderboard/:id", (req, res) => {
-
-    res.json({
-        success: true,
-        leaderboard: []
-    });
-
-});
+router.get("/leaderboard/:id", testController.leaderboard);
 
 module.exports = router;
