@@ -1,50 +1,27 @@
 const express = require("express");
-
 const router = express.Router();
 
+const adminController = require("../controllers/adminController");
+
 // Dashboard
-router.get("/dashboard", (req, res) => {
-    res.json({
-        success: true,
-        message: "Welcome to ABMDCAT Admin Dashboard"
-    });
-});
+router.get("/dashboard", adminController.dashboard);
 
-// Admin Profile
-router.get("/profile", (req, res) => {
-    res.json({
-        success: true,
-        username: "SAB@madina06",
-        fullname: "Super Admin"
-    });
-});
+// Profile
+router.get("/profile", adminController.profile);
 
-// Dashboard Statistics
-router.get("/statistics", (req, res) => {
-    res.json({
-        totalStudents: 0,
-        totalMcqs: 0,
-        totalTests: 0,
-        totalNotes: 0
-    });
-});
+// Statistics
+router.get("/statistics", adminController.statistics);
 
-// Website Settings
-router.get("/settings", (req, res) => {
-    res.json({
-        website: "ABMDCAT",
-        version: "1.0",
-        maintenance: false
-    });
-});
+// Settings
+router.get("/settings", adminController.settings);
 
 // Enable Maintenance
-router.post("/maintenance/on", (req, res) => {
-    res.json({
-        success: true,
-        message: "Maintenance mode enabled"
-    });
-});
+router.post("/maintenance/on", adminController.enableMaintenance);
 
-// Export router
+// Disable Maintenance
+router.post("/maintenance/off", adminController.disableMaintenance);
+
+// Logout
+router.post("/logout", adminController.logout);
+
 module.exports = router;
