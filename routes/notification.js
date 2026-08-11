@@ -1,85 +1,30 @@
 const express = require("express");
-
 const router = express.Router();
 
+const notificationController = require("../controllers/notificationController");
+
 // Get All Notifications
-router.get("/", (req, res) => {
-
-    res.json({
-        success: true,
-        notifications: []
-    });
-
-});
+router.get("/", notificationController.getAllNotifications);
 
 // Get Notification By ID
-router.get("/:id", (req, res) => {
-
-    res.json({
-        success: true,
-        notificationId: req.params.id
-    });
-
-});
+router.get("/:id", notificationController.getNotificationById);
 
 // Send Notification
-router.post("/send", (req, res) => {
-
-    res.json({
-        success: true,
-        message: "Notification Sent Successfully"
-    });
-
-});
+router.post("/send", notificationController.sendNotification);
 
 // Send Announcement
-router.post("/announcement", (req, res) => {
-
-    res.json({
-        success: true,
-        message: "Announcement Published Successfully"
-    });
-
-});
+router.post("/announcement", notificationController.sendAnnouncement);
 
 // Broadcast Message
-router.post("/broadcast", (req, res) => {
-
-    res.json({
-        success: true,
-        message: "Broadcast Sent To All Students"
-    });
-
-});
+router.post("/broadcast", notificationController.broadcast);
 
 // Mark As Read
-router.put("/read/:id", (req, res) => {
-
-    res.json({
-        success: true,
-        message: "Notification Marked As Read"
-    });
-
-});
+router.put("/read/:id", notificationController.markAsRead);
 
 // Delete Notification
-router.delete("/delete/:id", (req, res) => {
-
-    res.json({
-        success: true,
-        message: "Notification Deleted Successfully"
-    });
-
-});
+router.delete("/delete/:id", notificationController.deleteNotification);
 
 // Notification History
-router.get("/history/all", (req, res) => {
-
-    res.json({
-        success: true,
-        history: []
-    });
-
-});
+router.get("/history/all", notificationController.history);
 
 module.exports = router;
