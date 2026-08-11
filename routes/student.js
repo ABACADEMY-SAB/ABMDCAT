@@ -1,73 +1,33 @@
 const express = require("express");
-
 const router = express.Router();
 
-// Student Dashboard
-router.get("/dashboard", (req, res) => {
+const studentController = require("../controllers/studentController");
 
-    res.json({
-        success: true,
-        message: "Welcome to ABMDCAT Student Dashboard"
-    });
+// Student Registration
+router.post("/register", studentController.register);
 
-});
+// Student Login
+router.post("/login", studentController.login);
 
-// Student Profile
-router.get("/profile", (req, res) => {
+// Dashboard
+router.get("/dashboard", studentController.dashboard);
 
-    res.json({
-        success: true,
-        student: {
-            id: 1,
-            username: "student",
-            fullname: "Student Name",
-            email: "student@example.com",
-            phone: "03000000000"
-        }
-    });
-
-});
+// Profile
+router.get("/profile", studentController.profile);
 
 // Update Profile
-router.put("/profile", (req, res) => {
-
-    res.json({
-        success: true,
-        message: "Profile Updated Successfully"
-    });
-
-});
+router.put("/profile", studentController.updateProfile);
 
 // Change Password
-router.put("/change-password", (req, res) => {
+router.put("/change-password", studentController.changePassword);
 
-    res.json({
-        success: true,
-        message: "Password Changed Successfully"
-    });
+// Statistics
+router.get("/statistics", studentController.statistics);
 
-});
+// Delete Account
+router.delete("/account", studentController.deleteAccount);
 
 // Logout
-router.post("/logout", (req, res) => {
-
-    res.json({
-        success: true,
-        message: "Student Logged Out Successfully"
-    });
-
-});
-
-// Student Statistics
-router.get("/statistics", (req, res) => {
-
-    res.json({
-        testsAttempted: 0,
-        averageScore: 0,
-        bookmarks: 0,
-        wrongQuestions: 0
-    });
-
-});
+router.post("/logout", studentController.logout);
 
 module.exports = router;
