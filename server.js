@@ -17,10 +17,7 @@ app.use(express.urlencoded({ extended: true }));
 // ==============================
 
 app.get("/", (req, res) => {
-    res.json({
-        success: true,
-        message: "ABMDCAT Backend Running Successfully"
-    });
+    res.sendFile(__dirname + "/index.html");
 });
 
 // ==============================
