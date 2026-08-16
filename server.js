@@ -2,6 +2,7 @@ require("dotenv").config();
 
 const express = require("express");
 const cors = require("cors");
+const path = require("path");
 
 // Database connection
 require("./config/database");
@@ -13,11 +14,17 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // ==============================
+// Serve New Frontend
+// ==============================
+
+app.use(express.static(path.join(__dirname, "public")));
+
+// ==============================
 // Home Route
 // ==============================
 
 app.get("/", (req, res) => {
-    res.sendFile(__dirname + "/index.html");
+    res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
 // ==============================
