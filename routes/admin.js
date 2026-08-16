@@ -3,6 +3,9 @@ const router = express.Router();
 
 const adminController = require("../controllers/adminController");
 
+// Admin Login
+router.post("/login", adminController.login);
+
 // Dashboard
 router.get("/dashboard", adminController.dashboard);
 
