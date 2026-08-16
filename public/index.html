@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ABMDCAT - Login</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, sans-serif;
+      background: #f5fbff;
+      color: #111;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .login-container {
+      width: 90%;
+      max-width: 400px;
+      text-align: center;
+    }
+
+    .logo {
+      width: 110px;
+      height: 110px;
+      object-fit: contain;
+      margin-bottom: 10px;
+    }
+
+    h1 {
+      color: #0ea5e9;
+      margin: 5px 0;
+    }
+
+    .subtitle {
+      margin-bottom: 25px;
+      color: #555;
+    }
+
+    .card {
+      background: white;
+      padding: 25px;
+      border-radius: 15px;
+      box-shadow: 0 5px 25px rgba(0,0,0,0.12);
+    }
+
+    input {
+      width: 100%;
+      padding: 13px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+
+    button {
+      width: 100%;
+      padding: 13px;
+      border: none;
+      border-radius: 8px;
+      background: #0ea5e9;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      opacity: 0.6;
+    }
+
+    #message {
+      margin-top: 15px;
+      font-size: 14px;
+    }
+
+    .footer {
+      margin-top: 25px;
+      font-size: 13px;
+      color: #777;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="login-container">
+
+    <img src="/logo.png" alt="ABMDCAT Logo" class="logo">
+
+    <h1>ABMDCAT.COM</h1>
+
+    <p class="subtitle">
+      Prepare Smarter. Perform Better.
+    </p>
+
+    <div class="card">
+
+      <input
+        type="text"
+        id="username"
+        placeholder="Username"
+        autocomplete="username"
+      >
+
+      <input
+        type="password"
+        id="password"
+        placeholder="Password"
+        autocomplete="current-password"
+      >
+
+      <button id="loginButton" onclick="login()">
+        LOGIN
+      </button>
+
+      <div id="message"></div>
+
+    </div>
+
+    <div class="footer">
+      © 2026 ABMDCAT.COM
+    </div>
+
+  </div>
+
+  <script>
+    async function login() {
+
+      const username = document.getElementById("username").value.trim();
+      const password = document.getElementById("password").value;
+
+      const message = document.getElementById("message");
+      const button = document.getElementById("loginButton");
+
+      if (!username || !password) {
+        message.textContent = "Please enter username and password.";
+        return;
+      }
+
+      button.disabled = true;
+      button.textContent = "Logging in...";
+      message.textContent = "";
+
+      try {
+
+        const response = await fetch("/api/admin/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            username: username,
+            password: password
+          })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+
+          message.textContent = "Login successful.";
+
+          window.location.href = "/admin.html";
+
+        } else {
+
+          message.textContent =
+            data.message || "Invalid username or password.";
+
+          button.disabled = false;
+          button.textContent = "LOGIN";
+        }
+
+      } catch (error) {
+
+        console.error(error);
+
+        message.textContent =
+          "Unable to connect to the server.";
+
+        button.disabled = false;
+        button.textContent = "LOGIN";
+      }
+    }
+  </script>
+
+</body>
+</html>
