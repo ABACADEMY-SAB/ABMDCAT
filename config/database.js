@@ -13,7 +13,7 @@ pool.connect()
         client.release();
     })
     .catch((err) => {
-        console.error("Database connection failed:", err.message);
+        console.error("Database connection failed:", err);
     });
 
 module.exports = pool;
