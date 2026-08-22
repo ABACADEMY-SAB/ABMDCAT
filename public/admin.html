@@ -47,16 +47,31 @@
       margin: 30px auto;
     }
 
-    .welcome {
+    .welcome,
+    .profile,
+    .card {
       background: white;
-      padding: 22px;
       border-radius: 12px;
-      box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+      box-shadow: 0 3px 15px rgba(0, 0, 0, 0.08);
+    }
+
+    .welcome {
+      padding: 22px;
       margin-bottom: 25px;
     }
 
-    .welcome h2 {
+    .welcome h2,
+    .profile h2 {
       margin-top: 0;
+    }
+
+    .profile {
+      padding: 22px;
+      margin-bottom: 25px;
+    }
+
+    .profile p {
+      margin: 10px 0;
     }
 
     .cards {
@@ -66,10 +81,7 @@
     }
 
     .card {
-      background: white;
       padding: 22px;
-      border-radius: 12px;
-      box-shadow: 0 3px 15px rgba(0,0,0,0.08);
     }
 
     .card h3 {
@@ -95,54 +107,134 @@
 
 <header>
   <h1>ABMDCAT Admin Dashboard</h1>
-  <button class="logout" onclick="logout()">Logout</button>
+
+  <button class="logout" onclick="logout()">
+    Logout
+  </button>
 </header>
 
 <div class="container">
 
+  <!-- Dashboard Welcome -->
+
   <div class="welcome">
+
     <h2>Welcome, Super Admin</h2>
-    <p id="welcomeMessage">Loading dashboard...</p>
+
+    <p id="welcomeMessage">
+      Loading dashboard...
+    </p>
+
   </div>
+
+
+  <!-- Admin Profile -->
+
+  <div class="profile">
+
+    <h2>Admin Profile</h2>
+
+    <p>
+      <strong>Username:</strong>
+      <span id="profileUsername">Loading...</span>
+    </p>
+
+    <p>
+      <strong>Full Name:</strong>
+      <span id="profileFullname">Loading...</span>
+    </p>
+
+  </div>
+
+
+  <!-- Statistics -->
 
   <div class="cards">
 
     <div class="card">
+
       <h3>Total Students</h3>
-      <div class="number" id="students">0</div>
+
+      <div
+        class="number"
+        id="students">
+        0
+      </div>
+
     </div>
 
+
     <div class="card">
+
       <h3>Total MCQs</h3>
-      <div class="number" id="mcqs">0</div>
+
+      <div
+        class="number"
+        id="mcqs">
+        0
+      </div>
+
     </div>
 
+
     <div class="card">
+
       <h3>Total Tests</h3>
-      <div class="number" id="tests">0</div>
+
+      <div
+        class="number"
+        id="tests">
+        0
+      </div>
+
     </div>
 
+
     <div class="card">
+
       <h3>Total Notes</h3>
-      <div class="number" id="notes">0</div>
+
+      <div
+        class="number"
+        id="notes">
+        0
+      </div>
+
     </div>
 
+
     <div class="card">
+
       <h3>Total Results</h3>
-      <div class="number" id="results">0</div>
+
+      <div
+        class="number"
+        id="results">
+        0
+      </div>
+
     </div>
 
   </div>
 
-  <p class="message" id="status"></p>
+
+  <p
+    class="message"
+    id="status">
+  </p>
 
 </div>
+
 
 <script>
 
 async function loadDashboard() {
 
   try {
+
+    // -----------------------------
+    // Dashboard
+    // -----------------------------
 
     const dashboardResponse =
       await fetch("/api/admin/dashboard");
@@ -151,9 +243,42 @@ async function loadDashboard() {
       await dashboardResponse.json();
 
     if (dashboard.success) {
-      document.getElementById("welcomeMessage").textContent =
-        dashboard.message;
+
+      document.getElementById(
+        "welcomeMessage"
+      ).textContent = dashboard.message;
+
     }
+
+
+    // -----------------------------
+    // Profile
+    // -----------------------------
+
+    const profileResponse =
+      await fetch("/api/admin/profile");
+
+    const profile =
+      await profileResponse.json();
+
+    if (profile.success && profile.admin) {
+
+      document.getElementById(
+        "profileUsername"
+      ).textContent =
+        profile.admin.username || "Not available";
+
+      document.getElementById(
+        "profileFullname"
+      ).textContent =
+        profile.admin.fullname || "Not available";
+
+    }
+
+
+    // -----------------------------
+    // Statistics
+    // -----------------------------
 
     const statisticsResponse =
       await fetch("/api/admin/statistics");
@@ -161,47 +286,84 @@ async function loadDashboard() {
     const statistics =
       await statisticsResponse.json();
 
-    document.getElementById("students").textContent =
+
+    document.getElementById(
+      "students"
+    ).textContent =
       statistics.totalStudents ?? 0;
 
-    document.getElementById("mcqs").textContent =
+
+    document.getElementById(
+      "mcqs"
+    ).textContent =
       statistics.totalMcqs ?? 0;
 
-    document.getElementById("tests").textContent =
+
+    document.getElementById(
+      "tests"
+    ).textContent =
       statistics.totalTests ?? 0;
 
-    document.getElementById("notes").textContent =
+
+    document.getElementById(
+      "notes"
+    ).textContent =
       statistics.totalNotes ?? 0;
 
-    document.getElementById("results").textContent =
+
+    document.getElementById(
+      "results"
+    ).textContent =
       statistics.totalResults ?? 0;
+
 
   } catch (error) {
 
-    console.error(error);
+    console.error(
+      "Dashboard error:",
+      error
+    );
 
-    document.getElementById("status").textContent =
+    document.getElementById(
+      "status"
+    ).textContent =
       "Unable to load dashboard data.";
 
   }
 
 }
 
+
+// -----------------------------
+// Logout
+// -----------------------------
+
 async function logout() {
 
   try {
 
-    await fetch("/api/admin/logout", {
-      method: "POST"
-    });
+    await fetch(
+      "/api/admin/logout",
+      {
+        method: "POST"
+      }
+    );
 
   } catch (error) {
-    console.error(error);
+
+    console.error(
+      "Logout error:",
+      error
+    );
+
   }
 
   window.location.href = "/";
 
 }
+
+
+// Load everything
 
 loadDashboard();
 
