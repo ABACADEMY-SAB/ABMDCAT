@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ABMDCAT Admin Dashboard</title>
+
+  <title>ABMDCAT Admin Panel</title>
 
   <style>
     * {
@@ -17,77 +18,145 @@
       color: #111;
     }
 
+    /* =========================
+       HEADER
+    ========================= */
+
     header {
       background: #0ea5e9;
       color: white;
-      padding: 18px 25px;
+      padding: 16px 22px;
+
       display: flex;
-      justify-content: space-between;
       align-items: center;
+      justify-content: space-between;
+
+      position: sticky;
+      top: 0;
+      z-index: 100;
     }
 
     header h1 {
       margin: 0;
-      font-size: 22px;
+      font-size: 21px;
     }
 
     .logout {
+      border: none;
       background: white;
       color: #0ea5e9;
-      border: none;
       padding: 9px 15px;
       border-radius: 7px;
+      font-weight: bold;
       cursor: pointer;
+    }
+
+    /* =========================
+       LAYOUT
+    ========================= */
+
+    .layout {
+      display: flex;
+      min-height: calc(100vh - 60px);
+    }
+
+    /* =========================
+       SIDEBAR
+    ========================= */
+
+    .sidebar {
+      width: 230px;
+      background: white;
+      border-right: 1px solid #ddd;
+      padding: 18px 12px;
+      flex-shrink: 0;
+    }
+
+    .sidebar-title {
+      font-size: 13px;
+      font-weight: bold;
+      color: #777;
+      margin: 8px 12px 12px;
+      text-transform: uppercase;
+    }
+
+    .nav-button {
+      width: 100%;
+      border: none;
+      background: transparent;
+      padding: 12px;
+      text-align: left;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+
+    .nav-button:hover {
+      background: #eef9ff;
+    }
+
+    .nav-button.active {
+      background: #e0f5ff;
+      color: #0284c7;
       font-weight: bold;
     }
 
-    .container {
-      width: 92%;
-      max-width: 1100px;
-      margin: 30px auto;
+    /* =========================
+       MAIN
+    ========================= */
+
+    main {
+      flex: 1;
+      padding: 25px;
+      overflow-x: auto;
     }
 
-    .welcome,
-    .profile,
-    .card {
-      background: white;
-      border-radius: 12px;
-      box-shadow: 0 3px 15px rgba(0, 0, 0, 0.08);
+    .section {
+      display: none;
     }
 
-    .welcome {
-      padding: 22px;
-      margin-bottom: 25px;
+    .section.active {
+      display: block;
     }
 
-    .welcome h2,
-    .profile h2 {
+    .page-title {
       margin-top: 0;
+      margin-bottom: 7px;
+      font-size: 25px;
     }
 
-    .profile {
-      padding: 22px;
+    .page-description {
+      color: #666;
+      margin-top: 0;
       margin-bottom: 25px;
     }
 
-    .profile p {
-      margin: 10px 0;
-    }
+    /* =========================
+       CARDS
+    ========================= */
 
     .cards {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      grid-template-columns: repeat(
+        auto-fit,
+        minmax(170px, 1fr)
+      );
       gap: 18px;
+      margin-bottom: 25px;
     }
 
     .card {
-      padding: 22px;
+      background: white;
+      padding: 21px;
+      border-radius: 12px;
+      box-shadow: 0 3px 15px rgba(0,0,0,0.07);
     }
 
-    .card h3 {
-      margin: 0 0 10px;
-      font-size: 15px;
-      color: #555;
+    .card-title {
+      color: #666;
+      font-size: 14px;
+      margin-bottom: 10px;
     }
 
     .number {
@@ -96,226 +165,1041 @@
       color: #0ea5e9;
     }
 
-    .message {
-      margin-top: 20px;
+    /* =========================
+       PANELS
+    ========================= */
+
+    .panel {
+      background: white;
+      border-radius: 12px;
+      padding: 22px;
+      margin-bottom: 20px;
+      box-shadow: 0 3px 15px rgba(0,0,0,0.07);
+    }
+
+    .panel h2 {
+      margin-top: 0;
+    }
+
+    .row {
+      margin-bottom: 15px;
+    }
+
+    .label {
+      font-weight: bold;
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    .value {
       color: #555;
+    }
+
+    /* =========================
+       STATUS
+    ========================= */
+
+    .status {
+      display: inline-block;
+      padding: 7px 12px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: bold;
+    }
+
+    .status-on {
+      background: #fee2e2;
+      color: #b91c1c;
+    }
+
+    .status-off {
+      background: #dcfce7;
+      color: #15803d;
+    }
+
+    /* =========================
+       BUTTONS
+    ========================= */
+
+    .button {
+      border: none;
+      padding: 10px 16px;
+      border-radius: 7px;
+      cursor: pointer;
+      font-weight: bold;
+      margin-right: 8px;
+      margin-bottom: 8px;
+    }
+
+    .primary {
+      background: #0ea5e9;
+      color: white;
+    }
+
+    .danger {
+      background: #dc2626;
+      color: white;
+    }
+
+    .success {
+      background: #16a34a;
+      color: white;
+    }
+
+    .secondary {
+      background: #e5e7eb;
+      color: #111;
+    }
+
+    /* =========================
+       FUTURE MODULES
+    ========================= */
+
+    .module-grid {
+      display: grid;
+      grid-template-columns: repeat(
+        auto-fit,
+        minmax(200px, 1fr)
+      );
+      gap: 15px;
+    }
+
+    .module {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 3px 15px rgba(0,0,0,0.07);
+    }
+
+    .module h3 {
+      margin-top: 0;
+    }
+
+    .module p {
+      color: #666;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    /* =========================
+       MESSAGE
+    ========================= */
+
+    #message {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+
+      background: #111;
+      color: white;
+
+      padding: 12px 18px;
+      border-radius: 8px;
+
+      display: none;
+      z-index: 999;
+    }
+
+    /* =========================
+       MOBILE
+    ========================= */
+
+    @media (max-width: 700px) {
+
+      .layout {
+        display: block;
+      }
+
+      .sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid #ddd;
+
+        display: flex;
+        overflow-x: auto;
+        gap: 5px;
+      }
+
+      .sidebar-title {
+        display: none;
+      }
+
+      .nav-button {
+        min-width: max-content;
+        margin: 0;
+      }
+
+      main {
+        padding: 18px;
+      }
+
+      header h1 {
+        font-size: 17px;
+      }
+
     }
   </style>
 </head>
 
 <body>
 
-<header>
-  <h1>ABMDCAT Admin Dashboard</h1>
+<!-- =========================
+     HEADER
+========================= -->
 
-  <button class="logout" onclick="logout()">
+<header>
+
+  <h1>
+    ABMDCAT Admin Panel
+  </h1>
+
+  <button
+    class="logout"
+    onclick="logout()">
     Logout
   </button>
+
 </header>
 
-<div class="container">
 
-  <!-- Dashboard Welcome -->
-
-  <div class="welcome">
-
-    <h2>Welcome, Super Admin</h2>
-
-    <p id="welcomeMessage">
-      Loading dashboard...
-    </p>
-
-  </div>
+<div class="layout">
 
 
-  <!-- Admin Profile -->
+  <!-- =========================
+       SIDEBAR
+  ========================= -->
 
-  <div class="profile">
+  <aside class="sidebar">
 
-    <h2>Admin Profile</h2>
-
-    <p>
-      <strong>Username:</strong>
-      <span id="profileUsername">Loading...</span>
-    </p>
-
-    <p>
-      <strong>Full Name:</strong>
-      <span id="profileFullname">Loading...</span>
-    </p>
-
-  </div>
-
-
-  <!-- Statistics -->
-
-  <div class="cards">
-
-    <div class="card">
-
-      <h3>Total Students</h3>
-
-      <div
-        class="number"
-        id="students">
-        0
-      </div>
-
+    <div class="sidebar-title">
+      Administration
     </div>
 
+    <button
+      class="nav-button active"
+      onclick="showSection('dashboard', this)">
+      Dashboard
+    </button>
 
-    <div class="card">
+    <button
+      class="nav-button"
+      onclick="showSection('profile', this)">
+      Profile
+    </button>
 
-      <h3>Total MCQs</h3>
+    <button
+      class="nav-button"
+      onclick="showSection('statistics', this)">
+      Statistics
+    </button>
 
-      <div
-        class="number"
-        id="mcqs">
-        0
-      </div>
+    <button
+      class="nav-button"
+      onclick="showSection('settings', this)">
+      Settings
+    </button>
 
+    <button
+      class="nav-button"
+      onclick="showSection('maintenance', this)">
+      Maintenance
+    </button>
+
+
+    <div class="sidebar-title">
+      Content Management
     </div>
 
+    <button
+      class="nav-button"
+      onclick="showSection('students', this)">
+      Students
+    </button>
 
-    <div class="card">
+    <button
+      class="nav-button"
+      onclick="showSection('mcqs', this)">
+      MCQs
+    </button>
 
-      <h3>Total Tests</h3>
+    <button
+      class="nav-button"
+      onclick="showSection('tests', this)">
+      Tests
+    </button>
 
-      <div
-        class="number"
-        id="tests">
-        0
+    <button
+      class="nav-button"
+      onclick="showSection('notes', this)">
+      Notes
+    </button>
+
+    <button
+      class="nav-button"
+      onclick="showSection('results', this)">
+      Results
+    </button>
+
+    <button
+      class="nav-button"
+      onclick="showSection('notifications', this)">
+      Notifications
+    </button>
+
+    <button
+      class="nav-button"
+      onclick="showSection('ranking', this)">
+      Ranking
+    </button>
+
+    <button
+      class="nav-button"
+      onclick="showSection('bookmarks', this)">
+      Bookmarks
+    </button>
+
+    <button
+      class="nav-button"
+      onclick="showSection('uploads', this)">
+      Uploads
+    </button>
+
+  </aside>
+
+
+  <!-- =========================
+       MAIN CONTENT
+  ========================= -->
+
+  <main>
+
+
+    <!-- =========================
+         DASHBOARD
+    ========================= -->
+
+    <section
+      id="dashboard"
+      class="section active">
+
+      <h2 class="page-title">
+        Dashboard
+      </h2>
+
+      <p class="page-description">
+        ABMDCAT administration overview.
+      </p>
+
+
+      <div class="panel">
+
+        <h2>
+          Welcome
+        </h2>
+
+        <p id="welcomeMessage">
+          Loading dashboard...
+        </p>
+
       </div>
 
-    </div>
+
+      <div class="cards">
+
+        <div class="card">
+
+          <div class="card-title">
+            Total Students
+          </div>
+
+          <div
+            class="number"
+            id="dashboardStudents">
+            0
+          </div>
+
+        </div>
 
 
-    <div class="card">
+        <div class="card">
 
-      <h3>Total Notes</h3>
+          <div class="card-title">
+            Total MCQs
+          </div>
 
-      <div
-        class="number"
-        id="notes">
-        0
+          <div
+            class="number"
+            id="dashboardMcqs">
+            0
+          </div>
+
+        </div>
+
+
+        <div class="card">
+
+          <div class="card-title">
+            Total Tests
+          </div>
+
+          <div
+            class="number"
+            id="dashboardTests">
+            0
+          </div>
+
+        </div>
+
+
+        <div class="card">
+
+          <div class="card-title">
+            Total Notes
+          </div>
+
+          <div
+            class="number"
+            id="dashboardNotes">
+            0
+          </div>
+
+        </div>
+
+
+        <div class="card">
+
+          <div class="card-title">
+            Total Results
+          </div>
+
+          <div
+            class="number"
+            id="dashboardResults">
+            0
+          </div>
+
+        </div>
+
       </div>
 
-    </div>
+    </section>
 
 
-    <div class="card">
+    <!-- =========================
+         PROFILE
+    ========================= -->
 
-      <h3>Total Results</h3>
+    <section
+      id="profile"
+      class="section">
 
-      <div
-        class="number"
-        id="results">
-        0
+      <h2 class="page-title">
+        Admin Profile
+      </h2>
+
+      <p class="page-description">
+        Current administrator information.
+      </p>
+
+      <div class="panel">
+
+        <div class="row">
+
+          <span class="label">
+            Username
+          </span>
+
+          <span
+            class="value"
+            id="profileUsername">
+            Loading...
+          </span>
+
+        </div>
+
+
+        <div class="row">
+
+          <span class="label">
+            Full Name
+          </span>
+
+          <span
+            class="value"
+            id="profileFullname">
+            Loading...
+          </span>
+
+        </div>
+
       </div>
 
-    </div>
-
-  </div>
+    </section>
 
 
-  <p
-    class="message"
-    id="status">
-  </p>
+    <!-- =========================
+         STATISTICS
+    ========================= -->
+
+    <section
+      id="statistics"
+      class="section">
+
+      <h2 class="page-title">
+        Statistics
+      </h2>
+
+      <p class="page-description">
+        Current platform statistics.
+      </p>
+
+
+      <div class="cards">
+
+        <div class="card">
+
+          <div class="card-title">
+            Students
+          </div>
+
+          <div
+            class="number"
+            id="statStudents">
+            0
+          </div>
+
+        </div>
+
+
+        <div class="card">
+
+          <div class="card-title">
+            MCQs
+          </div>
+
+          <div
+            class="number"
+            id="statMcqs">
+            0
+          </div>
+
+        </div>
+
+
+        <div class="card">
+
+          <div class="card-title">
+            Tests
+          </div>
+
+          <div
+            class="number"
+            id="statTests">
+            0
+          </div>
+
+        </div>
+
+
+        <div class="card">
+
+          <div class="card-title">
+            Notes
+          </div>
+
+          <div
+            class="number"
+            id="statNotes">
+            0
+          </div>
+
+        </div>
+
+
+        <div class="card">
+
+          <div class="card-title">
+            Results
+          </div>
+
+          <div
+            class="number"
+            id="statResults">
+            0
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =========================
+         SETTINGS
+    ========================= -->
+
+    <section
+      id="settings"
+      class="section">
+
+      <h2 class="page-title">
+        Website Settings
+      </h2>
+
+      <p class="page-description">
+        Current ABMDCAT website configuration.
+      </p>
+
+
+      <div class="panel">
+
+        <div class="row">
+
+          <span class="label">
+            Website
+          </span>
+
+          <span
+            class="value"
+            id="websiteName">
+            Loading...
+          </span>
+
+        </div>
+
+
+        <div class="row">
+
+          <span class="label">
+            Version
+          </span>
+
+          <span
+            class="value"
+            id="websiteVersion">
+            Loading...
+          </span>
+
+        </div>
+
+
+        <div class="row">
+
+          <span class="label">
+            Maintenance
+          </span>
+
+          <span
+            class="status status-off"
+            id="settingsMaintenance">
+            OFF
+          </span>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =========================
+         MAINTENANCE
+    ========================= -->
+
+    <section
+      id="maintenance"
+      class="section">
+
+      <h2 class="page-title">
+        Maintenance Mode
+      </h2>
+
+      <p class="page-description">
+        Control website maintenance mode.
+      </p>
+
+
+      <div class="panel">
+
+        <p>
+          Current status:
+          <strong id="maintenanceStatus">
+            Checking...
+          </strong>
+        </p>
+
+
+        <button
+          class="button danger"
+          onclick="enableMaintenance()">
+          Enable Maintenance
+        </button>
+
+
+        <button
+          class="button success"
+          onclick="disableMaintenance()">
+          Disable Maintenance
+        </button>
+
+      </div>
+
+    </section>
+
+
+    <!-- =========================
+         STUDENTS
+    ========================= -->
+
+    <section
+      id="students"
+      class="section">
+
+      <h2 class="page-title">
+        Students
+      </h2>
+
+      <div class="module">
+
+        <h3>
+          Student Management
+        </h3>
+
+        <p>
+          Student management will be connected here after
+          the student database tables and CRUD endpoints
+          are configured.
+        </p>
+
+      </div>
+
+    </section>
+
+
+    <!-- =========================
+         MCQS
+    ========================= -->
+
+    <section
+      id="mcqs"
+      class="section">
+
+      <h2 class="page-title">
+        MCQs
+      </h2>
+
+      <div class="module">
+
+        <h3>
+          MCQ Management
+        </h3>
+
+        <p>
+          Add, edit, delete and manage MCQs here once the
+          MCQ database table is created.
+        </p>
+
+      </div>
+
+    </section>
+
+
+    <!-- =========================
+         TESTS
+    ========================= -->
+
+    <section
+      id="tests"
+      class="section">
+
+      <h2 class="page-title">
+        Tests
+      </h2>
+
+      <div class="module">
+
+        <h3>
+          Test Management
+        </h3>
+
+        <p>
+          Online test management will be connected here
+          after the test database is created.
+        </p>
+
+      </div>
+
+    </section>
+
+
+    <!-- =========================
+         NOTES
+    ========================= -->
+
+    <section
+      id="notes"
+      class="section">
+
+      <h2 class="page-title">
+        Notes
+      </h2>
+
+      <div class="module">
+
+        <h3>
+          Notes Management
+        </h3>
+
+        <p>
+          Notes and study material management will be
+          connected here after the notes database is ready.
+        </p>
+
+      </div>
+
+    </section>
+
+
+    <!-- =========================
+         RESULTS
+    ========================= -->
+
+    <section
+      id="results"
+      class="section">
+
+      <h2 class="page-title">
+        Results
+      </h2>
+
+      <div class="module">
+
+        <h3>
+          Results Management
+        </h3>
+
+        <p>
+          Student test results will appear here once the
+          results tables and APIs are connected.
+        </p>
+
+      </div>
+
+    </section>
+
+
+    <!-- =========================
+         NOTIFICATIONS
+    ========================= -->
+
+    <section
+      id="notifications"
+      class="section">
+
+      <h2 class="page-title">
+        Notifications
+      </h2>
+
+      <div class="module">
+
+        <h3>
+          Notification Management
+        </h3>
+
+        <p>
+          Notifications will be managed here after the
+          notification database and API are connected.
+        </p>
+
+      </div>
+
+    </section>
+
+
+    <!-- =========================
+         RANKING
+    ========================= -->
+
+    <section
+      id="ranking"
+      class="section">
+
+      <h2 class="page-title">
+        Ranking
+      </h2>
+
+      <div class="module">
+
+        <h3>
+          Student Ranking
+        </h3>
+
+        <p>
+          Ranking information will be displayed here after
+          the ranking API is connected to its database.
+        </p>
+
+      </div>
+
+    </section>
+
+
+    <!-- =========================
+         BOOKMARKS
+    ========================= -->
+
+    <section
+      id="bookmarks"
+      class="section">
+
+      <h2 class="page-title">
+        Bookmarks
+      </h2>
+
+      <div class="module">
+
+        <h3>
+          Bookmark Management
+        </h3>
+
+        <p>
+          Student bookmarks will be managed here after the
+          bookmark database is created.
+        </p>
+
+      </div>
+
+    </section>
+
+
+    <!-- =========================
+         UPLOADS
+    ========================= -->
+
+    <section
+      id="uploads"
+      class="section">
+
+      <h2 class="page-title">
+        Uploads
+      </h2>
+
+      <div class="module">
+
+        <h3>
+          File Upload Management
+        </h3>
+
+        <p>
+          File and study-material uploads will be connected
+          here after the upload API and storage are configured.
+        </p>
+
+      </div>
+
+    </section>
+
+
+  </main>
 
 </div>
 
 
+<div id="message"></div>
+
+
 <script>
+
+/* ==========================================
+   NAVIGATION
+========================================== */
+
+function showSection(sectionId, button) {
+
+  const sections =
+    document.querySelectorAll(".section");
+
+  sections.forEach(function(section) {
+
+    section.classList.remove("active");
+
+  });
+
+
+  const selected =
+    document.getElementById(sectionId);
+
+  if (selected) {
+
+    selected.classList.add("active");
+
+  }
+
+
+  const buttons =
+    document.querySelectorAll(".nav-button");
+
+  buttons.forEach(function(item) {
+
+    item.classList.remove("active");
+
+  });
+
+
+  if (button) {
+
+    button.classList.add("active");
+
+  }
+
+}
+
+
+/* ==========================================
+   MESSAGE
+========================================== */
+
+function showMessage(text) {
+
+  const message =
+    document.getElementById("message");
+
+  message.textContent = text;
+  message.style.display = "block";
+
+
+  setTimeout(function() {
+
+    message.style.display = "none";
+
+  }, 3000);
+
+}
+
+
+/* ==========================================
+   DASHBOARD
+========================================== */
 
 async function loadDashboard() {
 
   try {
 
-    // -----------------------------
-    // Dashboard
-    // -----------------------------
-
-    const dashboardResponse =
+    const response =
       await fetch("/api/admin/dashboard");
 
-    const dashboard =
-      await dashboardResponse.json();
+    const data =
+      await response.json();
 
-    if (dashboard.success) {
+
+    if (data.success) {
 
       document.getElementById(
         "welcomeMessage"
-      ).textContent = dashboard.message;
+      ).textContent = data.message;
 
     }
-
-
-    // -----------------------------
-    // Profile
-    // -----------------------------
-
-    const profileResponse =
-      await fetch("/api/admin/profile");
-
-    const profile =
-      await profileResponse.json();
-
-    if (profile.success && profile.admin) {
-
-      document.getElementById(
-        "profileUsername"
-      ).textContent =
-        profile.admin.username || "Not available";
-
-      document.getElementById(
-        "profileFullname"
-      ).textContent =
-        profile.admin.fullname || "Not available";
-
-    }
-
-
-    // -----------------------------
-    // Statistics
-    // -----------------------------
-
-    const statisticsResponse =
-      await fetch("/api/admin/statistics");
-
-    const statistics =
-      await statisticsResponse.json();
-
-
-    document.getElementById(
-      "students"
-    ).textContent =
-      statistics.totalStudents ?? 0;
-
-
-    document.getElementById(
-      "mcqs"
-    ).textContent =
-      statistics.totalMcqs ?? 0;
-
-
-    document.getElementById(
-      "tests"
-    ).textContent =
-      statistics.totalTests ?? 0;
-
-
-    document.getElementById(
-      "notes"
-    ).textContent =
-      statistics.totalNotes ?? 0;
-
-
-    document.getElementById(
-      "results"
-    ).textContent =
-      statistics.totalResults ?? 0;
-
 
   } catch (error) {
 
@@ -324,19 +1208,333 @@ async function loadDashboard() {
       error
     );
 
-    document.getElementById(
-      "status"
-    ).textContent =
-      "Unable to load dashboard data.";
+  }
+
+}
+
+
+/* ==========================================
+   PROFILE
+========================================== */
+
+async function loadProfile() {
+
+  try {
+
+    const response =
+      await fetch("/api/admin/profile");
+
+    const data =
+      await response.json();
+
+
+    if (data.success && data.admin) {
+
+      document.getElementById(
+        "profileUsername"
+      ).textContent =
+        data.admin.username || "Not available";
+
+
+      document.getElementById(
+        "profileFullname"
+      ).textContent =
+        data.admin.fullname || "Not available";
+
+    }
+
+  } catch (error) {
+
+    console.error(
+      "Profile error:",
+      error
+    );
 
   }
 
 }
 
 
-// -----------------------------
-// Logout
-// -----------------------------
+/* ==========================================
+   STATISTICS
+========================================== */
+
+async function loadStatistics() {
+
+  try {
+
+    const response =
+      await fetch("/api/admin/statistics");
+
+    const data =
+      await response.json();
+
+
+    const students =
+      data.totalStudents ?? 0;
+
+    const mcqs =
+      data.totalMcqs ?? 0;
+
+    const tests =
+      data.totalTests ?? 0;
+
+    const notes =
+      data.totalNotes ?? 0;
+
+    const results =
+      data.totalResults ?? 0;
+
+
+    document.getElementById(
+      "dashboardStudents"
+    ).textContent = students;
+
+
+    document.getElementById(
+      "dashboardMcqs"
+    ).textContent = mcqs;
+
+
+    document.getElementById(
+      "dashboardTests"
+    ).textContent = tests;
+
+
+    document.getElementById(
+      "dashboardNotes"
+    ).textContent = notes;
+
+
+    document.getElementById(
+      "dashboardResults"
+    ).textContent = results;
+
+
+    document.getElementById(
+      "statStudents"
+    ).textContent = students;
+
+
+    document.getElementById(
+      "statMcqs"
+    ).textContent = mcqs;
+
+
+    document.getElementById(
+      "statTests"
+    ).textContent = tests;
+
+
+    document.getElementById(
+      "statNotes"
+    ).textContent = notes;
+
+
+    document.getElementById(
+      "statResults"
+    ).textContent = results;
+
+
+  } catch (error) {
+
+    console.error(
+      "Statistics error:",
+      error
+    );
+
+  }
+
+}
+
+
+/* ==========================================
+   SETTINGS
+========================================== */
+
+async function loadSettings() {
+
+  try {
+
+    const response =
+      await fetch("/api/admin/settings");
+
+    const data =
+      await response.json();
+
+
+    document.getElementById(
+      "websiteName"
+    ).textContent =
+      data.website || "ABMDCAT";
+
+
+    document.getElementById(
+      "websiteVersion"
+    ).textContent =
+      data.version || "1.0";
+
+
+    updateMaintenanceStatus(
+      Boolean(data.maintenance)
+    );
+
+
+  } catch (error) {
+
+    console.error(
+      "Settings error:",
+      error
+    );
+
+  }
+
+}
+
+
+/* ==========================================
+   MAINTENANCE STATUS
+========================================== */
+
+function updateMaintenanceStatus(enabled) {
+
+  const status =
+    document.getElementById(
+      "maintenanceStatus"
+    );
+
+  const settingsStatus =
+    document.getElementById(
+      "settingsMaintenance"
+    );
+
+
+  if (enabled) {
+
+    status.textContent =
+      "ON";
+
+    settingsStatus.textContent =
+      "ON";
+
+    settingsStatus.className =
+      "status status-on";
+
+  } else {
+
+    status.textContent =
+      "OFF";
+
+    settingsStatus.textContent =
+      "OFF";
+
+    settingsStatus.className =
+      "status status-off";
+
+  }
+
+}
+
+
+/* ==========================================
+   ENABLE MAINTENANCE
+========================================== */
+
+async function enableMaintenance() {
+
+  try {
+
+    const response =
+      await fetch(
+        "/api/admin/maintenance/on",
+        {
+          method: "POST"
+        }
+      );
+
+
+    const data =
+      await response.json();
+
+
+    if (data.success) {
+
+      updateMaintenanceStatus(true);
+
+      showMessage(
+        "Maintenance Mode Enabled"
+      );
+
+    }
+
+
+  } catch (error) {
+
+    console.error(
+      "Maintenance error:",
+      error
+    );
+
+    showMessage(
+      "Unable to enable maintenance mode."
+    );
+
+  }
+
+}
+
+
+/* ==========================================
+   DISABLE MAINTENANCE
+========================================== */
+
+async function disableMaintenance() {
+
+  try {
+
+    const response =
+      await fetch(
+        "/api/admin/maintenance/off",
+        {
+          method: "POST"
+        }
+      );
+
+
+    const data =
+      await response.json();
+
+
+    if (data.success) {
+
+      updateMaintenanceStatus(false);
+
+      showMessage(
+        "Maintenance Mode Disabled"
+      );
+
+    }
+
+
+  } catch (error) {
+
+    console.error(
+      "Maintenance error:",
+      error
+    );
+
+    showMessage(
+      "Unable to disable maintenance mode."
+    );
+
+  }
+
+}
+
+
+/* ==========================================
+   LOGOUT
+========================================== */
 
 async function logout() {
 
@@ -358,14 +1556,30 @@ async function logout() {
 
   }
 
+
   window.location.href = "/";
 
 }
 
 
-// Load everything
+/* ==========================================
+   INITIAL LOAD
+========================================== */
 
-loadDashboard();
+async function initializeAdminPanel() {
+
+  await loadDashboard();
+
+  await loadProfile();
+
+  await loadStatistics();
+
+  await loadSettings();
+
+}
+
+
+initializeAdminPanel();
 
 </script>
 
