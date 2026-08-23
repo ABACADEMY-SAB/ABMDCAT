@@ -9,45 +9,146 @@ require("./config/database");
 
 const app = express();
 
+
+// ==============================
+// Middleware
+// ==============================
+
 app.use(cors());
+
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+
+app.use(
+    express.urlencoded({
+        extended: true
+    })
+);
+
 
 // ==============================
-// Serve New Frontend
+// Serve Frontend
 // ==============================
 
-app.use(express.static(path.join(__dirname, "public")));
+app.use(
+    express.static(
+        path.join(__dirname, "public")
+    )
+);
+
 
 // ==============================
 // Home Route
 // ==============================
 
 app.get("/", (req, res) => {
-    res.sendFile(path.join(__dirname, "public", "index.html"));
+
+    res.sendFile(
+        path.join(
+            __dirname,
+            "public",
+            "index.html"
+        )
+    );
+
 });
+
 
 // ==============================
 // API Routes
 // ==============================
 
-app.use("/api/admin", require("./routes/admin"));
-app.use("/api/student", require("./routes/student"));
-app.use("/api/mcq", require("./routes/mcq"));
-app.use("/api/notes", require("./routes/notes"));
-app.use("/api/result", require("./routes/result"));
-app.use("/api/test", require("./routes/test"));
-app.use("/api/bookmark", require("./routes/bookmark"));
-app.use("/api/notification", require("./routes/notification"));
-app.use("/api/ranking", require("./routes/ranking"));
-app.use("/api/upload", require("./routes/upload"));
+// Admin
+app.use(
+    "/api/admin",
+    require("./routes/admin")
+);
+
+
+// Admin Student Management
+app.use(
+    "/api/admin/students",
+    require("./routes/adminStudent")
+);
+
+
+// Student
+app.use(
+    "/api/student",
+    require("./routes/student")
+);
+
+
+// MCQ
+app.use(
+    "/api/mcq",
+    require("./routes/mcq")
+);
+
+
+// Notes
+app.use(
+    "/api/notes",
+    require("./routes/notes")
+);
+
+
+// Results
+app.use(
+    "/api/result",
+    require("./routes/result")
+);
+
+
+// Tests
+app.use(
+    "/api/test",
+    require("./routes/test")
+);
+
+
+// Bookmarks
+app.use(
+    "/api/bookmark",
+    require("./routes/bookmark")
+);
+
+
+// Notifications
+app.use(
+    "/api/notification",
+    require("./routes/notification")
+);
+
+
+// Ranking
+app.use(
+    "/api/ranking",
+    require("./routes/ranking")
+);
+
+
+// Uploads
+app.use(
+    "/api/upload",
+    require("./routes/upload")
+);
+
 
 // ==============================
 // Start Server
 // ==============================
 
-const PORT = process.env.PORT || 3000;
+const PORT =
+    process.env.PORT || 3000;
 
-app.listen(PORT, () => {
-    console.log(`ABMDCAT server running on port ${PORT}`);
-});
+
+app.listen(
+    PORT,
+    () => {
+
+        console.log(
+            `ABMDCAT server running on port ${PORT}`
+        );
+
+    }
+);
