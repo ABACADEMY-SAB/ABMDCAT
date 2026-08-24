@@ -6,8 +6,12 @@ const db = require("../config/database");
 
 class Student {
 
+    // =====================================
     // Get All Students
+    // =====================================
+
     static getAll(callback) {
+
         db.query(
             `SELECT
                 id,
@@ -20,11 +24,16 @@ class Student {
              ORDER BY id DESC`,
             callback
         );
+
     }
 
 
+    // =====================================
     // Get Student By ID
+    // =====================================
+
     static getById(id, callback) {
+
         db.query(
             `SELECT
                 id,
@@ -38,11 +47,16 @@ class Student {
             [id],
             callback
         );
+
     }
 
 
+    // =====================================
     // Get Student By Username
+    // =====================================
+
     static getByUsername(username, callback) {
+
         db.query(
             `SELECT *
              FROM students
@@ -50,18 +64,28 @@ class Student {
             [username],
             callback
         );
+
     }
 
 
+    // =====================================
     // Create Student
+    // =====================================
+
     static create(data, callback) {
 
         db.query(
             `INSERT INTO students
-                (username, password, fullname, email, phone)
-             VALUES
-                ($1, $2, $3, $4, $5)
-             RETURNING
+            (
+                username,
+                password,
+                fullname,
+                email,
+                phone,
+                status
+            )
+            VALUES ($1,$2,$3,$4,$5,'active')
+            RETURNING
                 id,
                 username,
                 fullname,
@@ -81,7 +105,10 @@ class Student {
     }
 
 
+    // =====================================
     // Update Student
+    // =====================================
+
     static update(id, data, callback) {
 
         db.query(
@@ -110,7 +137,10 @@ class Student {
     }
 
 
+    // =====================================
     // Change Password
+    // =====================================
+
     static changePassword(id, password, callback) {
 
         db.query(
@@ -127,7 +157,10 @@ class Student {
     }
 
 
+    // =====================================
     // Delete Student
+    // =====================================
+
     static delete(id, callback) {
 
         db.query(
@@ -140,7 +173,10 @@ class Student {
     }
 
 
+    // =====================================
     // Block Student
+    // =====================================
+
     static block(id, callback) {
 
         db.query(
@@ -161,7 +197,10 @@ class Student {
     }
 
 
+    // =====================================
     // Unblock Student
+    // =====================================
+
     static unblock(id, callback) {
 
         db.query(
@@ -176,6 +215,21 @@ class Student {
                 phone,
                 status`,
             [id],
+            callback
+        );
+
+    }
+
+
+    // =====================================
+    // Count Students
+    // =====================================
+
+    static count(callback) {
+
+        db.query(
+            `SELECT COUNT(*) AS total
+             FROM students`,
             callback
         );
 
