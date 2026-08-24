@@ -1,1107 +1,998 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>ABMDCAT Admin Panel</title>
+<title>ABMDCAT Admin Panel</title>
 
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+<style>
+* {
+    box-sizing: border-box;
+}
 
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f5fbff;
-      color: #111;
-    }
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f5fbff;
+    color: #111;
+}
 
-    /* =========================
-       HEADER
-    ========================= */
+header {
+    background: #0ea5e9;
+    color: white;
+    padding: 16px 22px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
 
-    header {
-      background: #0ea5e9;
-      color: white;
-      padding: 16px 22px;
+header h1 {
+    margin: 0;
+    font-size: 21px;
+}
 
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+.logout {
+    border: none;
+    background: white;
+    color: #0ea5e9;
+    padding: 9px 15px;
+    border-radius: 7px;
+    font-weight: bold;
+    cursor: pointer;
+}
 
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
+.layout {
+    display: flex;
+    min-height: calc(100vh - 60px);
+}
 
-    header h1 {
-      margin: 0;
-      font-size: 21px;
-    }
+.sidebar {
+    width: 230px;
+    background: white;
+    border-right: 1px solid #ddd;
+    padding: 18px 12px;
+    flex-shrink: 0;
+}
 
-    .logout {
-      border: none;
-      background: white;
-      color: #0ea5e9;
-      padding: 9px 15px;
-      border-radius: 7px;
-      font-weight: bold;
-      cursor: pointer;
-    }
+.sidebar-title {
+    font-size: 13px;
+    font-weight: bold;
+    color: #777;
+    margin: 8px 12px 12px;
+    text-transform: uppercase;
+}
 
-    /* =========================
-       LAYOUT
-    ========================= */
+.nav-button {
+    width: 100%;
+    border: none;
+    background: transparent;
+    padding: 12px;
+    text-align: left;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-bottom: 4px;
+}
+
+.nav-button:hover {
+    background: #eef9ff;
+}
+
+.nav-button.active {
+    background: #e0f5ff;
+    color: #0284c7;
+    font-weight: bold;
+}
+
+main {
+    flex: 1;
+    padding: 25px;
+    overflow-x: auto;
+}
+
+.section {
+    display: none;
+}
+
+.section.active {
+    display: block;
+}
+
+.page-title {
+    margin-top: 0;
+    margin-bottom: 7px;
+    font-size: 25px;
+}
+
+.page-description {
+    color: #666;
+    margin-top: 0;
+    margin-bottom: 25px;
+}
+
+.cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 18px;
+    margin-bottom: 25px;
+}
+
+.card {
+    background: white;
+    padding: 21px;
+    border-radius: 12px;
+    box-shadow: 0 3px 15px rgba(0,0,0,0.07);
+}
+
+.card-title {
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.number {
+    font-size: 30px;
+    font-weight: bold;
+    color: #0ea5e9;
+}
+
+.panel {
+    background: white;
+    border-radius: 12px;
+    padding: 22px;
+    margin-bottom: 20px;
+    box-shadow: 0 3px 15px rgba(0,0,0,0.07);
+}
+
+.panel h2 {
+    margin-top: 0;
+}
+
+.row {
+    margin-bottom: 15px;
+}
+
+.label {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.value {
+    color: #555;
+}
+
+.button {
+    border: none;
+    padding: 10px 16px;
+    border-radius: 7px;
+    cursor: pointer;
+    font-weight: bold;
+    margin-right: 8px;
+    margin-bottom: 8px;
+}
+
+.primary {
+    background: #0ea5e9;
+    color: white;
+}
+
+.danger {
+    background: #dc2626;
+    color: white;
+}
+
+.success {
+    background: #16a34a;
+    color: white;
+}
+
+.secondary {
+    background: #e5e7eb;
+    color: #111;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+}
+
+.form-group {
+    margin-bottom: 10px;
+}
+
+.form-group.full {
+    grid-column: 1 / -1;
+}
+
+.form-group label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 6px;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 11px;
+    border: 1px solid #ccc;
+    border-radius: 7px;
+    font-size: 14px;
+}
+
+.table-wrapper {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 850px;
+}
+
+th,
+td {
+    padding: 12px;
+    border-bottom: 1px solid #e5e7eb;
+    text-align: left;
+    font-size: 14px;
+}
+
+th {
+    background: #f0f9ff;
+    color: #0369a1;
+}
+
+tr:hover {
+    background: #f8fcff;
+}
+
+.status {
+    display: inline-block;
+    padding: 6px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.status-active {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.status-blocked {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+#message {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #111;
+    color: white;
+    padding: 12px 18px;
+    border-radius: 8px;
+    display: none;
+    z-index: 999;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    z-index: 500;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.modal-content {
+    background: white;
+    width: 100%;
+    max-width: 600px;
+    border-radius: 12px;
+    padding: 25px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.modal-content h2 {
+    margin-top: 0;
+}
+
+.modal-buttons {
+    margin-top: 20px;
+}
+
+.close {
+    float: right;
+    border: none;
+    background: transparent;
+    font-size: 25px;
+    cursor: pointer;
+}
+
+.search-box {
+    width: 100%;
+    padding: 11px;
+    border: 1px solid #ccc;
+    border-radius: 7px;
+    margin-bottom: 15px;
+}
+
+.module {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 3px 15px rgba(0,0,0,0.07);
+}
+
+.status-on {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+.status-off {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+@media (max-width: 700px) {
 
     .layout {
-      display: flex;
-      min-height: calc(100vh - 60px);
+        display: block;
     }
-
-    /* =========================
-       SIDEBAR
-    ========================= */
 
     .sidebar {
-      width: 230px;
-      background: white;
-      border-right: 1px solid #ddd;
-      padding: 18px 12px;
-      flex-shrink: 0;
-    }
-
-    .sidebar-title {
-      font-size: 13px;
-      font-weight: bold;
-      color: #777;
-      margin: 8px 12px 12px;
-      text-transform: uppercase;
-    }
-
-    .nav-button {
-      width: 100%;
-      border: none;
-      background: transparent;
-      padding: 12px;
-      text-align: left;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 14px;
-      margin-bottom: 4px;
-    }
-
-    .nav-button:hover {
-      background: #eef9ff;
-    }
-
-    .nav-button.active {
-      background: #e0f5ff;
-      color: #0284c7;
-      font-weight: bold;
-    }
-
-    /* =========================
-       MAIN
-    ========================= */
-
-    main {
-      flex: 1;
-      padding: 25px;
-      overflow-x: auto;
-    }
-
-    .section {
-      display: none;
-    }
-
-    .section.active {
-      display: block;
-    }
-
-    .page-title {
-      margin-top: 0;
-      margin-bottom: 7px;
-      font-size: 25px;
-    }
-
-    .page-description {
-      color: #666;
-      margin-top: 0;
-      margin-bottom: 25px;
-    }
-
-    /* =========================
-       CARDS
-    ========================= */
-
-    .cards {
-      display: grid;
-      grid-template-columns: repeat(
-        auto-fit,
-        minmax(170px, 1fr)
-      );
-      gap: 18px;
-      margin-bottom: 25px;
-    }
-
-    .card {
-      background: white;
-      padding: 21px;
-      border-radius: 12px;
-      box-shadow: 0 3px 15px rgba(0,0,0,0.07);
-    }
-
-    .card-title {
-      color: #666;
-      font-size: 14px;
-      margin-bottom: 10px;
-    }
-
-    .number {
-      font-size: 30px;
-      font-weight: bold;
-      color: #0ea5e9;
-    }
-
-    /* =========================
-       PANELS
-    ========================= */
-
-    .panel {
-      background: white;
-      border-radius: 12px;
-      padding: 22px;
-      margin-bottom: 20px;
-      box-shadow: 0 3px 15px rgba(0,0,0,0.07);
-    }
-
-    .panel h2 {
-      margin-top: 0;
-    }
-
-    .row {
-      margin-bottom: 15px;
-    }
-
-    .label {
-      font-weight: bold;
-      display: block;
-      margin-bottom: 5px;
-    }
-
-    .value {
-      color: #555;
-    }
-
-    /* =========================
-       STATUS
-    ========================= */
-
-    .status {
-      display: inline-block;
-      padding: 7px 12px;
-      border-radius: 20px;
-      font-size: 13px;
-      font-weight: bold;
-    }
-
-    .status-on {
-      background: #fee2e2;
-      color: #b91c1c;
-    }
-
-    .status-off {
-      background: #dcfce7;
-      color: #15803d;
-    }
-
-    /* =========================
-       BUTTONS
-    ========================= */
-
-    .button {
-      border: none;
-      padding: 10px 16px;
-      border-radius: 7px;
-      cursor: pointer;
-      font-weight: bold;
-      margin-right: 8px;
-      margin-bottom: 8px;
-    }
-
-    .primary {
-      background: #0ea5e9;
-      color: white;
-    }
-
-    .danger {
-      background: #dc2626;
-      color: white;
-    }
-
-    .success {
-      background: #16a34a;
-      color: white;
-    }
-
-    .secondary {
-      background: #e5e7eb;
-      color: #111;
-    }
-
-    /* =========================
-       FUTURE MODULES
-    ========================= */
-
-    .module-grid {
-      display: grid;
-      grid-template-columns: repeat(
-        auto-fit,
-        minmax(200px, 1fr)
-      );
-      gap: 15px;
-    }
-
-    .module {
-      background: white;
-      border-radius: 12px;
-      padding: 20px;
-      box-shadow: 0 3px 15px rgba(0,0,0,0.07);
-    }
-
-    .module h3 {
-      margin-top: 0;
-    }
-
-    .module p {
-      color: #666;
-      font-size: 14px;
-      line-height: 1.5;
-    }
-
-    /* =========================
-       MESSAGE
-    ========================= */
-
-    #message {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-
-      background: #111;
-      color: white;
-
-      padding: 12px 18px;
-      border-radius: 8px;
-
-      display: none;
-      z-index: 999;
-    }
-
-    /* =========================
-       MOBILE
-    ========================= */
-
-    @media (max-width: 700px) {
-
-      .layout {
-        display: block;
-      }
-
-      .sidebar {
         width: 100%;
         border-right: none;
         border-bottom: 1px solid #ddd;
-
         display: flex;
         overflow-x: auto;
         gap: 5px;
-      }
+    }
 
-      .sidebar-title {
+    .sidebar-title {
         display: none;
-      }
+    }
 
-      .nav-button {
+    .nav-button {
         min-width: max-content;
         margin: 0;
-      }
-
-      main {
-        padding: 18px;
-      }
-
-      header h1 {
-        font-size: 17px;
-      }
-
     }
-  </style>
+
+    main {
+        padding: 18px;
+    }
+
+    header h1 {
+        font-size: 17px;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .form-group.full {
+        grid-column: auto;
+    }
+}
+</style>
 </head>
 
 <body>
 
-<!-- =========================
-     HEADER
-========================= -->
-
 <header>
 
-  <h1>
-    ABMDCAT Admin Panel
-  </h1>
+    <h1>ABMDCAT Admin Panel</h1>
 
-  <button
-    class="logout"
-    onclick="logout()">
-    Logout
-  </button>
+    <button class="logout" onclick="logout()">
+        Logout
+    </button>
 
 </header>
 
-
 <div class="layout">
 
-
-  <!-- =========================
-       SIDEBAR
-  ========================= -->
-
-  <aside class="sidebar">
+<aside class="sidebar">
 
     <div class="sidebar-title">
-      Administration
+        Administration
     </div>
 
-    <button
-      class="nav-button active"
-      onclick="showSection('dashboard', this)">
-      Dashboard
-    </button>
-
-    <button
-      class="nav-button"
-      onclick="showSection('profile', this)">
-      Profile
-    </button>
-
-    <button
-      class="nav-button"
-      onclick="showSection('statistics', this)">
-      Statistics
-    </button>
-
-    <button
-      class="nav-button"
-      onclick="showSection('settings', this)">
-      Settings
-    </button>
-
-    <button
-      class="nav-button"
-      onclick="showSection('maintenance', this)">
-      Maintenance
-    </button>
-
-
-    <div class="sidebar-title">
-      Content Management
-    </div>
-
-    <button
-      class="nav-button"
-      onclick="showSection('students', this)">
-      Students
-    </button>
-
-    <button
-      class="nav-button"
-      onclick="showSection('mcqs', this)">
-      MCQs
-    </button>
-
-    <button
-      class="nav-button"
-      onclick="showSection('tests', this)">
-      Tests
-    </button>
-
-    <button
-      class="nav-button"
-      onclick="showSection('notes', this)">
-      Notes
-    </button>
-
-    <button
-      class="nav-button"
-      onclick="showSection('results', this)">
-      Results
-    </button>
-
-    <button
-      class="nav-button"
-      onclick="showSection('notifications', this)">
-      Notifications
-    </button>
-
-    <button
-      class="nav-button"
-      onclick="showSection('ranking', this)">
-      Ranking
-    </button>
-
-    <button
-      class="nav-button"
-      onclick="showSection('bookmarks', this)">
-      Bookmarks
-    </button>
-
-    <button
-      class="nav-button"
-      onclick="showSection('uploads', this)">
-      Uploads
-    </button>
-
-  </aside>
-
-
-  <!-- =========================
-       MAIN CONTENT
-  ========================= -->
-
-  <main>
-
-
-    <!-- =========================
-         DASHBOARD
-    ========================= -->
-
-    <section
-      id="dashboard"
-      class="section active">
-
-      <h2 class="page-title">
+    <button class="nav-button active"
+        onclick="showSection('dashboard', this)">
         Dashboard
-      </h2>
+    </button>
 
-      <p class="page-description">
+    <button class="nav-button"
+        onclick="showSection('profile', this)">
+        Profile
+    </button>
+
+    <button class="nav-button"
+        onclick="showSection('statistics', this)">
+        Statistics
+    </button>
+
+    <button class="nav-button"
+        onclick="showSection('settings', this)">
+        Settings
+    </button>
+
+    <button class="nav-button"
+        onclick="showSection('maintenance', this)">
+        Maintenance
+    </button>
+
+    <div class="sidebar-title">
+        Content Management
+    </div>
+
+    <button class="nav-button"
+        onclick="showSection('students', this); loadStudents()">
+        Students
+    </button>
+
+    <button class="nav-button"
+        onclick="showSection('mcqs', this)">
+        MCQs
+    </button>
+
+    <button class="nav-button"
+        onclick="showSection('tests', this)">
+        Tests
+    </button>
+
+    <button class="nav-button"
+        onclick="showSection('notes', this)">
+        Notes
+    </button>
+
+    <button class="nav-button"
+        onclick="showSection('results', this)">
+        Results
+    </button>
+
+    <button class="nav-button"
+        onclick="showSection('notifications', this)">
+        Notifications
+    </button>
+
+    <button class="nav-button"
+        onclick="showSection('ranking', this)">
+        Ranking
+    </button>
+
+    <button class="nav-button"
+        onclick="showSection('bookmarks', this)">
+        Bookmarks
+    </button>
+
+    <button class="nav-button"
+        onclick="showSection('uploads', this)">
+        Uploads
+    </button>
+
+</aside>
+
+<main>
+
+<!-- DASHBOARD -->
+
+<section id="dashboard" class="section active">
+
+    <h2 class="page-title">Dashboard</h2>
+
+    <p class="page-description">
         ABMDCAT administration overview.
-      </p>
+    </p>
 
+    <div class="panel">
 
-      <div class="panel">
-
-        <h2>
-          Welcome
-        </h2>
+        <h2>Welcome</h2>
 
         <p id="welcomeMessage">
-          Loading dashboard...
+            Loading dashboard...
         </p>
 
-      </div>
+    </div>
 
-
-      <div class="cards">
-
-        <div class="card">
-
-          <div class="card-title">
-            Total Students
-          </div>
-
-          <div
-            class="number"
-            id="dashboardStudents">
-            0
-          </div>
-
-        </div>
-
+    <div class="cards">
 
         <div class="card">
-
-          <div class="card-title">
-            Total MCQs
-          </div>
-
-          <div
-            class="number"
-            id="dashboardMcqs">
-            0
-          </div>
-
+            <div class="card-title">Total Students</div>
+            <div class="number" id="dashboardStudents">0</div>
         </div>
-
 
         <div class="card">
-
-          <div class="card-title">
-            Total Tests
-          </div>
-
-          <div
-            class="number"
-            id="dashboardTests">
-            0
-          </div>
-
+            <div class="card-title">Total MCQs</div>
+            <div class="number" id="dashboardMcqs">0</div>
         </div>
-
 
         <div class="card">
-
-          <div class="card-title">
-            Total Notes
-          </div>
-
-          <div
-            class="number"
-            id="dashboardNotes">
-            0
-          </div>
-
+            <div class="card-title">Total Tests</div>
+            <div class="number" id="dashboardTests">0</div>
         </div>
-
 
         <div class="card">
-
-          <div class="card-title">
-            Total Results
-          </div>
-
-          <div
-            class="number"
-            id="dashboardResults">
-            0
-          </div>
-
+            <div class="card-title">Total Notes</div>
+            <div class="number" id="dashboardNotes">0</div>
         </div>
 
-      </div>
+        <div class="card">
+            <div class="card-title">Total Results</div>
+            <div class="number" id="dashboardResults">0</div>
+        </div>
 
-    </section>
+    </div>
+
+</section>
 
 
-    <!-- =========================
-         PROFILE
-    ========================= -->
+<!-- PROFILE -->
 
-    <section
-      id="profile"
-      class="section">
+<section id="profile" class="section">
 
-      <h2 class="page-title">
-        Admin Profile
-      </h2>
+    <h2 class="page-title">Admin Profile</h2>
 
-      <p class="page-description">
-        Current administrator information.
-      </p>
-
-      <div class="panel">
+    <div class="panel">
 
         <div class="row">
-
-          <span class="label">
-            Username
-          </span>
-
-          <span
-            class="value"
-            id="profileUsername">
-            Loading...
-          </span>
-
+            <span class="label">Username</span>
+            <span class="value" id="profileUsername">Loading...</span>
         </div>
-
 
         <div class="row">
-
-          <span class="label">
-            Full Name
-          </span>
-
-          <span
-            class="value"
-            id="profileFullname">
-            Loading...
-          </span>
-
+            <span class="label">Full Name</span>
+            <span class="value" id="profileFullname">Loading...</span>
         </div>
 
-      </div>
+    </div>
 
-    </section>
-
-
-    <!-- =========================
-         STATISTICS
-    ========================= -->
-
-    <section
-      id="statistics"
-      class="section">
-
-      <h2 class="page-title">
-        Statistics
-      </h2>
-
-      <p class="page-description">
-        Current platform statistics.
-      </p>
+</section>
 
 
-      <div class="cards">
+<!-- STATISTICS -->
+
+<section id="statistics" class="section">
+
+    <h2 class="page-title">Statistics</h2>
+
+    <div class="cards">
 
         <div class="card">
-
-          <div class="card-title">
-            Students
-          </div>
-
-          <div
-            class="number"
-            id="statStudents">
-            0
-          </div>
-
+            <div class="card-title">Students</div>
+            <div class="number" id="statStudents">0</div>
         </div>
-
 
         <div class="card">
-
-          <div class="card-title">
-            MCQs
-          </div>
-
-          <div
-            class="number"
-            id="statMcqs">
-            0
-          </div>
-
+            <div class="card-title">MCQs</div>
+            <div class="number" id="statMcqs">0</div>
         </div>
-
 
         <div class="card">
-
-          <div class="card-title">
-            Tests
-          </div>
-
-          <div
-            class="number"
-            id="statTests">
-            0
-          </div>
-
+            <div class="card-title">Tests</div>
+            <div class="number" id="statTests">0</div>
         </div>
-
 
         <div class="card">
-
-          <div class="card-title">
-            Notes
-          </div>
-
-          <div
-            class="number"
-            id="statNotes">
-            0
-          </div>
-
+            <div class="card-title">Notes</div>
+            <div class="number" id="statNotes">0</div>
         </div>
-
 
         <div class="card">
-
-          <div class="card-title">
-            Results
-          </div>
-
-          <div
-            class="number"
-            id="statResults">
-            0
-          </div>
-
+            <div class="card-title">Results</div>
+            <div class="number" id="statResults">0</div>
         </div>
 
-      </div>
+    </div>
 
-    </section>
-
-
-    <!-- =========================
-         SETTINGS
-    ========================= -->
-
-    <section
-      id="settings"
-      class="section">
-
-      <h2 class="page-title">
-        Website Settings
-      </h2>
-
-      <p class="page-description">
-        Current ABMDCAT website configuration.
-      </p>
+</section>
 
 
-      <div class="panel">
+<!-- SETTINGS -->
+
+<section id="settings" class="section">
+
+    <h2 class="page-title">Website Settings</h2>
+
+    <div class="panel">
 
         <div class="row">
-
-          <span class="label">
-            Website
-          </span>
-
-          <span
-            class="value"
-            id="websiteName">
-            Loading...
-          </span>
-
+            <span class="label">Website</span>
+            <span class="value" id="websiteName">Loading...</span>
         </div>
-
 
         <div class="row">
-
-          <span class="label">
-            Version
-          </span>
-
-          <span
-            class="value"
-            id="websiteVersion">
-            Loading...
-          </span>
-
+            <span class="label">Version</span>
+            <span class="value" id="websiteVersion">Loading...</span>
         </div>
-
 
         <div class="row">
-
-          <span class="label">
-            Maintenance
-          </span>
-
-          <span
-            class="status status-off"
-            id="settingsMaintenance">
-            OFF
-          </span>
-
+            <span class="label">Maintenance</span>
+            <span class="status status-off" id="settingsMaintenance">
+                OFF
+            </span>
         </div>
 
-      </div>
+    </div>
 
-    </section>
-
-
-    <!-- =========================
-         MAINTENANCE
-    ========================= -->
-
-    <section
-      id="maintenance"
-      class="section">
-
-      <h2 class="page-title">
-        Maintenance Mode
-      </h2>
-
-      <p class="page-description">
-        Control website maintenance mode.
-      </p>
+</section>
 
 
-      <div class="panel">
+<!-- MAINTENANCE -->
+
+<section id="maintenance" class="section">
+
+    <h2 class="page-title">Maintenance Mode</h2>
+
+    <div class="panel">
 
         <p>
-          Current status:
-          <strong id="maintenanceStatus">
-            Checking...
-          </strong>
+            Current status:
+            <strong id="maintenanceStatus">
+                Checking...
+            </strong>
         </p>
 
-
-        <button
-          class="button danger"
-          onclick="enableMaintenance()">
-          Enable Maintenance
+        <button class="button danger"
+            onclick="enableMaintenance()">
+            Enable Maintenance
         </button>
 
-
-        <button
-          class="button success"
-          onclick="disableMaintenance()">
-          Disable Maintenance
+        <button class="button success"
+            onclick="disableMaintenance()">
+            Disable Maintenance
         </button>
 
-      </div>
+    </div>
 
-    </section>
-
-
-    <!-- =========================
-         STUDENTS
-    ========================= -->
-
-    <section
-      id="students"
-      class="section">
-
-      <h2 class="page-title">
-        Students
-      </h2>
-
-      <div class="module">
-
-        <h3>
-          Student Management
-        </h3>
-
-        <p>
-          Student management will be connected here after
-          the student database tables and CRUD endpoints
-          are configured.
-        </p>
-
-      </div>
-
-    </section>
+</section>
 
 
-    <!-- =========================
-         MCQS
-    ========================= -->
+<!-- =========================
+     STUDENTS
+========================= -->
 
-    <section
-      id="mcqs"
-      class="section">
+<section id="students" class="section">
 
-      <h2 class="page-title">
-        MCQs
-      </h2>
+    <h2 class="page-title">
+        Student Management
+    </h2>
 
-      <div class="module">
+    <p class="page-description">
+        Add, view, update, block and delete ABMDCAT students.
+    </p>
 
-        <h3>
-          MCQ Management
-        </h3>
+    <div class="panel">
 
-        <p>
-          Add, edit, delete and manage MCQs here once the
-          MCQ database table is created.
-        </p>
+        <button class="button primary"
+            onclick="openAddStudent()">
+            + Add Student
+        </button>
 
-      </div>
+        <button class="button secondary"
+            onclick="loadStudents()">
+            Refresh
+        </button>
 
-    </section>
+        <input
+            type="text"
+            id="studentSearch"
+            class="search-box"
+            placeholder="Search students..."
+            oninput="filterStudents()">
+
+    </div>
+
+    <div class="panel">
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+                        <th>ID</th>
+                        <th>Username</th>
+                        <th>Full Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+
+                </thead>
+
+                <tbody id="studentsTable">
+
+                    <tr>
+                        <td colspan="7">
+                            Loading students...
+                        </td>
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</section>
 
 
-    <!-- =========================
-         TESTS
-    ========================= -->
+<!-- MCQS -->
 
-    <section
-      id="tests"
-      class="section">
+<section id="mcqs" class="section">
 
-      <h2 class="page-title">
-        Tests
-      </h2>
+    <h2 class="page-title">MCQs</h2>
 
-      <div class="module">
+    <div class="module">
 
-        <h3>
-          Test Management
-        </h3>
-
-        <p>
-          Online test management will be connected here
-          after the test database is created.
-        </p>
-
-      </div>
-
-    </section>
-
-
-    <!-- =========================
-         NOTES
-    ========================= -->
-
-    <section
-      id="notes"
-      class="section">
-
-      <h2 class="page-title">
-        Notes
-      </h2>
-
-      <div class="module">
-
-        <h3>
-          Notes Management
-        </h3>
+        <h3>MCQ Management</h3>
 
         <p>
-          Notes and study material management will be
-          connected here after the notes database is ready.
+            MCQ management will be connected next.
         </p>
 
-      </div>
+    </div>
 
-    </section>
+</section>
 
 
-    <!-- =========================
-         RESULTS
-    ========================= -->
+<!-- TESTS -->
 
-    <section
-      id="results"
-      class="section">
+<section id="tests" class="section">
 
-      <h2 class="page-title">
-        Results
-      </h2>
+    <h2 class="page-title">Tests</h2>
 
-      <div class="module">
+    <div class="module">
 
-        <h3>
-          Results Management
-        </h3>
+        <h3>Test Management</h3>
 
         <p>
-          Student test results will appear here once the
-          results tables and APIs are connected.
+            Test management will be connected next.
         </p>
 
-      </div>
+    </div>
 
-    </section>
+</section>
 
 
-    <!-- =========================
-         NOTIFICATIONS
-    ========================= -->
+<!-- NOTES -->
 
-    <section
-      id="notifications"
-      class="section">
+<section id="notes" class="section">
 
-      <h2 class="page-title">
-        Notifications
-      </h2>
+    <h2 class="page-title">Notes</h2>
 
-      <div class="module">
+    <div class="module">
 
-        <h3>
-          Notification Management
-        </h3>
+        <h3>Notes Management</h3>
 
         <p>
-          Notifications will be managed here after the
-          notification database and API are connected.
+            Notes management will be connected next.
         </p>
 
-      </div>
+    </div>
 
-    </section>
+</section>
 
 
-    <!-- =========================
-         RANKING
-    ========================= -->
+<!-- RESULTS -->
 
-    <section
-      id="ranking"
-      class="section">
+<section id="results" class="section">
 
-      <h2 class="page-title">
-        Ranking
-      </h2>
+    <h2 class="page-title">Results</h2>
 
-      <div class="module">
+    <div class="module">
 
-        <h3>
-          Student Ranking
-        </h3>
+        <h3>Results Management</h3>
 
         <p>
-          Ranking information will be displayed here after
-          the ranking API is connected to its database.
+            Results management will be connected next.
         </p>
 
-      </div>
+    </div>
 
-    </section>
+</section>
 
 
-    <!-- =========================
-         BOOKMARKS
-    ========================= -->
+<!-- NOTIFICATIONS -->
 
-    <section
-      id="bookmarks"
-      class="section">
+<section id="notifications" class="section">
 
-      <h2 class="page-title">
-        Bookmarks
-      </h2>
+    <h2 class="page-title">Notifications</h2>
 
-      <div class="module">
+    <div class="module">
 
-        <h3>
-          Bookmark Management
-        </h3>
+        <h3>Notification Management</h3>
 
         <p>
-          Student bookmarks will be managed here after the
-          bookmark database is created.
+            Notification management will be connected next.
         </p>
 
-      </div>
+    </div>
 
-    </section>
+</section>
 
 
-    <!-- =========================
-         UPLOADS
-    ========================= -->
+<!-- RANKING -->
 
-    <section
-      id="uploads"
-      class="section">
+<section id="ranking" class="section">
 
-      <h2 class="page-title">
-        Uploads
-      </h2>
+    <h2 class="page-title">Ranking</h2>
 
-      <div class="module">
+    <div class="module">
 
-        <h3>
-          File Upload Management
-        </h3>
+        <h3>Student Ranking</h3>
 
         <p>
-          File and study-material uploads will be connected
-          here after the upload API and storage are configured.
+            Ranking management will be connected next.
         </p>
 
-      </div>
+    </div>
 
-    </section>
+</section>
 
 
-  </main>
+<!-- BOOKMARKS -->
+
+<section id="bookmarks" class="section">
+
+    <h2 class="page-title">Bookmarks</h2>
+
+    <div class="module">
+
+        <h3>Bookmarks</h3>
+
+        <p>
+            Bookmark management will be connected next.
+        </p>
+
+    </div>
+
+</section>
+
+
+<!-- UPLOADS -->
+
+<section id="uploads" class="section">
+
+    <h2 class="page-title">Uploads</h2>
+
+    <div class="module">
+
+        <h3>File Uploads</h3>
+
+        <p>
+            Upload management will be connected next.
+        </p>
+
+    </div>
+
+</section>
+
+</main>
+</div>
+
+
+<!-- =========================
+     ADD / EDIT STUDENT MODAL
+========================= -->
+
+<div id="studentModal" class="modal">
+
+    <div class="modal-content">
+
+        <button class="close"
+            onclick="closeStudentModal()">
+            ×
+        </button>
+
+        <h2 id="studentModalTitle">
+            Add Student
+        </h2>
+
+        <form id="studentForm">
+
+            <input
+                type="hidden"
+                id="studentId">
+
+            <div class="form-grid">
+
+                <div class="form-group">
+
+                    <label>Username</label>
+
+                    <input
+                        type="text"
+                        id="studentUsername"
+                        required>
+
+                </div>
+
+
+                <div class="form-group"
+                    id="passwordGroup">
+
+                    <label>Password</label>
+
+                    <input
+                        type="password"
+                        id="studentPassword">
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>Full Name</label>
+
+                    <input
+                        type="text"
+                        id="studentFullname"
+                        required>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>Email</label>
+
+                    <input
+                        type="email"
+                        id="studentEmail"
+                        required>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>Phone</label>
+
+                    <input
+                        type="text"
+                        id="studentPhone"
+                        required>
+
+                </div>
+
+            </div>
+
+            <div class="modal-buttons">
+
+                <button
+                    type="submit"
+                    class="button primary">
+                    Save Student
+                </button>
+
+                <button
+                    type="button"
+                    class="button secondary"
+                    onclick="closeStudentModal()">
+                    Cancel
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
 
 </div>
 
@@ -1112,47 +1003,38 @@
 <script>
 
 /* ==========================================
+   GLOBAL DATA
+========================================== */
+
+let allStudents = [];
+
+
+/* ==========================================
    NAVIGATION
 ========================================== */
 
 function showSection(sectionId, button) {
 
-  const sections =
-    document.querySelectorAll(".section");
+    document.querySelectorAll(".section")
+        .forEach(section => {
+            section.classList.remove("active");
+        });
 
-  sections.forEach(function(section) {
+    const selected =
+        document.getElementById(sectionId);
 
-    section.classList.remove("active");
+    if (selected) {
+        selected.classList.add("active");
+    }
 
-  });
+    document.querySelectorAll(".nav-button")
+        .forEach(item => {
+            item.classList.remove("active");
+        });
 
-
-  const selected =
-    document.getElementById(sectionId);
-
-  if (selected) {
-
-    selected.classList.add("active");
-
-  }
-
-
-  const buttons =
-    document.querySelectorAll(".nav-button");
-
-  buttons.forEach(function(item) {
-
-    item.classList.remove("active");
-
-  });
-
-
-  if (button) {
-
-    button.classList.add("active");
-
-  }
-
+    if (button) {
+        button.classList.add("active");
+    }
 }
 
 
@@ -1162,19 +1044,15 @@ function showSection(sectionId, button) {
 
 function showMessage(text) {
 
-  const message =
-    document.getElementById("message");
+    const message =
+        document.getElementById("message");
 
-  message.textContent = text;
-  message.style.display = "block";
+    message.textContent = text;
+    message.style.display = "block";
 
-
-  setTimeout(function() {
-
-    message.style.display = "none";
-
-  }, 3000);
-
+    setTimeout(() => {
+        message.style.display = "none";
+    }, 3000);
 }
 
 
@@ -1184,32 +1062,27 @@ function showMessage(text) {
 
 async function loadDashboard() {
 
-  try {
+    try {
 
-    const response =
-      await fetch("/api/admin/dashboard");
+        const response =
+            await fetch("/api/admin/dashboard");
 
-    const data =
-      await response.json();
+        const data =
+            await response.json();
 
+        if (data.success) {
 
-    if (data.success) {
+            document.getElementById(
+                "welcomeMessage"
+            ).textContent = data.message;
 
-      document.getElementById(
-        "welcomeMessage"
-      ).textContent = data.message;
+        }
+
+    } catch (error) {
+
+        console.error("Dashboard error:", error);
 
     }
-
-  } catch (error) {
-
-    console.error(
-      "Dashboard error:",
-      error
-    );
-
-  }
-
 }
 
 
@@ -1219,39 +1092,33 @@ async function loadDashboard() {
 
 async function loadProfile() {
 
-  try {
+    try {
 
-    const response =
-      await fetch("/api/admin/profile");
+        const response =
+            await fetch("/api/admin/profile");
 
-    const data =
-      await response.json();
+        const data =
+            await response.json();
 
+        if (data.success && data.admin) {
 
-    if (data.success && data.admin) {
+            document.getElementById(
+                "profileUsername"
+            ).textContent =
+                data.admin.username || "Not available";
 
-      document.getElementById(
-        "profileUsername"
-      ).textContent =
-        data.admin.username || "Not available";
+            document.getElementById(
+                "profileFullname"
+            ).textContent =
+                data.admin.fullname || "Not available";
 
+        }
 
-      document.getElementById(
-        "profileFullname"
-      ).textContent =
-        data.admin.fullname || "Not available";
+    } catch (error) {
+
+        console.error("Profile error:", error);
 
     }
-
-  } catch (error) {
-
-    console.error(
-      "Profile error:",
-      error
-    );
-
-  }
-
 }
 
 
@@ -1261,90 +1128,74 @@ async function loadProfile() {
 
 async function loadStatistics() {
 
-  try {
+    try {
 
-    const response =
-      await fetch("/api/admin/statistics");
+        const response =
+            await fetch("/api/admin/statistics");
 
-    const data =
-      await response.json();
+        const data =
+            await response.json();
 
+        const students =
+            data.totalStudents ?? 0;
 
-    const students =
-      data.totalStudents ?? 0;
+        const mcqs =
+            data.totalMcqs ?? 0;
 
-    const mcqs =
-      data.totalMcqs ?? 0;
+        const tests =
+            data.totalTests ?? 0;
 
-    const tests =
-      data.totalTests ?? 0;
+        const notes =
+            data.totalNotes ?? 0;
 
-    const notes =
-      data.totalNotes ?? 0;
+        const results =
+            data.totalResults ?? 0;
 
-    const results =
-      data.totalResults ?? 0;
+        document.getElementById(
+            "dashboardStudents"
+        ).textContent = students;
 
+        document.getElementById(
+            "dashboardMcqs"
+        ).textContent = mcqs;
 
-    document.getElementById(
-      "dashboardStudents"
-    ).textContent = students;
+        document.getElementById(
+            "dashboardTests"
+        ).textContent = tests;
 
+        document.getElementById(
+            "dashboardNotes"
+        ).textContent = notes;
 
-    document.getElementById(
-      "dashboardMcqs"
-    ).textContent = mcqs;
+        document.getElementById(
+            "dashboardResults"
+        ).textContent = results;
 
+        document.getElementById(
+            "statStudents"
+        ).textContent = students;
 
-    document.getElementById(
-      "dashboardTests"
-    ).textContent = tests;
+        document.getElementById(
+            "statMcqs"
+        ).textContent = mcqs;
 
+        document.getElementById(
+            "statTests"
+        ).textContent = tests;
 
-    document.getElementById(
-      "dashboardNotes"
-    ).textContent = notes;
+        document.getElementById(
+            "statNotes"
+        ).textContent = notes;
 
+        document.getElementById(
+            "statResults"
+        ).textContent = results;
 
-    document.getElementById(
-      "dashboardResults"
-    ).textContent = results;
+    } catch (error) {
 
+        console.error("Statistics error:", error);
 
-    document.getElementById(
-      "statStudents"
-    ).textContent = students;
-
-
-    document.getElementById(
-      "statMcqs"
-    ).textContent = mcqs;
-
-
-    document.getElementById(
-      "statTests"
-    ).textContent = tests;
-
-
-    document.getElementById(
-      "statNotes"
-    ).textContent = notes;
-
-
-    document.getElementById(
-      "statResults"
-    ).textContent = results;
-
-
-  } catch (error) {
-
-    console.error(
-      "Statistics error:",
-      error
-    );
-
-  }
-
+    }
 }
 
 
@@ -1354,181 +1205,781 @@ async function loadStatistics() {
 
 async function loadSettings() {
 
-  try {
+    try {
 
-    const response =
-      await fetch("/api/admin/settings");
+        const response =
+            await fetch("/api/admin/settings");
 
-    const data =
-      await response.json();
+        const data =
+            await response.json();
 
+        document.getElementById(
+            "websiteName"
+        ).textContent =
+            data.website || "ABMDCAT";
 
-    document.getElementById(
-      "websiteName"
-    ).textContent =
-      data.website || "ABMDCAT";
+        document.getElementById(
+            "websiteVersion"
+        ).textContent =
+            data.version || "1.0";
 
+        updateMaintenanceStatus(
+            Boolean(data.maintenance)
+        );
 
-    document.getElementById(
-      "websiteVersion"
-    ).textContent =
-      data.version || "1.0";
+    } catch (error) {
 
+        console.error("Settings error:", error);
 
-    updateMaintenanceStatus(
-      Boolean(data.maintenance)
-    );
-
-
-  } catch (error) {
-
-    console.error(
-      "Settings error:",
-      error
-    );
-
-  }
-
+    }
 }
 
 
 /* ==========================================
-   MAINTENANCE STATUS
+   MAINTENANCE
 ========================================== */
 
 function updateMaintenanceStatus(enabled) {
 
-  const status =
-    document.getElementById(
-      "maintenanceStatus"
-    );
+    const status =
+        document.getElementById(
+            "maintenanceStatus"
+        );
 
-  const settingsStatus =
-    document.getElementById(
-      "settingsMaintenance"
-    );
+    const settingsStatus =
+        document.getElementById(
+            "settingsMaintenance"
+        );
 
+    if (enabled) {
 
-  if (enabled) {
+        status.textContent = "ON";
 
-    status.textContent =
-      "ON";
+        settingsStatus.textContent = "ON";
 
-    settingsStatus.textContent =
-      "ON";
+        settingsStatus.className =
+            "status status-on";
 
-    settingsStatus.className =
-      "status status-on";
+    } else {
 
-  } else {
+        status.textContent = "OFF";
 
-    status.textContent =
-      "OFF";
+        settingsStatus.textContent = "OFF";
 
-    settingsStatus.textContent =
-      "OFF";
+        settingsStatus.className =
+            "status status-off";
 
-    settingsStatus.className =
-      "status status-off";
-
-  }
-
+    }
 }
 
-
-/* ==========================================
-   ENABLE MAINTENANCE
-========================================== */
 
 async function enableMaintenance() {
 
-  try {
+    try {
 
-    const response =
-      await fetch(
-        "/api/admin/maintenance/on",
-        {
-          method: "POST"
+        const response =
+            await fetch(
+                "/api/admin/maintenance/on",
+                {
+                    method: "POST"
+                }
+            );
+
+        const data =
+            await response.json();
+
+        if (data.success) {
+
+            updateMaintenanceStatus(true);
+
+            showMessage(
+                "Maintenance Mode Enabled"
+            );
+
         }
-      );
 
+    } catch (error) {
 
-    const data =
-      await response.json();
-
-
-    if (data.success) {
-
-      updateMaintenanceStatus(true);
-
-      showMessage(
-        "Maintenance Mode Enabled"
-      );
+        showMessage(
+            "Unable to enable maintenance mode."
+        );
 
     }
+}
 
 
-  } catch (error) {
+async function disableMaintenance() {
 
-    console.error(
-      "Maintenance error:",
-      error
-    );
+    try {
 
-    showMessage(
-      "Unable to enable maintenance mode."
-    );
+        const response =
+            await fetch(
+                "/api/admin/maintenance/off",
+                {
+                    method: "POST"
+                }
+            );
 
-  }
+        const data =
+            await response.json();
 
+        if (data.success) {
+
+            updateMaintenanceStatus(false);
+
+            showMessage(
+                "Maintenance Mode Disabled"
+            );
+
+        }
+
+    } catch (error) {
+
+        showMessage(
+            "Unable to disable maintenance mode."
+        );
+
+    }
 }
 
 
 /* ==========================================
-   DISABLE MAINTENANCE
+   STUDENT MANAGEMENT
 ========================================== */
 
-async function disableMaintenance() {
+async function loadStudents() {
 
-  try {
+    const table =
+        document.getElementById("studentsTable");
 
-    const response =
-      await fetch(
-        "/api/admin/maintenance/off",
-        {
-          method: "POST"
+    table.innerHTML = `
+        <tr>
+            <td colspan="7">
+                Loading students...
+            </td>
+        </tr>
+    `;
+
+    try {
+
+        const response =
+            await fetch("/api/admin/students");
+
+        const data =
+            await response.json();
+
+        if (!response.ok || !data.success) {
+
+            throw new Error(
+                data.message || "Failed to load students"
+            );
+
         }
-      );
+
+        allStudents =
+            data.students || [];
+
+        renderStudents(allStudents);
+
+    } catch (error) {
+
+        console.error(
+            "Load students error:",
+            error
+        );
+
+        table.innerHTML = `
+            <tr>
+                <td colspan="7">
+                    Unable to load students.
+                </td>
+            </tr>
+        `;
+
+        showMessage(
+            "Unable to load students."
+        );
+    }
+}
 
 
-    const data =
-      await response.json();
+/* ==========================================
+   RENDER STUDENTS
+========================================== */
+
+function renderStudents(students) {
+
+    const table =
+        document.getElementById("studentsTable");
+
+    if (!students.length) {
+
+        table.innerHTML = `
+            <tr>
+                <td colspan="7">
+                    No students found.
+                </td>
+            </tr>
+        `;
+
+        return;
+    }
+
+    table.innerHTML =
+        students.map(student => {
+
+            const status =
+                String(student.status || "active")
+                    .toLowerCase();
+
+            const blocked =
+                status === "blocked";
+
+            return `
+
+                <tr>
+
+                    <td>${escapeHtml(student.id)}</td>
+
+                    <td>
+                        ${escapeHtml(student.username)}
+                    </td>
+
+                    <td>
+                        ${escapeHtml(student.fullname)}
+                    </td>
+
+                    <td>
+                        ${escapeHtml(student.email)}
+                    </td>
+
+                    <td>
+                        ${escapeHtml(student.phone)}
+                    </td>
+
+                    <td>
+
+                        <span class="status ${
+                            blocked
+                            ? "status-blocked"
+                            : "status-active"
+                        }">
+
+                            ${
+                                blocked
+                                ? "Blocked"
+                                : "Active"
+                            }
+
+                        </span>
+
+                    </td>
+
+                    <td>
+
+                        <button
+                            class="button primary"
+                            onclick="editStudent(${student.id})">
+                            Edit
+                        </button>
+
+                        ${
+                            blocked
+
+                            ? `
+
+                                <button
+                                    class="button success"
+                                    onclick="unblockStudent(${student.id})">
+                                    Unblock
+                                </button>
+
+                            `
+
+                            : `
+
+                                <button
+                                    class="button secondary"
+                                    onclick="blockStudent(${student.id})">
+                                    Block
+                                </button>
+
+                            `
+                        }
+
+                        <button
+                            class="button danger"
+                            onclick="deleteStudent(${student.id})">
+                            Delete
+                        </button>
+
+                    </td>
+
+                </tr>
+
+            `;
+
+        }).join("");
+}
 
 
-    if (data.success) {
+/* ==========================================
+   SEARCH STUDENTS
+========================================== */
 
-      updateMaintenanceStatus(false);
+function filterStudents() {
 
-      showMessage(
-        "Maintenance Mode Disabled"
-      );
+    const keyword =
+        document.getElementById(
+            "studentSearch"
+        ).value
+        .toLowerCase()
+        .trim();
+
+    const filtered =
+        allStudents.filter(student => {
+
+            return (
+
+                String(student.username || "")
+                    .toLowerCase()
+                    .includes(keyword)
+
+                ||
+
+                String(student.fullname || "")
+                    .toLowerCase()
+                    .includes(keyword)
+
+                ||
+
+                String(student.email || "")
+                    .toLowerCase()
+                    .includes(keyword)
+
+                ||
+
+                String(student.phone || "")
+                    .toLowerCase()
+                    .includes(keyword)
+
+            );
+
+        });
+
+    renderStudents(filtered);
+}
+
+
+/* ==========================================
+   ADD STUDENT
+========================================== */
+
+function openAddStudent() {
+
+    document.getElementById(
+        "studentModalTitle"
+    ).textContent =
+        "Add Student";
+
+    document.getElementById(
+        "studentId"
+    ).value = "";
+
+    document.getElementById(
+        "studentForm"
+    ).reset();
+
+    document.getElementById(
+        "studentUsername"
+    ).disabled = false;
+
+    document.getElementById(
+        "passwordGroup"
+    ).style.display = "block";
+
+    document.getElementById(
+        "studentPassword"
+    ).required = true;
+
+    document.getElementById(
+        "studentModal"
+    ).style.display = "flex";
+}
+
+
+/* ==========================================
+   EDIT STUDENT
+========================================== */
+
+function editStudent(id) {
+
+    const student =
+        allStudents.find(
+            item => Number(item.id) === Number(id)
+        );
+
+    if (!student) {
+
+        showMessage(
+            "Student not found."
+        );
+
+        return;
+    }
+
+    document.getElementById(
+        "studentModalTitle"
+    ).textContent =
+        "Edit Student";
+
+    document.getElementById(
+        "studentId"
+    ).value = student.id;
+
+    document.getElementById(
+        "studentUsername"
+    ).value =
+        student.username || "";
+
+    document.getElementById(
+        "studentFullname"
+    ).value =
+        student.fullname || "";
+
+    document.getElementById(
+        "studentEmail"
+    ).value =
+        student.email || "";
+
+    document.getElementById(
+        "studentPhone"
+    ).value =
+        student.phone || "";
+
+    document.getElementById(
+        "studentPassword"
+    ).value = "";
+
+    document.getElementById(
+        "studentUsername"
+    ).disabled = true;
+
+    document.getElementById(
+        "passwordGroup"
+    ).style.display = "none";
+
+    document.getElementById(
+        "studentPassword"
+    ).required = false;
+
+    document.getElementById(
+        "studentModal"
+    ).style.display = "flex";
+}
+
+
+/* ==========================================
+   CLOSE MODAL
+========================================== */
+
+function closeStudentModal() {
+
+    document.getElementById(
+        "studentModal"
+    ).style.display = "none";
+
+    document.getElementById(
+        "studentForm"
+    ).reset();
+}
+
+
+/* ==========================================
+   SAVE STUDENT
+========================================== */
+
+document.getElementById(
+    "studentForm"
+).addEventListener(
+    "submit",
+    async function(event) {
+
+        event.preventDefault();
+
+        const id =
+            document.getElementById(
+                "studentId"
+            ).value;
+
+        const isEdit =
+            Boolean(id);
+
+        const data = {
+
+            username:
+                document.getElementById(
+                    "studentUsername"
+                ).value.trim(),
+
+            fullname:
+                document.getElementById(
+                    "studentFullname"
+                ).value.trim(),
+
+            email:
+                document.getElementById(
+                    "studentEmail"
+                ).value.trim(),
+
+            phone:
+                document.getElementById(
+                    "studentPhone"
+                ).value.trim()
+
+        };
+
+        if (!isEdit) {
+
+            data.password =
+                document.getElementById(
+                    "studentPassword"
+                ).value;
+
+        }
+
+        try {
+
+            const response =
+                await fetch(
+                    isEdit
+                    ? `/api/admin/students/${id}`
+                    : "/api/admin/students",
+                    {
+
+                        method:
+                            isEdit
+                            ? "PUT"
+                            : "POST",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body:
+                            JSON.stringify(data)
+
+                    }
+                );
+
+            const result =
+                await response.json();
+
+            if (!response.ok || !result.success) {
+
+                throw new Error(
+                    result.message ||
+                    "Operation failed"
+                );
+
+            }
+
+            closeStudentModal();
+
+            showMessage(
+                isEdit
+                ? "Student updated successfully."
+                : "Student added successfully."
+            );
+
+            await loadStudents();
+
+            await loadStatistics();
+
+        } catch (error) {
+
+            console.error(
+                "Save student error:",
+                error
+            );
+
+            showMessage(
+                error.message ||
+                "Unable to save student."
+            );
+
+        }
+
+    }
+);
+
+
+/* ==========================================
+   BLOCK STUDENT
+========================================== */
+
+async function blockStudent(id) {
+
+    if (!confirm(
+        "Are you sure you want to block this student?"
+    )) {
+        return;
+    }
+
+    try {
+
+        const response =
+            await fetch(
+                `/api/admin/students/${id}/block`,
+                {
+                    method: "PUT"
+                }
+            );
+
+        const data =
+            await response.json();
+
+        if (!response.ok || !data.success) {
+
+            throw new Error(
+                data.message ||
+                "Unable to block student"
+            );
+
+        }
+
+        showMessage(
+            "Student blocked successfully."
+        );
+
+        loadStudents();
+
+    } catch (error) {
+
+        showMessage(
+            error.message
+        );
+
+    }
+}
+
+
+/* ==========================================
+   UNBLOCK STUDENT
+========================================== */
+
+async function unblockStudent(id) {
+
+    try {
+
+        const response =
+            await fetch(
+                `/api/admin/students/${id}/unblock`,
+                {
+                    method: "PUT"
+                }
+            );
+
+        const data =
+            await response.json();
+
+        if (!response.ok || !data.success) {
+
+            throw new Error(
+                data.message ||
+                "Unable to unblock student"
+            );
+
+        }
+
+        showMessage(
+            "Student unblocked successfully."
+        );
+
+        loadStudents();
+
+    } catch (error) {
+
+        showMessage(
+            error.message
+        );
+
+    }
+}
+
+
+/* ==========================================
+   DELETE STUDENT
+========================================== */
+
+async function deleteStudent(id) {
+
+    if (!confirm(
+        "Are you sure you want to permanently delete this student?"
+    )) {
+        return;
+    }
+
+    try {
+
+        const response =
+            await fetch(
+                `/api/admin/students/${id}`,
+                {
+                    method: "DELETE"
+                }
+            );
+
+        const data =
+            await response.json();
+
+        if (!response.ok || !data.success) {
+
+            throw new Error(
+                data.message ||
+                "Unable to delete student"
+            );
+
+        }
+
+        showMessage(
+            "Student deleted successfully."
+        );
+
+        loadStudents();
+
+        loadStatistics();
+
+    } catch (error) {
+
+        showMessage(
+            error.message
+        );
+
+    }
+}
+
+
+/* ==========================================
+   HTML ESCAPE
+========================================== */
+
+function escapeHtml(value) {
+
+    if (value === null ||
+        value === undefined) {
+
+        return "";
 
     }
 
-
-  } catch (error) {
-
-    console.error(
-      "Maintenance error:",
-      error
-    );
-
-    showMessage(
-      "Unable to disable maintenance mode."
-    );
-
-  }
-
+    return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
 }
 
 
@@ -1538,46 +1989,43 @@ async function disableMaintenance() {
 
 async function logout() {
 
-  try {
+    try {
 
-    await fetch(
-      "/api/admin/logout",
-      {
-        method: "POST"
-      }
-    );
+        await fetch(
+            "/api/admin/logout",
+            {
+                method: "POST"
+            }
+        );
 
-  } catch (error) {
+    } catch (error) {
 
-    console.error(
-      "Logout error:",
-      error
-    );
+        console.error(
+            "Logout error:",
+            error
+        );
 
-  }
+    }
 
-
-  window.location.href = "/";
-
+    window.location.href = "/";
 }
 
 
 /* ==========================================
-   INITIAL LOAD
+   INITIALIZATION
 ========================================== */
 
 async function initializeAdminPanel() {
 
-  await loadDashboard();
+    await loadDashboard();
 
-  await loadProfile();
+    await loadProfile();
 
-  await loadStatistics();
+    await loadStatistics();
 
-  await loadSettings();
+    await loadSettings();
 
 }
-
 
 initializeAdminPanel();
 
