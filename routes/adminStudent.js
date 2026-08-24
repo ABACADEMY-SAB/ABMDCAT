@@ -6,77 +6,56 @@ const express = require("express");
 
 const router = express.Router();
 
-const adminStudentController =
+const controller =
     require("../controllers/adminStudentController");
 
 
-// =====================================
 // Get All Students
-// =====================================
-
 router.get(
     "/",
-    adminStudentController.getAllStudents
+    controller.getAllStudents
 );
 
 
-// =====================================
-// Get Student By ID
-// =====================================
-
+// Get Student
 router.get(
     "/:id",
-    adminStudentController.getStudent
+    controller.getStudent
 );
 
 
-// =====================================
 // Add Student
-// =====================================
-
 router.post(
     "/",
-    adminStudentController.addStudent
+    controller.addStudent
 );
 
 
-// =====================================
 // Update Student
-// =====================================
-
 router.put(
     "/:id",
-    adminStudentController.updateStudent
+    controller.updateStudent
 );
 
 
-// =====================================
 // Block Student
-// =====================================
-
 router.put(
     "/:id/block",
-    adminStudentController.blockStudent
+    controller.blockStudent
 );
 
 
-// =====================================
 // Unblock Student
-// =====================================
-
 router.put(
     "/:id/unblock",
-    adminStudentController.unblockStudent
+    controller.unblockStudent
 );
 
 
-// =====================================
 // Delete Student
-// =====================================
-
 router.delete(
     "/:id",
-    adminStudentController.deleteStudent
+    controller.deleteStudent
 );
 
 
