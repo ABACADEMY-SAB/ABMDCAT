@@ -27,7 +27,7 @@ exports.getAllStudents = (req, res) => {
 
         }
 
-        return res.json({
+        res.json({
             success: true,
             students: result.rows
         });
@@ -38,12 +38,12 @@ exports.getAllStudents = (req, res) => {
 
 
 // =====================================
-// Get Student By ID
+// Get Student
 // =====================================
 
 exports.getStudent = (req, res) => {
 
-    const { id } = req.params;
+    const id = req.params.id;
 
     Student.getById(id, (err, result) => {
 
@@ -70,7 +70,7 @@ exports.getStudent = (req, res) => {
 
         }
 
-        return res.json({
+        res.json({
             success: true,
             student: result.rows[0]
         });
@@ -94,7 +94,6 @@ exports.addStudent = (req, res) => {
         phone
     } = req.body;
 
-
     if (
         !username ||
         !password ||
@@ -109,7 +108,6 @@ exports.addStudent = (req, res) => {
         });
 
     }
-
 
     Student.getByUsername(
         username,
@@ -129,17 +127,14 @@ exports.addStudent = (req, res) => {
 
             }
 
-
             if (result.rows.length > 0) {
 
                 return res.status(409).json({
                     success: false,
-                    message:
-                        "Username already exists"
+                    message: "Username already exists"
                 });
 
             }
-
 
             Student.create(
                 {
@@ -160,23 +155,15 @@ exports.addStudent = (req, res) => {
 
                         return res.status(500).json({
                             success: false,
-                            message:
-                                "Database error"
+                            message: "Database error"
                         });
 
                     }
 
-
-                    return res.status(201).json({
-
+                    res.status(201).json({
                         success: true,
-
-                        message:
-                            "Student added successfully",
-
-                        student:
-                            result.rows[0]
-
+                        message: "Student added successfully",
+                        student: result.rows[0]
                     });
 
                 }
@@ -194,14 +181,13 @@ exports.addStudent = (req, res) => {
 
 exports.updateStudent = (req, res) => {
 
-    const { id } = req.params;
+    const id = req.params.id;
 
     const {
         fullname,
         email,
         phone
     } = req.body;
-
 
     if (!fullname || !email || !phone) {
 
@@ -212,7 +198,6 @@ exports.updateStudent = (req, res) => {
         });
 
     }
-
 
     Student.update(
         id,
@@ -237,28 +222,19 @@ exports.updateStudent = (req, res) => {
 
             }
 
-
             if (result.rows.length === 0) {
 
                 return res.status(404).json({
                     success: false,
-                    message:
-                        "Student not found"
+                    message: "Student not found"
                 });
 
             }
 
-
-            return res.json({
-
+            res.json({
                 success: true,
-
-                message:
-                    "Student updated successfully",
-
-                student:
-                    result.rows[0]
-
+                message: "Student updated successfully",
+                student: result.rows[0]
             });
 
         }
@@ -273,8 +249,7 @@ exports.updateStudent = (req, res) => {
 
 exports.blockStudent = (req, res) => {
 
-    const { id } = req.params;
-
+    const id = req.params.id;
 
     Student.block(
         id,
@@ -294,28 +269,19 @@ exports.blockStudent = (req, res) => {
 
             }
 
-
             if (result.rows.length === 0) {
 
                 return res.status(404).json({
                     success: false,
-                    message:
-                        "Student not found"
+                    message: "Student not found"
                 });
 
             }
 
-
-            return res.json({
-
+            res.json({
                 success: true,
-
-                message:
-                    "Student blocked successfully",
-
-                student:
-                    result.rows[0]
-
+                message: "Student blocked successfully",
+                student: result.rows[0]
             });
 
         }
@@ -330,8 +296,7 @@ exports.blockStudent = (req, res) => {
 
 exports.unblockStudent = (req, res) => {
 
-    const { id } = req.params;
-
+    const id = req.params.id;
 
     Student.unblock(
         id,
@@ -351,28 +316,19 @@ exports.unblockStudent = (req, res) => {
 
             }
 
-
             if (result.rows.length === 0) {
 
                 return res.status(404).json({
                     success: false,
-                    message:
-                        "Student not found"
+                    message: "Student not found"
                 });
 
             }
 
-
-            return res.json({
-
+            res.json({
                 success: true,
-
-                message:
-                    "Student unblocked successfully",
-
-                student:
-                    result.rows[0]
-
+                message: "Student unblocked successfully",
+                student: result.rows[0]
             });
 
         }
@@ -387,8 +343,7 @@ exports.unblockStudent = (req, res) => {
 
 exports.deleteStudent = (req, res) => {
 
-    const { id } = req.params;
-
+    const id = req.params.id;
 
     Student.delete(
         id,
@@ -408,25 +363,18 @@ exports.deleteStudent = (req, res) => {
 
             }
 
-
             if (result.rowCount === 0) {
 
                 return res.status(404).json({
                     success: false,
-                    message:
-                        "Student not found"
+                    message: "Student not found"
                 });
 
             }
 
-
-            return res.json({
-
+            res.json({
                 success: true,
-
-                message:
-                    "Student deleted successfully"
-
+                message: "Student deleted successfully"
             });
 
         }
