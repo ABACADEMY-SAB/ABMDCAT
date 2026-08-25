@@ -6,9 +6,6 @@ const notesController = require("../controllers/notesController");
 // Get All Notes
 router.get("/", notesController.getAllNotes);
 
-// Get Note By ID
-router.get("/:id", notesController.getNoteById);
-
 // Add Note
 router.post("/add", notesController.addNote);
 
@@ -32,5 +29,8 @@ router.get("/categories", notesController.categories);
 
 // Upload PDF
 router.post("/upload-pdf", notesController.uploadPdf);
+
+// Get Note By ID — MUST BE LAST
+router.get("/:id", notesController.getNoteById);
 
 module.exports = router;
