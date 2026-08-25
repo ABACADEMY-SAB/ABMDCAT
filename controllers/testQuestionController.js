@@ -26,26 +26,16 @@ exports.getTestQuestions = (req, res) => {
                 );
 
                 return res.status(500).json({
-
                     success: false,
-
-                    message:
-                        "Database error",
-
-                    error:
-                        err.message
-
+                    message: "Database error",
+                    error: err.message
                 });
 
             }
 
             return res.json({
-
                 success: true,
-
-                questions:
-                    result.rows
-
+                questions: result.rows
             });
 
         }
@@ -62,29 +52,20 @@ exports.addQuestion = (req, res) => {
 
     const { testId } = req.params;
 
-    const {
-        mcq_id,
-        question_order
-    } = req.body;
+    const { mcq_id } = req.body;
 
 
     if (!mcq_id) {
 
         return res.status(400).json({
-
             success: false,
-
-            message:
-                "MCQ ID is required"
-
+            message: "MCQ ID is required"
         });
 
     }
 
 
-    const order =
-        Number(question_order) || 1;
-
+    // Check duplicate
 
     TestQuestion.exists(
         testId,
@@ -99,15 +80,9 @@ exports.addQuestion = (req, res) => {
                 );
 
                 return res.status(500).json({
-
                     success: false,
-
-                    message:
-                        "Database error",
-
-                    error:
-                        err.message
-
+                    message: "Database error",
+                    error: err.message
                 });
 
             }
@@ -116,58 +91,85 @@ exports.addQuestion = (req, res) => {
             if (existing.rows.length > 0) {
 
                 return res.status(409).json({
-
                     success: false,
-
                     message:
                         "This MCQ is already added to this test"
-
                 });
 
             }
 
 
-            TestQuestion.add(
-                {
-                    test_id: testId,
-                    mcq_id,
-                    question_order: order
-                },
+            // Get current question count
+
+            TestQuestion.countByTestId(
+                testId,
                 (err, result) => {
 
                     if (err) {
 
                         console.error(
-                            "Add test question error:",
+                            "Count questions error:",
                             err
                         );
 
                         return res.status(500).json({
-
                             success: false,
-
-                            message:
-                                "Database error",
-
-                            error:
-                                err.message
-
+                            message: "Database error",
+                            error: err.message
                         });
 
                     }
 
 
-                    return res.status(201).json({
+                    const nextOrder =
+                        Number(
+                            result.rows[0].total
+                        ) + 1;
 
-                        success: true,
 
-                        message:
-                            "MCQ added to test successfully",
+                    // Add MCQ
 
-                        question:
-                            result.rows[0]
+                    TestQuestion.add(
+                        {
+                            test_id: testId,
+                            mcq_id: mcq_id,
+                            question_order:
+                                nextOrder
+                        },
+                        (err, result) => {
 
-                    });
+                            if (err) {
+
+                                console.error(
+                                    "Add test question error:",
+                                    err
+                                );
+
+                                return res.status(500).json({
+                                    success: false,
+                                    message:
+                                        "Database error",
+                                    error:
+                                        err.message
+                                });
+
+                            }
+
+
+                            return res.status(201).json({
+
+                                success: true,
+
+                                message:
+                                    "MCQ added to test successfully",
+
+                                question:
+                                    result.rows[0]
+
+                            });
+
+                        }
+                    );
 
                 }
             );
@@ -198,15 +200,9 @@ exports.deleteQuestion = (req, res) => {
                 );
 
                 return res.status(500).json({
-
                     success: false,
-
-                    message:
-                        "Database error",
-
-                    error:
-                        err.message
-
+                    message: "Database error",
+                    error: err.message
                 });
 
             }
@@ -215,24 +211,18 @@ exports.deleteQuestion = (req, res) => {
             if (result.rowCount === 0) {
 
                 return res.status(404).json({
-
                     success: false,
-
                     message:
                         "Test question not found"
-
                 });
 
             }
 
 
             return res.json({
-
                 success: true,
-
                 message:
                     "MCQ removed from test"
-
             });
 
         }
@@ -261,15 +251,9 @@ exports.clearTest = (req, res) => {
                 );
 
                 return res.status(500).json({
-
                     success: false,
-
-                    message:
-                        "Database error",
-
-                    error:
-                        err.message
-
+                    message: "Database error",
+                    error: err.message
                 });
 
             }
@@ -313,15 +297,9 @@ exports.countQuestions = (req, res) => {
                 );
 
                 return res.status(500).json({
-
                     success: false,
-
-                    message:
-                        "Database error",
-
-                    error:
-                        err.message
-
+                    message: "Database error",
+                    error: err.message
                 });
 
             }
