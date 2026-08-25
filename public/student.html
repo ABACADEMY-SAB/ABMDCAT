@@ -1,0 +1,1565 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>ABMDCAT - Student Dashboard</title>
+
+
+  <style>
+
+    * {
+      box-sizing: border-box;
+    }
+
+
+    body {
+
+      margin: 0;
+
+      font-family: Arial, sans-serif;
+
+      background: #f5fbff;
+
+      color: #111;
+
+    }
+
+
+    /* =========================
+       HEADER
+    ========================= */
+
+    header {
+
+      background: #0ea5e9;
+
+      color: white;
+
+      padding: 16px 22px;
+
+      display: flex;
+
+      align-items: center;
+
+      justify-content: space-between;
+
+      position: sticky;
+
+      top: 0;
+
+      z-index: 100;
+
+    }
+
+
+    header h1 {
+
+      margin: 0;
+
+      font-size: 21px;
+
+    }
+
+
+    .logout {
+
+      border: none;
+
+      background: white;
+
+      color: #0ea5e9;
+
+      padding: 9px 15px;
+
+      border-radius: 7px;
+
+      font-weight: bold;
+
+      cursor: pointer;
+
+    }
+
+
+    /* =========================
+       LAYOUT
+    ========================= */
+
+    .layout {
+
+      display: flex;
+
+      min-height: calc(100vh - 60px);
+
+    }
+
+
+    /* =========================
+       SIDEBAR
+    ========================= */
+
+    .sidebar {
+
+      width: 230px;
+
+      background: white;
+
+      border-right: 1px solid #ddd;
+
+      padding: 18px 12px;
+
+      flex-shrink: 0;
+
+    }
+
+
+    .sidebar-title {
+
+      font-size: 13px;
+
+      font-weight: bold;
+
+      color: #777;
+
+      margin: 8px 12px 12px;
+
+      text-transform: uppercase;
+
+    }
+
+
+    .nav-button {
+
+      width: 100%;
+
+      border: none;
+
+      background: transparent;
+
+      padding: 12px;
+
+      text-align: left;
+
+      border-radius: 8px;
+
+      cursor: pointer;
+
+      font-size: 14px;
+
+      margin-bottom: 4px;
+
+    }
+
+
+    .nav-button:hover {
+
+      background: #eef9ff;
+
+    }
+
+
+    .nav-button.active {
+
+      background: #e0f5ff;
+
+      color: #0284c7;
+
+      font-weight: bold;
+
+    }
+
+
+    /* =========================
+       MAIN
+    ========================= */
+
+    main {
+
+      flex: 1;
+
+      padding: 25px;
+
+      overflow-x: auto;
+
+    }
+
+
+    .section {
+
+      display: none;
+
+    }
+
+
+    .section.active {
+
+      display: block;
+
+    }
+
+
+    .page-title {
+
+      margin-top: 0;
+
+      margin-bottom: 7px;
+
+      font-size: 25px;
+
+    }
+
+
+    .page-description {
+
+      color: #666;
+
+      margin-top: 0;
+
+      margin-bottom: 25px;
+
+    }
+
+
+    /* =========================
+       CARDS
+    ========================= */
+
+    .cards {
+
+      display: grid;
+
+      grid-template-columns:
+        repeat(
+          auto-fit,
+          minmax(170px, 1fr)
+        );
+
+      gap: 18px;
+
+      margin-bottom: 25px;
+
+    }
+
+
+    .card {
+
+      background: white;
+
+      padding: 21px;
+
+      border-radius: 12px;
+
+      box-shadow:
+        0 3px 15px rgba(0,0,0,0.07);
+
+    }
+
+
+    .card-title {
+
+      color: #666;
+
+      font-size: 14px;
+
+      margin-bottom: 10px;
+
+    }
+
+
+    .number {
+
+      font-size: 30px;
+
+      font-weight: bold;
+
+      color: #0ea5e9;
+
+    }
+
+
+    /* =========================
+       PANELS
+    ========================= */
+
+    .panel {
+
+      background: white;
+
+      border-radius: 12px;
+
+      padding: 22px;
+
+      margin-bottom: 20px;
+
+      box-shadow:
+        0 3px 15px rgba(0,0,0,0.07);
+
+    }
+
+
+    .panel h2 {
+
+      margin-top: 0;
+
+    }
+
+
+    .row {
+
+      margin-bottom: 15px;
+
+    }
+
+
+    .label {
+
+      font-weight: bold;
+
+      display: block;
+
+      margin-bottom: 5px;
+
+    }
+
+
+    .value {
+
+      color: #555;
+
+    }
+
+
+    /* =========================
+       MODULE GRID
+    ========================= */
+
+    .module-grid {
+
+      display: grid;
+
+      grid-template-columns:
+        repeat(
+          auto-fit,
+          minmax(200px, 1fr)
+        );
+
+      gap: 15px;
+
+    }
+
+
+    .module {
+
+      background: white;
+
+      border-radius: 12px;
+
+      padding: 20px;
+
+      box-shadow:
+        0 3px 15px rgba(0,0,0,0.07);
+
+    }
+
+
+    .module h3 {
+
+      margin-top: 0;
+
+    }
+
+
+    .module p {
+
+      color: #666;
+
+      font-size: 14px;
+
+      line-height: 1.5;
+
+    }
+
+
+    /* =========================
+       BUTTONS
+    ========================= */
+
+    .button {
+
+      border: none;
+
+      padding: 10px 16px;
+
+      border-radius: 7px;
+
+      cursor: pointer;
+
+      font-weight: bold;
+
+      margin-right: 8px;
+
+      margin-bottom: 8px;
+
+    }
+
+
+    .primary {
+
+      background: #0ea5e9;
+
+      color: white;
+
+    }
+
+
+    .secondary {
+
+      background: #e5e7eb;
+
+      color: #111;
+
+    }
+
+
+    .danger {
+
+      background: #dc2626;
+
+      color: white;
+
+    }
+
+
+    /* =========================
+       MESSAGE
+    ========================= */
+
+    #message {
+
+      position: fixed;
+
+      bottom: 20px;
+
+      right: 20px;
+
+      background: #111;
+
+      color: white;
+
+      padding: 12px 18px;
+
+      border-radius: 8px;
+
+      display: none;
+
+      z-index: 999;
+
+    }
+
+
+    /* =========================
+       MOBILE
+    ========================= */
+
+    @media (max-width: 700px) {
+
+      .layout {
+
+        display: block;
+
+      }
+
+
+      .sidebar {
+
+        width: 100%;
+
+        border-right: none;
+
+        border-bottom: 1px solid #ddd;
+
+        display: flex;
+
+        overflow-x: auto;
+
+        gap: 5px;
+
+      }
+
+
+      .sidebar-title {
+
+        display: none;
+
+      }
+
+
+      .nav-button {
+
+        min-width: max-content;
+
+        margin: 0;
+
+      }
+
+
+      main {
+
+        padding: 18px;
+
+      }
+
+
+      header h1 {
+
+        font-size: 17px;
+
+      }
+
+    }
+
+  </style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================
+     HEADER
+========================= -->
+
+<header>
+
+  <h1>
+    ABMDCAT Student Panel
+  </h1>
+
+
+  <button
+    class="logout"
+    onclick="logout()"
+  >
+    Logout
+  </button>
+
+</header>
+
+
+
+<div class="layout">
+
+
+  <!-- =========================
+       SIDEBAR
+  ========================= -->
+
+  <aside class="sidebar">
+
+
+    <div class="sidebar-title">
+      Student
+    </div>
+
+
+    <button
+      class="nav-button active"
+      onclick="showSection('dashboard', this)"
+    >
+      Dashboard
+    </button>
+
+
+    <button
+      class="nav-button"
+      onclick="showSection('profile', this)"
+    >
+      Profile
+    </button>
+
+
+    <button
+      class="nav-button"
+      onclick="showSection('practice', this)"
+    >
+      Practice MCQs
+    </button>
+
+
+    <button
+      class="nav-button"
+      onclick="showSection('tests', this)"
+    >
+      Tests
+    </button>
+
+
+    <button
+      class="nav-button"
+      onclick="showSection('results', this)"
+    >
+      Results
+    </button>
+
+
+    <button
+      class="nav-button"
+      onclick="showSection('bookmarks', this)"
+    >
+      Bookmarks
+    </button>
+
+
+    <button
+      class="nav-button"
+      onclick="showSection('wrong', this)"
+    >
+      Wrong Questions
+    </button>
+
+
+    <button
+      class="nav-button"
+      onclick="showSection('ranking', this)"
+    >
+      Ranking
+    </button>
+
+
+    <button
+      class="nav-button"
+      onclick="showSection('notes', this)"
+    >
+      Notes
+    </button>
+
+
+    <button
+      class="nav-button"
+      onclick="showSection('notifications', this)"
+    >
+      Notifications
+    </button>
+
+
+    <button
+      class="nav-button"
+      onclick="showSection('settings', this)"
+    >
+      Settings
+    </button>
+
+
+  </aside>
+
+
+
+  <!-- =========================
+       MAIN
+  ========================= -->
+
+  <main>
+
+
+    <!-- =========================
+         DASHBOARD
+    ========================= -->
+
+    <section
+      id="dashboard"
+      class="section active"
+    >
+
+      <h2 class="page-title">
+        Student Dashboard
+      </h2>
+
+
+      <p class="page-description">
+        Welcome to your ABMDCAT preparation dashboard.
+      </p>
+
+
+      <div class="panel">
+
+        <h2>
+          Welcome,
+          <span id="studentName">
+            Student
+          </span>
+        </h2>
+
+
+        <p>
+          Keep practicing and improve your MDCAT preparation.
+        </p>
+
+      </div>
+
+
+      <div class="cards">
+
+
+        <div class="card">
+
+          <div class="card-title">
+            Tests Attempted
+          </div>
+
+          <div
+            class="number"
+            id="testsAttempted"
+          >
+            0
+          </div>
+
+        </div>
+
+
+        <div class="card">
+
+          <div class="card-title">
+            Average Score
+          </div>
+
+          <div
+            class="number"
+            id="averageScore"
+          >
+            0%
+          </div>
+
+        </div>
+
+
+        <div class="card">
+
+          <div class="card-title">
+            Bookmarks
+          </div>
+
+          <div
+            class="number"
+            id="bookmarkCount"
+          >
+            0
+          </div>
+
+        </div>
+
+
+        <div class="card">
+
+          <div class="card-title">
+            Wrong Questions
+          </div>
+
+          <div
+            class="number"
+            id="wrongCount"
+          >
+            0
+          </div>
+
+        </div>
+
+
+      </div>
+
+    </section>
+
+
+
+    <!-- =========================
+         PROFILE
+    ========================= -->
+
+    <section
+      id="profile"
+      class="section"
+    >
+
+      <h2 class="page-title">
+        My Profile
+      </h2>
+
+
+      <p class="page-description">
+        Your ABMDCAT student information.
+      </p>
+
+
+      <div class="panel">
+
+
+        <div class="row">
+
+          <span class="label">
+            Username
+          </span>
+
+          <span
+            class="value"
+            id="profileUsername"
+          >
+            Loading...
+          </span>
+
+        </div>
+
+
+        <div class="row">
+
+          <span class="label">
+            Full Name
+          </span>
+
+          <span
+            class="value"
+            id="profileFullname"
+          >
+            Loading...
+          </span>
+
+        </div>
+
+
+        <div class="row">
+
+          <span class="label">
+            Email
+          </span>
+
+          <span
+            class="value"
+            id="profileEmail"
+          >
+            Loading...
+          </span>
+
+        </div>
+
+
+        <div class="row">
+
+          <span class="label">
+            Phone
+          </span>
+
+          <span
+            class="value"
+            id="profilePhone"
+          >
+            Loading...
+          </span>
+
+        </div>
+
+
+        <div class="row">
+
+          <span class="label">
+            Account Status
+          </span>
+
+          <span
+            class="value"
+            id="profileStatus"
+          >
+            Loading...
+          </span>
+
+        </div>
+
+
+      </div>
+
+    </section>
+
+
+
+    <!-- =========================
+         PRACTICE
+    ========================= -->
+
+    <section
+      id="practice"
+      class="section"
+    >
+
+      <h2 class="page-title">
+        Practice MCQs
+      </h2>
+
+
+      <p class="page-description">
+        Practice MDCAT multiple choice questions.
+      </p>
+
+
+      <div class="module-grid">
+
+
+        <div class="module">
+
+          <h3>
+            Biology
+          </h3>
+
+          <p>
+            Practice Biology MCQs by subject,
+            chapter and topic.
+          </p>
+
+          <button
+            class="button primary"
+            onclick="showMessage('Biology practice will be connected soon.')"
+          >
+            Start Practice
+          </button>
+
+        </div>
+
+
+        <div class="module">
+
+          <h3>
+            Chemistry
+          </h3>
+
+          <p>
+            Practice Chemistry MCQs according
+            to the MDCAT syllabus.
+          </p>
+
+          <button
+            class="button primary"
+            onclick="showMessage('Chemistry practice will be connected soon.')"
+          >
+            Start Practice
+          </button>
+
+        </div>
+
+
+        <div class="module">
+
+          <h3>
+            Physics
+          </h3>
+
+          <p>
+            Practice Physics MCQs with different
+            topics and chapters.
+          </p>
+
+          <button
+            class="button primary"
+            onclick="showMessage('Physics practice will be connected soon.')"
+          >
+            Start Practice
+          </button>
+
+        </div>
+
+
+      </div>
+
+    </section>
+
+
+
+    <!-- =========================
+         TESTS
+    ========================= -->
+
+    <section
+      id="tests"
+      class="section"
+    >
+
+      <h2 class="page-title">
+        Tests
+      </h2>
+
+
+      <p class="page-description">
+        Take available online tests.
+      </p>
+
+
+      <div class="module">
+
+        <h3>
+          Online Tests
+        </h3>
+
+        <p>
+          Available online tests will appear here
+          after the test system is connected.
+        </p>
+
+      </div>
+
+    </section>
+
+
+
+    <!-- =========================
+         RESULTS
+    ========================= -->
+
+    <section
+      id="results"
+      class="section"
+    >
+
+      <h2 class="page-title">
+        Results
+      </h2>
+
+
+      <p class="page-description">
+        View your previous test results.
+      </p>
+
+
+      <div class="module">
+
+        <h3>
+          My Results
+        </h3>
+
+        <p>
+          Your test results will appear here after
+          the results API is connected.
+        </p>
+
+      </div>
+
+    </section>
+
+
+
+    <!-- =========================
+         BOOKMARKS
+    ========================= -->
+
+    <section
+      id="bookmarks"
+      class="section"
+    >
+
+      <h2 class="page-title">
+        Bookmarks
+      </h2>
+
+
+      <p class="page-description">
+        MCQs you saved for later revision.
+      </p>
+
+
+      <div class="module">
+
+        <h3>
+          My Bookmarks
+        </h3>
+
+        <p>
+          Your bookmarked MCQs will appear here.
+        </p>
+
+      </div>
+
+    </section>
+
+
+
+    <!-- =========================
+         WRONG QUESTIONS
+    ========================= -->
+
+    <section
+      id="wrong"
+      class="section"
+    >
+
+      <h2 class="page-title">
+        Wrong Questions
+      </h2>
+
+
+      <p class="page-description">
+        Review questions you answered incorrectly.
+      </p>
+
+
+      <div class="module">
+
+        <h3>
+          Revision
+        </h3>
+
+        <p>
+          Your wrong questions will appear here.
+        </p>
+
+      </div>
+
+    </section>
+
+
+
+    <!-- =========================
+         RANKING
+    ========================= -->
+
+    <section
+      id="ranking"
+      class="section"
+    >
+
+      <h2 class="page-title">
+        Ranking
+      </h2>
+
+
+      <p class="page-description">
+        See your performance ranking.
+      </p>
+
+
+      <div class="module">
+
+        <h3>
+          Student Ranking
+        </h3>
+
+        <p>
+          Overall, daily, weekly and monthly rankings
+          will appear here.
+        </p>
+
+      </div>
+
+    </section>
+
+
+
+    <!-- =========================
+         NOTES
+    ========================= -->
+
+    <section
+      id="notes"
+      class="section"
+    >
+
+      <h2 class="page-title">
+        Notes
+      </h2>
+
+
+      <p class="page-description">
+        Study notes and learning materials.
+      </p>
+
+
+      <div class="module">
+
+        <h3>
+          Study Notes
+        </h3>
+
+        <p>
+          Available notes and purchased notes
+          will appear here.
+        </p>
+
+      </div>
+
+    </section>
+
+
+
+    <!-- =========================
+         NOTIFICATIONS
+    ========================= -->
+
+    <section
+      id="notifications"
+      class="section"
+    >
+
+      <h2 class="page-title">
+        Notifications
+      </h2>
+
+
+      <p class="page-description">
+        Important ABMDCAT announcements and notifications.
+      </p>
+
+
+      <div class="module">
+
+        <h3>
+          Notifications
+        </h3>
+
+        <p>
+          Your notifications will appear here.
+        </p>
+
+      </div>
+
+    </section>
+
+
+
+    <!-- =========================
+         SETTINGS
+    ========================= -->
+
+    <section
+      id="settings"
+      class="section"
+    >
+
+      <h2 class="page-title">
+        Settings
+      </h2>
+
+
+      <p class="page-description">
+        Manage your account settings.
+      </p>
+
+
+      <div class="panel">
+
+        <h3>
+          Account
+        </h3>
+
+        <p>
+          Account settings will be connected here.
+        </p>
+
+      </div>
+
+    </section>
+
+
+  </main>
+
+</div>
+
+
+
+<div id="message"></div>
+
+
+
+<script>
+
+
+/* ==========================================
+   GET STUDENT
+========================================== */
+
+function getStudent() {
+
+  const saved =
+    localStorage.getItem("student");
+
+
+  if (!saved) {
+
+    window.location.href = "/";
+
+    return null;
+
+  }
+
+
+  try {
+
+    return JSON.parse(saved);
+
+  } catch (error) {
+
+    localStorage.removeItem("student");
+
+    window.location.href = "/";
+
+    return null;
+
+  }
+
+}
+
+
+
+/* ==========================================
+   NAVIGATION
+========================================== */
+
+function showSection(sectionId, button) {
+
+  const sections =
+    document.querySelectorAll(".section");
+
+
+  sections.forEach(function(section) {
+
+    section.classList.remove("active");
+
+  });
+
+
+  const selected =
+    document.getElementById(sectionId);
+
+
+  if (selected) {
+
+    selected.classList.add("active");
+
+  }
+
+
+  const buttons =
+    document.querySelectorAll(".nav-button");
+
+
+  buttons.forEach(function(item) {
+
+    item.classList.remove("active");
+
+  });
+
+
+  if (button) {
+
+    button.classList.add("active");
+
+  }
+
+}
+
+
+
+/* ==========================================
+   MESSAGE
+========================================== */
+
+function showMessage(text) {
+
+  const message =
+    document.getElementById("message");
+
+
+  message.textContent = text;
+
+  message.style.display = "block";
+
+
+  setTimeout(function() {
+
+    message.style.display = "none";
+
+  }, 3000);
+
+}
+
+
+
+/* ==========================================
+   LOAD PROFILE
+========================================== */
+
+async function loadProfile() {
+
+  const student =
+    getStudent();
+
+
+  if (!student) return;
+
+
+  document.getElementById(
+    "studentName"
+  ).textContent =
+    student.fullname || student.username;
+
+
+  document.getElementById(
+    "profileUsername"
+  ).textContent =
+    student.username || "Not available";
+
+
+  document.getElementById(
+    "profileFullname"
+  ).textContent =
+    student.fullname || "Not available";
+
+
+  document.getElementById(
+    "profileEmail"
+  ).textContent =
+    student.email || "Not available";
+
+
+  document.getElementById(
+    "profilePhone"
+  ).textContent =
+    student.phone || "Not available";
+
+
+  document.getElementById(
+    "profileStatus"
+  ).textContent =
+    student.status || "Not available";
+
+}
+
+
+
+/* ==========================================
+   LOAD STATISTICS
+========================================== */
+
+async function loadStatistics() {
+
+  const student =
+    getStudent();
+
+
+  if (!student) return;
+
+
+  try {
+
+    const response =
+      await fetch(
+        "/api/student/statistics"
+      );
+
+
+    const data =
+      await response.json();
+
+
+    if (data.success) {
+
+      document.getElementById(
+        "testsAttempted"
+      ).textContent =
+        data.testsAttempted ?? 0;
+
+
+      document.getElementById(
+        "averageScore"
+      ).textContent =
+        (data.averageScore ?? 0) + "%";
+
+
+      document.getElementById(
+        "bookmarkCount"
+      ).textContent =
+        data.bookmarks ?? 0;
+
+
+      document.getElementById(
+        "wrongCount"
+      ).textContent =
+        data.wrongQuestions ?? 0;
+
+    }
+
+  } catch (error) {
+
+    console.error(
+      "Statistics error:",
+      error
+    );
+
+  }
+
+}
+
+
+
+/* ==========================================
+   LOGOUT
+========================================== */
+
+async function logout() {
+
+  try {
+
+    await fetch(
+      "/api/student/logout",
+      {
+        method: "POST"
+      }
+    );
+
+  } catch (error) {
+
+    console.error(
+      "Logout error:",
+      error
+    );
+
+  }
+
+
+  localStorage.removeItem("student");
+
+
+  window.location.href = "/";
+
+}
+
+
+
+/* ==========================================
+   INITIALIZE
+========================================== */
+
+async function initializeStudentPanel() {
+
+  const student =
+    getStudent();
+
+
+  if (!student) return;
+
+
+  await loadProfile();
+
+  await loadStatistics();
+
+}
+
+
+initializeStudentPanel();
+
+
+</script>
+
+</body>
+
+</html>
