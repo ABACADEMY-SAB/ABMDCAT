@@ -212,7 +212,7 @@ class Mcq {
     // Random MCQs
     // =====================================
 
-    static.random(limit, callback) {
+    static random(limit, callback) {
 
         db.query(
             `SELECT *
@@ -230,7 +230,7 @@ class Mcq {
     // Count MCQs
     // =====================================
 
-    static.count(callback) {
+    static count(callback) {
 
         db.query(
             `SELECT COUNT(*) AS total
