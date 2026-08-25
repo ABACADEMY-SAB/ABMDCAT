@@ -1,138 +1,69 @@
 const express = require("express");
-const multer = require("multer");
-const path = require("path");
 
 const router = express.Router();
 
-// Storage Configuration
-const storage = multer.diskStorage({
+const uploadController =
+    require("../controllers/uploadController");
 
-    destination: function(req, file, cb){
 
-        cb(null, "uploads/");
+// =====================================
+// GET ALL UPLOADS
+// =====================================
 
-    },
+router.get(
+    "/",
+    uploadController.getAllUploads
+);
 
-    filename: function(req, file, cb){
 
-        const uniqueName =
-        Date.now() + "-" + file.originalname;
+// =====================================
+// GET UPLOADS BY USER
+// =====================================
 
-        cb(null, uniqueName);
+router.get(
+    "/user/:userId",
+    uploadController.getUploadsByUser
+);
 
-    }
 
-});
+// =====================================
+// COUNT UPLOADS
+// =====================================
 
-// File Filter
-const fileFilter = (req, file, cb) => {
+router.get(
+    "/count",
+    uploadController.countUploads
+);
 
-    const allowed = [
 
-        ".pdf",
-        ".jpg",
-        ".jpeg",
-        ".png",
-        ".xlsx",
-        ".xls"
+// =====================================
+// SAVE UPLOAD INFORMATION
+// =====================================
 
-    ];
-
-    const ext = path.extname(file.originalname).toLowerCase();
-
-    if(allowed.includes(ext)){
-
-        cb(null, true);
-
-    }else{
-
-        cb(new Error("Unsupported File Type"));
-
-    }
-
-};
-
-// Multer Upload
-const upload = multer({
-
-    storage: storage,
-
-    fileFilter: fileFilter,
-
-    limits: {
-
-        fileSize: 20 * 1024 * 1024
-
-    }
-
-});
-
-// Upload File
 router.post(
+    "/add",
+    uploadController.saveUpload
+);
 
-"/",
 
-upload.single("file"),
+// =====================================
+// DELETE UPLOAD
+// =====================================
 
-(req,res)=>{
+router.delete(
+    "/delete/:id",
+    uploadController.deleteUpload
+);
 
-    res.json({
 
-        success:true,
+// =====================================
+// GET UPLOAD BY ID
+// =====================================
 
-        filename:req.file.filename,
+router.get(
+    "/:id",
+    uploadController.getUploadById
+);
 
-        original:req.file.originalname,
-
-        path:req.file.path
-
-    });
-
-});
-
-// Upload Multiple Files
-router.post(
-
-"/multiple",
-
-upload.array("files",10),
-
-(req,res)=>{
-
-    res.json({
-
-        success:true,
-
-        files:req.files
-
-    });
-
-});
-
-// List Uploaded Files
-router.get("/",(req,res)=>{
-
-    res.json({
-
-        success:true,
-
-        files:[]
-
-    });
-
-});
-
-// Delete Uploaded File
-router.delete("/:id",(req,res)=>{
-
-    res.json({
-
-        success:true,
-
-        message:"File Deleted Successfully"
-
-    });
-
-});
 
 module.exports = router;
