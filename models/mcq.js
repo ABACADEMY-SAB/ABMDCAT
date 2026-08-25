@@ -194,7 +194,7 @@ class Mcq {
     // Topic Filter
     // =====================================
 
-    static.topic(topic, callback) {
+    static topic(topic, callback) {
 
         db.query(
             `SELECT *
