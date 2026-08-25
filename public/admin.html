@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 
 <meta charset="UTF-8">
@@ -389,7 +390,13 @@ Logout
 
 </header>
 
+
 <div class="layout">
+
+
+<!-- =========================
+     SIDEBAR
+========================= -->
 
 <aside class="sidebar">
 
@@ -426,6 +433,7 @@ class="nav-button"
 onclick="showSection('maintenance',this)">
 Maintenance
 </button>
+
 
 <div class="sidebar-title">
 Content Management
@@ -487,9 +495,13 @@ Uploads
 
 </aside>
 
+
 <main>
 
-<!-- DASHBOARD -->
+
+<!-- =========================
+     DASHBOARD
+========================= -->
 
 <section
 id="dashboard"
@@ -513,12 +525,14 @@ Loading dashboard...
 
 </div>
 
+
 <div class="cards">
 
 <div class="card">
 <div class="card-title">
 Total Students
 </div>
+
 <div
 class="number"
 id="dashboardStudents">
@@ -526,10 +540,12 @@ id="dashboardStudents">
 </div>
 </div>
 
+
 <div class="card">
 <div class="card-title">
 Total MCQs
 </div>
+
 <div
 class="number"
 id="dashboardMcqs">
@@ -537,10 +553,12 @@ id="dashboardMcqs">
 </div>
 </div>
 
+
 <div class="card">
 <div class="card-title">
 Total Tests
 </div>
+
 <div
 class="number"
 id="dashboardTests">
@@ -548,10 +566,12 @@ id="dashboardTests">
 </div>
 </div>
 
+
 <div class="card">
 <div class="card-title">
 Total Notes
 </div>
+
 <div
 class="number"
 id="dashboardNotes">
@@ -559,10 +579,12 @@ id="dashboardNotes">
 </div>
 </div>
 
+
 <div class="card">
 <div class="card-title">
 Total Results
 </div>
+
 <div
 class="number"
 id="dashboardResults">
@@ -575,7 +597,9 @@ id="dashboardResults">
 </section>
 
 
-<!-- PROFILE -->
+<!-- =========================
+     PROFILE
+========================= -->
 
 <section
 id="profile"
@@ -606,7 +630,9 @@ Loading...
 </section>
 
 
-<!-- STATISTICS -->
+<!-- =========================
+     STATISTICS
+========================= -->
 
 <section
 id="statistics"
@@ -668,7 +694,9 @@ id="statResults">
 </section>
 
 
-<!-- SETTINGS -->
+<!-- =========================
+     SETTINGS
+========================= -->
 
 <section
 id="settings"
@@ -695,6 +723,7 @@ Loading...
 </p>
 
 <p>
+
 <strong>Maintenance:</strong>
 
 <span
@@ -710,7 +739,9 @@ OFF
 </section>
 
 
-<!-- MAINTENANCE -->
+<!-- =========================
+     MAINTENANCE
+========================= -->
 
 <section
 id="maintenance"
@@ -762,6 +793,7 @@ Students
 Manage ABMDCAT student accounts.
 </p>
 
+
 <div class="cards">
 
 <div class="card">
@@ -800,7 +832,7 @@ type="text"
 class="input"
 id="studentSearch"
 placeholder="Search by username, name, email or phone..."
-oninput="filterStudents()">
+oninput="filterStudents">
 
 </div>
 
@@ -846,18 +878,24 @@ Loading students...
 </section>
 
 
-<!-- OTHER MODULES -->
+<!-- =========================
+     MCQS
+========================= -->
 
-<section id="mcqs" class="section">
+<section
+id="mcqs"
+class="section">
 
-<h2 class="page-title">MCQs</h2>
+<h2 class="page-title">
+MCQs
+</h2>
 
 <div class="panel">
 
 <h3>MCQ Management</h3>
 
 <p>
-MCQ management will be connected in the next batch.
+MCQ management will be connected after the Tests module.
 </p>
 
 </div>
@@ -865,33 +903,119 @@ MCQ management will be connected in the next batch.
 </section>
 
 
-<section id="tests" class="section">
+<!-- =========================
+     TESTS
+========================= -->
 
-<h2 class="page-title">Tests</h2>
+<section
+id="tests"
+class="section">
+
+<h2 class="page-title">
+Tests
+</h2>
+
+<p class="page-description">
+Create, edit, schedule and manage online MDCAT tests.
+</p>
+
+
+<div class="cards">
+
+<div class="card">
+
+<div class="card-title">
+Total Tests
+</div>
+
+<div
+class="number"
+id="testCount">
+0
+</div>
+
+</div>
+
+</div>
+
 
 <div class="panel">
 
-<h3>Test Management</h3>
+<button
+class="button primary"
+onclick="openAddTest()">
++ Create Test
+</button>
 
-<p>
-Online test management will be connected in a later batch.
-</p>
+<button
+class="button secondary"
+onclick="loadTests()">
+Refresh
+</button>
+
+</div>
+
+
+<div class="panel">
+
+<div class="table-container">
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>ID</th>
+<th>Title</th>
+<th>Subject</th>
+<th>Chapter</th>
+<th>Questions</th>
+<th>Duration</th>
+<th>Start Time</th>
+<th>Actions</th>
+
+</tr>
+
+</thead>
+
+<tbody id="testsTable">
+
+<tr>
+<td colspan="8">
+Loading tests...
+</td>
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
 
 </div>
 
 </section>
 
 
-<section id="notes" class="section">
+<!-- =========================
+     NOTES
+========================= -->
 
-<h2 class="page-title">Notes</h2>
+<section
+id="notes"
+class="section">
+
+<h2 class="page-title">
+Notes
+</h2>
 
 <div class="panel">
 
 <h3>Notes Management</h3>
 
 <p>
-Notes management will be connected in a later batch.
+Notes management will be connected later.
 </p>
 
 </div>
@@ -899,16 +1023,24 @@ Notes management will be connected in a later batch.
 </section>
 
 
-<section id="results" class="section">
+<!-- =========================
+     RESULTS
+========================= -->
 
-<h2 class="page-title">Results</h2>
+<section
+id="results"
+class="section">
+
+<h2 class="page-title">
+Results
+</h2>
 
 <div class="panel">
 
 <h3>Results Management</h3>
 
 <p>
-Results management will be connected in a later batch.
+Results management will be connected later.
 </p>
 
 </div>
@@ -916,16 +1048,24 @@ Results management will be connected in a later batch.
 </section>
 
 
-<section id="notifications" class="section">
+<!-- =========================
+     NOTIFICATIONS
+========================= -->
 
-<h2 class="page-title">Notifications</h2>
+<section
+id="notifications"
+class="section">
+
+<h2 class="page-title">
+Notifications
+</h2>
 
 <div class="panel">
 
 <h3>Notification Management</h3>
 
 <p>
-Notifications will be connected in a later batch.
+Notifications will be connected later.
 </p>
 
 </div>
@@ -933,16 +1073,24 @@ Notifications will be connected in a later batch.
 </section>
 
 
-<section id="ranking" class="section">
+<!-- =========================
+     RANKING
+========================= -->
 
-<h2 class="page-title">Ranking</h2>
+<section
+id="ranking"
+class="section">
+
+<h2 class="page-title">
+Ranking
+</h2>
 
 <div class="panel">
 
 <h3>Ranking</h3>
 
 <p>
-Ranking will be connected in a later batch.
+Ranking will be connected later.
 </p>
 
 </div>
@@ -950,16 +1098,24 @@ Ranking will be connected in a later batch.
 </section>
 
 
-<section id="bookmarks" class="section">
+<!-- =========================
+     BOOKMARKS
+========================= -->
 
-<h2 class="page-title">Bookmarks</h2>
+<section
+id="bookmarks"
+class="section">
+
+<h2 class="page-title">
+Bookmarks
+</h2>
 
 <div class="panel">
 
 <h3>Bookmarks</h3>
 
 <p>
-Bookmark management will be connected in a later batch.
+Bookmark management will be connected later.
 </p>
 
 </div>
@@ -967,28 +1123,39 @@ Bookmark management will be connected in a later batch.
 </section>
 
 
-<section id="uploads" class="section">
+<!-- =========================
+     UPLOADS
+========================= -->
 
-<h2 class="page-title">Uploads</h2>
+<section
+id="uploads"
+class="section">
+
+<h2 class="page-title">
+Uploads
+</h2>
 
 <div class="panel">
 
 <h3>File Uploads</h3>
 
 <p>
-Upload management will be connected in a later batch.
+Upload management will be connected later.
 </p>
 
 </div>
 
 </section>
 
+
 </main>
 
 </div>
 
 
-<!-- ADD / EDIT MODAL -->
+<!-- =========================
+     STUDENT MODAL
+========================= -->
 
 <div
 class="modal"
@@ -1006,6 +1173,7 @@ Add Student
 type="hidden"
 id="studentId">
 
+
 <div class="form-grid">
 
 <div class="form-group">
@@ -1018,6 +1186,7 @@ id="studentUsername"
 required>
 
 </div>
+
 
 <div
 class="form-group"
@@ -1062,6 +1231,7 @@ required>
 
 </div>
 
+
 <div class="form-group">
 
 <label>Phone</label>
@@ -1096,13 +1266,165 @@ Cancel
 </div>
 
 
+<!-- =========================
+     TEST MODAL
+========================= -->
+
+<div
+class="modal"
+id="testModal">
+
+<div class="modal-box">
+
+<h2 id="testModalTitle">
+Create Test
+</h2>
+
+<form id="testForm">
+
+<input
+type="hidden"
+id="testId">
+
+
+<div class="form-group">
+
+<label>Test Title</label>
+
+<input
+class="input"
+id="testTitle"
+placeholder="e.g. MDCAT Biology Test 1"
+required>
+
+</div>
+
+
+<div class="form-group">
+
+<label>Description</label>
+
+<input
+class="input"
+id="testDescription"
+placeholder="Test description">
+
+</div>
+
+
+<div class="form-grid">
+
+<div class="form-group">
+
+<label>Subject</label>
+
+<input
+class="input"
+id="testSubject"
+placeholder="Biology"
+required>
+
+</div>
+
+
+<div class="form-group">
+
+<label>Chapter</label>
+
+<input
+class="input"
+id="testChapter"
+placeholder="Circulation">
+
+</div>
+
+</div>
+
+
+<div class="form-group">
+
+<label>Topic</label>
+
+<input
+class="input"
+id="testTopic"
+placeholder="Heart">
+
+</div>
+
+
+<div class="form-grid">
+
+<div class="form-group">
+
+<label>Total Questions</label>
+
+<input
+type="number"
+class="input"
+id="testQuestions"
+min="1"
+max="180"
+required>
+
+</div>
+
+
+<div class="form-group">
+
+<label>Duration (minutes)</label>
+
+<input
+type="number"
+class="input"
+id="testDuration"
+min="1"
+required>
+
+</div>
+
+</div>
+
+
+<div class="form-group">
+
+<label>Start Time (optional)</label>
+
+<input
+type="datetime-local"
+class="input"
+id="testStartTime">
+
+</div>
+
+
+<button
+type="submit"
+class="button primary">
+Save Test
+</button>
+
+<button
+type="button"
+class="button secondary"
+onclick="closeTestModal()">
+Cancel
+</button>
+
+</form>
+
+</div>
+
+</div>
+
+
 <div id="message"></div>
 
 
 <script>
 
 /* =====================================
-NAVIGATION
+   NAVIGATION
 ===================================== */
 
 function showSection(id, button) {
@@ -1110,35 +1432,57 @@ function showSection(id, button) {
     document
         .querySelectorAll(".section")
         .forEach(section => {
+
             section.classList.remove("active");
+
         });
+
 
     const section =
         document.getElementById(id);
 
+
     if (section) {
+
         section.classList.add("active");
+
     }
+
 
     document
         .querySelectorAll(".nav-button")
         .forEach(btn => {
+
             btn.classList.remove("active");
+
         });
 
+
     if (button) {
+
         button.classList.add("active");
+
     }
 
+
     if (id === "students") {
+
         loadStudents();
+
+    }
+
+
+    if (id === "tests") {
+
+        loadTests();
+
     }
 
 }
 
 
 /* =====================================
-MESSAGE
+   MESSAGE
 ===================================== */
 
 function showMessage(text) {
@@ -1146,31 +1490,65 @@ function showMessage(text) {
     const box =
         document.getElementById("message");
 
+
     box.textContent = text;
+
     box.style.display = "block";
 
+
     setTimeout(() => {
+
         box.style.display = "none";
+
     }, 3000);
 
 }
 
 
 /* =====================================
-STUDENT DATA
+   ESCAPE HTML
+===================================== */
+
+function escapeHtml(value) {
+
+    if (
+        value === null ||
+        value === undefined
+    ) {
+
+        return "";
+
+    }
+
+
+    return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+
+}
+
+
+/* =====================================
+   STUDENT DATA
 ===================================== */
 
 let allStudents = [];
 
 
 /* =====================================
-LOAD STUDENTS
+   LOAD STUDENTS
 ===================================== */
 
 async function loadStudents() {
 
     const table =
-        document.getElementById("studentsTable");
+        document.getElementById(
+            "studentsTable"
+        );
+
 
     table.innerHTML = `
         <tr>
@@ -1180,35 +1558,49 @@ async function loadStudents() {
         </tr>
     `;
 
+
     try {
 
         const response =
-            await fetch("/api/admin/students");
+            await fetch(
+                "/api/admin/students"
+            );
+
 
         const data =
             await response.json();
 
-        if (!response.ok || !data.success) {
+
+        if (
+            !response.ok ||
+            !data.success
+        ) {
 
             throw new Error(
-                data.message || "Unable to load students"
+                data.message ||
+                "Unable to load students"
             );
 
         }
 
+
         allStudents =
             data.students || [];
+
 
         document.getElementById(
             "studentCount"
         ).textContent =
             allStudents.length;
 
+
         renderStudents(allStudents);
+
 
     } catch (error) {
 
         console.error(error);
+
 
         table.innerHTML = `
             <tr>
@@ -1218,7 +1610,10 @@ async function loadStudents() {
             </tr>
         `;
 
-        showMessage(error.message);
+
+        showMessage(
+            error.message
+        );
 
     }
 
@@ -1226,13 +1621,16 @@ async function loadStudents() {
 
 
 /* =====================================
-RENDER STUDENTS
+   RENDER STUDENTS
 ===================================== */
 
 function renderStudents(students) {
 
     const table =
-        document.getElementById("studentsTable");
+        document.getElementById(
+            "studentsTable"
+        );
+
 
     if (!students.length) {
 
@@ -1245,6 +1643,7 @@ function renderStudents(students) {
         `;
 
         return;
+
     }
 
 
@@ -1254,29 +1653,46 @@ function renderStudents(students) {
             const status =
                 student.status || "active";
 
+
             const statusClass =
                 status === "blocked"
                     ? "status-blocked"
                     : "status-active";
 
+
             return `
 
             <tr>
 
-                <td>${escapeHtml(student.id)}</td>
-
-                <td>${escapeHtml(student.username)}</td>
-
-                <td>${escapeHtml(student.fullname)}</td>
-
-                <td>${escapeHtml(student.email)}</td>
-
-                <td>${escapeHtml(student.phone)}</td>
+                <td>
+                    ${escapeHtml(student.id)}
+                </td>
 
                 <td>
-                    <span class="status ${statusClass}">
+                    ${escapeHtml(student.username)}
+                </td>
+
+                <td>
+                    ${escapeHtml(student.fullname)}
+                </td>
+
+                <td>
+                    ${escapeHtml(student.email)}
+                </td>
+
+                <td>
+                    ${escapeHtml(student.phone)}
+                </td>
+
+                <td>
+
+                    <span
+                    class="status ${statusClass}">
+
                         ${escapeHtml(status)}
+
                     </span>
+
                 </td>
 
                 <td>
@@ -1286,6 +1702,7 @@ function renderStudents(students) {
                     onclick="editStudent(${student.id})">
                     Edit
                     </button>
+
 
                     ${
                         status === "blocked"
@@ -1307,6 +1724,7 @@ function renderStudents(students) {
                         </button>`
                     }
 
+
                     <button
                     class="button secondary"
                     onclick="deleteStudent(${student.id})">
@@ -1325,43 +1743,29 @@ function renderStudents(students) {
 
 
 /* =====================================
-ESCAPE HTML
-===================================== */
-
-function escapeHtml(value) {
-
-    if (value === null || value === undefined) {
-        return "";
-    }
-
-    return String(value)
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
-
-}
-
-
-/* =====================================
-SEARCH
+   SEARCH STUDENTS
 ===================================== */
 
 function filterStudents() {
 
     const keyword =
         document
-            .getElementById("studentSearch")
+            .getElementById(
+                "studentSearch"
+            )
             .value
             .toLowerCase()
             .trim();
 
+
     if (!keyword) {
 
-        renderStudents(allStudents);
+        renderStudents(
+            allStudents
+        );
 
         return;
+
     }
 
 
@@ -1370,67 +1774,84 @@ function filterStudents() {
 
             return (
 
-                String(student.username || "")
-                    .toLowerCase()
-                    .includes(keyword)
+                String(
+                    student.username || ""
+                )
+                .toLowerCase()
+                .includes(keyword)
 
                 ||
 
-                String(student.fullname || "")
-                    .toLowerCase()
-                    .includes(keyword)
+                String(
+                    student.fullname || ""
+                )
+                .toLowerCase()
+                .includes(keyword)
 
                 ||
 
-                String(student.email || "")
-                    .toLowerCase()
-                    .includes(keyword)
+                String(
+                    student.email || ""
+                )
+                .toLowerCase()
+                .includes(keyword)
 
                 ||
 
-                String(student.phone || "")
-                    .toLowerCase()
-                    .includes(keyword)
+                String(
+                    student.phone || ""
+                )
+                .toLowerCase()
+                .includes(keyword)
 
             );
 
         });
 
 
-    renderStudents(filtered);
+    renderStudents(
+        filtered
+    );
 
 }
 
 
 /* =====================================
-OPEN ADD
+   ADD STUDENT
 ===================================== */
 
 function openAddStudent() {
 
     document.getElementById(
         "studentModalTitle"
-    ).textContent = "Add Student";
+    ).textContent =
+        "Add Student";
+
 
     document.getElementById(
         "studentForm"
     ).reset();
 
+
     document.getElementById(
         "studentId"
     ).value = "";
+
 
     document.getElementById(
         "studentUsername"
     ).disabled = false;
 
+
     document.getElementById(
         "passwordGroup"
     ).style.display = "block";
 
+
     document.getElementById(
         "studentPassword"
     ).required = true;
+
 
     document.getElementById(
         "studentModal"
@@ -1440,50 +1861,63 @@ function openAddStudent() {
 
 
 /* =====================================
-CLOSE MODAL
+   CLOSE STUDENT MODAL
 ===================================== */
 
 function closeStudentModal() {
 
     document
-        .getElementById("studentModal")
-        .classList.remove("active");
+        .getElementById(
+            "studentModal"
+        )
+        .classList.remove(
+            "active"
+        );
 
 }
 
 
 /* =====================================
-EDIT STUDENT
+   EDIT STUDENT
 ===================================== */
 
 function editStudent(id) {
 
     const student =
         allStudents.find(
-            item => Number(item.id) === Number(id)
+            item =>
+                Number(item.id) ===
+                Number(id)
         );
+
 
     if (!student) {
 
-        showMessage("Student not found");
+        showMessage(
+            "Student not found"
+        );
 
         return;
+
     }
 
 
     document.getElementById(
         "studentModalTitle"
-    ).textContent = "Edit Student";
+    ).textContent =
+        "Edit Student";
 
 
     document.getElementById(
         "studentId"
-    ).value = student.id;
+    ).value =
+        student.id;
 
 
     document.getElementById(
         "studentUsername"
-    ).value = student.username || "";
+    ).value =
+        student.username || "";
 
 
     document.getElementById(
@@ -1493,17 +1927,20 @@ function editStudent(id) {
 
     document.getElementById(
         "studentFullname"
-    ).value = student.fullname || "";
+    ).value =
+        student.fullname || "";
 
 
     document.getElementById(
         "studentEmail"
-    ).value = student.email || "";
+    ).value =
+        student.email || "";
 
 
     document.getElementById(
         "studentPhone"
-    ).value = student.phone || "";
+    ).value =
+        student.phone || "";
 
 
     document.getElementById(
@@ -1517,18 +1954,24 @@ function editStudent(id) {
 
 
     document
-        .getElementById("studentModal")
-        .classList.add("active");
+        .getElementById(
+            "studentModal"
+        )
+        .classList.add(
+            "active"
+        );
 
 }
 
 
 /* =====================================
-SAVE STUDENT
+   SAVE STUDENT
 ===================================== */
 
 document
-    .getElementById("studentForm")
+    .getElementById(
+        "studentForm"
+    )
     .addEventListener(
         "submit",
         async function(event) {
@@ -1573,6 +2016,7 @@ document
                         "studentUsername"
                     ).value.trim();
 
+
                 body.password =
                     document.getElementById(
                         "studentPassword"
@@ -1585,9 +2029,11 @@ document
 
                 const response =
                     await fetch(
+
                         isEdit
                             ? `/api/admin/students/${id}`
                             : "/api/admin/students",
+
                         {
 
                             method:
@@ -1596,14 +2042,19 @@ document
                                     : "POST",
 
                             headers: {
+
                                 "Content-Type":
                                     "application/json"
+
                             },
 
                             body:
-                                JSON.stringify(body)
+                                JSON.stringify(
+                                    body
+                                )
 
                         }
+
                     );
 
 
@@ -1633,13 +2084,17 @@ document
 
                 closeStudentModal();
 
+
                 await loadStudents();
+
 
             } catch (error) {
 
                 console.error(error);
 
-                showMessage(error.message);
+                showMessage(
+                    error.message
+                );
 
             }
 
@@ -1648,7 +2103,7 @@ document
 
 
 /* =====================================
-BLOCK STUDENT
+   BLOCK STUDENT
 ===================================== */
 
 async function blockStudent(id) {
@@ -1658,7 +2113,9 @@ async function blockStudent(id) {
             "Are you sure you want to block this student?"
         )
     ) {
+
         return;
+
     }
 
 
@@ -1677,7 +2134,10 @@ async function blockStudent(id) {
             await response.json();
 
 
-        if (!response.ok || !data.success) {
+        if (
+            !response.ok ||
+            !data.success
+        ) {
 
             throw new Error(
                 data.message ||
@@ -1691,13 +2151,17 @@ async function blockStudent(id) {
             "Student blocked successfully"
         );
 
+
         await loadStudents();
+
 
     } catch (error) {
 
         console.error(error);
 
-        showMessage(error.message);
+        showMessage(
+            error.message
+        );
 
     }
 
@@ -1705,7 +2169,7 @@ async function blockStudent(id) {
 
 
 /* =====================================
-UNBLOCK STUDENT
+   UNBLOCK STUDENT
 ===================================== */
 
 async function unblockStudent(id) {
@@ -1725,7 +2189,10 @@ async function unblockStudent(id) {
             await response.json();
 
 
-        if (!response.ok || !data.success) {
+        if (
+            !response.ok ||
+            !data.success
+        ) {
 
             throw new Error(
                 data.message ||
@@ -1739,13 +2206,17 @@ async function unblockStudent(id) {
             "Student unblocked successfully"
         );
 
+
         await loadStudents();
+
 
     } catch (error) {
 
         console.error(error);
 
-        showMessage(error.message);
+        showMessage(
+            error.message
+        );
 
     }
 
@@ -1753,7 +2224,7 @@ async function unblockStudent(id) {
 
 
 /* =====================================
-DELETE STUDENT
+   DELETE STUDENT
 ===================================== */
 
 async function deleteStudent(id) {
@@ -1763,7 +2234,9 @@ async function deleteStudent(id) {
             "Are you sure you want to permanently delete this student?"
         )
     ) {
+
         return;
+
     }
 
 
@@ -1782,7 +2255,10 @@ async function deleteStudent(id) {
             await response.json();
 
 
-        if (!response.ok || !data.success) {
+        if (
+            !response.ok ||
+            !data.success
+        ) {
 
             throw new Error(
                 data.message ||
@@ -1796,13 +2272,17 @@ async function deleteStudent(id) {
             "Student deleted successfully"
         );
 
+
         await loadStudents();
+
 
     } catch (error) {
 
         console.error(error);
 
-        showMessage(error.message);
+        showMessage(
+            error.message
+        );
 
     }
 
@@ -1810,7 +2290,606 @@ async function deleteStudent(id) {
 
 
 /* =====================================
-DASHBOARD
+   TEST DATA
+===================================== */
+
+let allTests = [];
+
+
+/* =====================================
+   LOAD TESTS
+===================================== */
+
+async function loadTests() {
+
+    const table =
+        document.getElementById(
+            "testsTable"
+        );
+
+
+    table.innerHTML = `
+        <tr>
+            <td colspan="8">
+                Loading tests...
+            </td>
+        </tr>
+    `;
+
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/test"
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (
+            !response.ok ||
+            !data.success
+        ) {
+
+            throw new Error(
+                data.message ||
+                "Unable to load tests"
+            );
+
+        }
+
+
+        allTests =
+            data.tests || [];
+
+
+        document.getElementById(
+            "testCount"
+        ).textContent =
+            allTests.length;
+
+
+        renderTests(
+            allTests
+        );
+
+
+    } catch (error) {
+
+        console.error(error);
+
+
+        table.innerHTML = `
+            <tr>
+                <td colspan="8">
+                    Unable to load tests.
+                </td>
+            </tr>
+        `;
+
+
+        showMessage(
+            error.message
+        );
+
+    }
+
+}
+
+
+/* =====================================
+   RENDER TESTS
+===================================== */
+
+function renderTests(tests) {
+
+    const table =
+        document.getElementById(
+            "testsTable"
+        );
+
+
+    if (!tests.length) {
+
+        table.innerHTML = `
+            <tr>
+                <td colspan="8">
+                    No tests found.
+                </td>
+            </tr>
+        `;
+
+        return;
+
+    }
+
+
+    table.innerHTML =
+        tests.map(test => {
+
+            const startTime =
+                test.start_time
+                    ? new Date(
+                        test.start_time
+                    ).toLocaleString()
+                    : "Not scheduled";
+
+
+            return `
+
+            <tr>
+
+                <td>
+                    ${escapeHtml(test.id)}
+                </td>
+
+                <td>
+                    ${escapeHtml(test.title)}
+                </td>
+
+                <td>
+                    ${escapeHtml(test.subject)}
+                </td>
+
+                <td>
+                    ${escapeHtml(
+                        test.chapter || "-"
+                    )}
+                </td>
+
+                <td>
+                    ${escapeHtml(
+                        test.total_questions
+                    )}
+                </td>
+
+                <td>
+                    ${escapeHtml(
+                        test.duration_minutes
+                    )} min
+                </td>
+
+                <td>
+                    ${escapeHtml(
+                        startTime
+                    )}
+                </td>
+
+                <td>
+
+                    <button
+                    class="button primary"
+                    onclick="editTest(${test.id})">
+                    Edit
+                    </button>
+
+
+                    <button
+                    class="button danger"
+                    onclick="deleteTest(${test.id})">
+                    Delete
+                    </button>
+
+                </td>
+
+            </tr>
+
+            `;
+
+        }).join("");
+
+}
+
+
+/* =====================================
+   OPEN ADD TEST
+===================================== */
+
+function openAddTest() {
+
+    document.getElementById(
+        "testModalTitle"
+    ).textContent =
+        "Create Test";
+
+
+    document.getElementById(
+        "testForm"
+    ).reset();
+
+
+    document.getElementById(
+        "testId"
+    ).value = "";
+
+
+    document.getElementById(
+        "testModal"
+    ).classList.add(
+        "active"
+    );
+
+}
+
+
+/* =====================================
+   CLOSE TEST MODAL
+===================================== */
+
+function closeTestModal() {
+
+    document
+        .getElementById(
+            "testModal"
+        )
+        .classList.remove(
+            "active"
+        );
+
+}
+
+
+/* =====================================
+   EDIT TEST
+===================================== */
+
+function editTest(id) {
+
+    const test =
+        allTests.find(
+            item =>
+                Number(item.id) ===
+                Number(id)
+        );
+
+
+    if (!test) {
+
+        showMessage(
+            "Test not found"
+        );
+
+        return;
+
+    }
+
+
+    document.getElementById(
+        "testModalTitle"
+    ).textContent =
+        "Edit Test";
+
+
+    document.getElementById(
+        "testId"
+    ).value =
+        test.id;
+
+
+    document.getElementById(
+        "testTitle"
+    ).value =
+        test.title || "";
+
+
+    document.getElementById(
+        "testDescription"
+    ).value =
+        test.description || "";
+
+
+    document.getElementById(
+        "testSubject"
+    ).value =
+        test.subject || "";
+
+
+    document.getElementById(
+        "testChapter"
+    ).value =
+        test.chapter || "";
+
+
+    document.getElementById(
+        "testTopic"
+    ).value =
+        test.topic || "";
+
+
+    document.getElementById(
+        "testQuestions"
+    ).value =
+        test.total_questions || "";
+
+
+    document.getElementById(
+        "testDuration"
+    ).value =
+        test.duration_minutes || "";
+
+
+    if (test.start_time) {
+
+        const date =
+            new Date(
+                test.start_time
+            );
+
+
+        const local =
+            new Date(
+                date.getTime()
+                -
+                date.getTimezoneOffset()
+                * 60000
+            )
+            .toISOString()
+            .slice(0,16);
+
+
+        document.getElementById(
+            "testStartTime"
+        ).value =
+            local;
+
+    } else {
+
+        document.getElementById(
+            "testStartTime"
+        ).value =
+            "";
+
+    }
+
+
+    document
+        .getElementById(
+            "testModal"
+        )
+        .classList.add(
+            "active"
+        );
+
+}
+
+
+/* =====================================
+   SAVE TEST
+===================================== */
+
+document
+    .getElementById(
+        "testForm"
+    )
+    .addEventListener(
+        "submit",
+        async function(event) {
+
+            event.preventDefault();
+
+
+            const id =
+                document.getElementById(
+                    "testId"
+                ).value;
+
+
+            const isEdit =
+                Boolean(id);
+
+
+            const body = {
+
+                title:
+                    document.getElementById(
+                        "testTitle"
+                    ).value.trim(),
+
+                description:
+                    document.getElementById(
+                        "testDescription"
+                    ).value.trim(),
+
+                subject:
+                    document.getElementById(
+                        "testSubject"
+                    ).value.trim(),
+
+                chapter:
+                    document.getElementById(
+                        "testChapter"
+                    ).value.trim(),
+
+                topic:
+                    document.getElementById(
+                        "testTopic"
+                    ).value.trim(),
+
+                total_questions:
+                    Number(
+                        document.getElementById(
+                            "testQuestions"
+                        ).value
+                    ),
+
+                duration_minutes:
+                    Number(
+                        document.getElementById(
+                            "testDuration"
+                        ).value
+                    ),
+
+                start_time:
+                    document.getElementById(
+                        "testStartTime"
+                    ).value ||
+                    null
+
+            };
+
+
+            if (
+                body.total_questions < 1 ||
+                body.total_questions > 180
+            ) {
+
+                showMessage(
+                    "Questions must be between 1 and 180"
+                );
+
+                return;
+
+            }
+
+
+            try {
+
+                const response =
+                    await fetch(
+
+                        isEdit
+                            ? `/api/test/update/${id}`
+                            : "/api/test/create",
+
+                        {
+
+                            method:
+                                isEdit
+                                    ? "PUT"
+                                    : "POST",
+
+                            headers: {
+
+                                "Content-Type":
+                                    "application/json"
+
+                            },
+
+                            body:
+                                JSON.stringify(
+                                    body
+                                )
+
+                        }
+
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (
+                    !response.ok ||
+                    !data.success
+                ) {
+
+                    throw new Error(
+                        data.message ||
+                        "Unable to save test"
+                    );
+
+                }
+
+
+                showMessage(
+                    isEdit
+                        ? "Test updated successfully"
+                        : "Test created successfully"
+                );
+
+
+                closeTestModal();
+
+
+                await loadTests();
+
+
+            } catch (error) {
+
+                console.error(error);
+
+                showMessage(
+                    error.message
+                );
+
+            }
+
+        }
+    );
+
+
+/* =====================================
+   DELETE TEST
+===================================== */
+
+async function deleteTest(id) {
+
+    if (
+        !confirm(
+            "Are you sure you want to permanently delete this test?"
+        )
+    ) {
+
+        return;
+
+    }
+
+
+    try {
+
+        const response =
+            await fetch(
+                `/api/test/delete/${id}`,
+                {
+                    method: "DELETE"
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (
+            !response.ok ||
+            !data.success
+        ) {
+
+            throw new Error(
+                data.message ||
+                "Unable to delete test"
+            );
+
+        }
+
+
+        showMessage(
+            "Test deleted successfully"
+        );
+
+
+        await loadTests();
+
+
+    } catch (error) {
+
+        console.error(error);
+
+        showMessage(
+            error.message
+        );
+
+    }
+
+}
+
+
+/* =====================================
+   DASHBOARD
 ===================================== */
 
 async function loadDashboard() {
@@ -1822,14 +2901,17 @@ async function loadDashboard() {
                 "/api/admin/dashboard"
             );
 
+
         const data =
             await response.json();
+
 
         document.getElementById(
             "welcomeMessage"
         ).textContent =
             data.message ||
             "Welcome to ABMDCAT Admin Dashboard";
+
 
     } catch (error) {
 
@@ -1841,7 +2923,7 @@ async function loadDashboard() {
 
 
 /* =====================================
-PROFILE
+   PROFILE
 ===================================== */
 
 async function loadProfile() {
@@ -1852,6 +2934,7 @@ async function loadProfile() {
             await fetch(
                 "/api/admin/profile"
             );
+
 
         const data =
             await response.json();
@@ -1872,6 +2955,7 @@ async function loadProfile() {
 
         }
 
+
     } catch (error) {
 
         console.error(error);
@@ -1882,7 +2966,7 @@ async function loadProfile() {
 
 
 /* =====================================
-STATISTICS
+   STATISTICS
 ===================================== */
 
 async function loadStatistics() {
@@ -1894,6 +2978,7 @@ async function loadStatistics() {
                 "/api/admin/statistics"
             );
 
+
         const data =
             await response.json();
 
@@ -1901,14 +2986,18 @@ async function loadStatistics() {
         const students =
             data.totalStudents ?? 0;
 
+
         const mcqs =
             data.totalMcqs ?? 0;
+
 
         const tests =
             data.totalTests ?? 0;
 
+
         const notes =
             data.totalNotes ?? 0;
+
 
         const results =
             data.totalResults ?? 0;
@@ -1916,52 +3005,63 @@ async function loadStatistics() {
 
         document.getElementById(
             "dashboardStudents"
-        ).textContent = students;
+        ).textContent =
+            students;
 
 
         document.getElementById(
             "dashboardMcqs"
-        ).textContent = mcqs;
+        ).textContent =
+            mcqs;
 
 
         document.getElementById(
             "dashboardTests"
-        ).textContent = tests;
+        ).textContent =
+            tests;
 
 
         document.getElementById(
             "dashboardNotes"
-        ).textContent = notes;
+        ).textContent =
+            notes;
 
 
         document.getElementById(
             "dashboardResults"
-        ).textContent = results;
+        ).textContent =
+            results;
 
 
         document.getElementById(
             "statStudents"
-        ).textContent = students;
+        ).textContent =
+            students;
 
 
         document.getElementById(
             "statMcqs"
-        ).textContent = mcqs;
+        ).textContent =
+            mcqs;
 
 
         document.getElementById(
             "statTests"
-        ).textContent = tests;
+        ).textContent =
+            tests;
 
 
         document.getElementById(
             "statNotes"
-        ).textContent = notes;
+        ).textContent =
+            notes;
 
 
         document.getElementById(
             "statResults"
-        ).textContent = results;
+        ).textContent =
+            results;
+
 
     } catch (error) {
 
@@ -1973,7 +3073,7 @@ async function loadStatistics() {
 
 
 /* =====================================
-SETTINGS
+   SETTINGS
 ===================================== */
 
 async function loadSettings() {
@@ -1985,6 +3085,7 @@ async function loadSettings() {
                 "/api/admin/settings"
             );
 
+
         const data =
             await response.json();
 
@@ -1992,18 +3093,23 @@ async function loadSettings() {
         document.getElementById(
             "websiteName"
         ).textContent =
-            data.website || "ABMDCAT";
+            data.website ||
+            "ABMDCAT";
 
 
         document.getElementById(
             "websiteVersion"
         ).textContent =
-            data.version || "1.0";
+            data.version ||
+            "1.0";
 
 
         updateMaintenanceStatus(
-            Boolean(data.maintenance)
+            Boolean(
+                data.maintenance
+            )
         );
+
 
     } catch (error) {
 
@@ -2015,15 +3121,19 @@ async function loadSettings() {
 
 
 /* =====================================
-MAINTENANCE
+   MAINTENANCE
 ===================================== */
 
-function updateMaintenanceStatus(enabled) {
+function updateMaintenanceStatus(
+    enabled
+) {
 
     document.getElementById(
         "maintenanceStatus"
     ).textContent =
-        enabled ? "ON" : "OFF";
+        enabled
+            ? "ON"
+            : "OFF";
 
 
     const settings =
@@ -2033,7 +3143,9 @@ function updateMaintenanceStatus(enabled) {
 
 
     settings.textContent =
-        enabled ? "ON" : "OFF";
+        enabled
+            ? "ON"
+            : "OFF";
 
 
     settings.className =
@@ -2056,19 +3168,24 @@ async function enableMaintenance() {
                 }
             );
 
+
         const data =
             await response.json();
 
 
         if (data.success) {
 
-            updateMaintenanceStatus(true);
+            updateMaintenanceStatus(
+                true
+            );
+
 
             showMessage(
                 "Maintenance Mode Enabled"
             );
 
         }
+
 
     } catch (error) {
 
@@ -2093,19 +3210,24 @@ async function disableMaintenance() {
                 }
             );
 
+
         const data =
             await response.json();
 
 
         if (data.success) {
 
-            updateMaintenanceStatus(false);
+            updateMaintenanceStatus(
+                false
+            );
+
 
             showMessage(
                 "Maintenance Mode Disabled"
             );
 
         }
+
 
     } catch (error) {
 
@@ -2119,7 +3241,7 @@ async function disableMaintenance() {
 
 
 /* =====================================
-LOGOUT
+   LOGOUT
 ===================================== */
 
 async function logout() {
@@ -2133,11 +3255,13 @@ async function logout() {
             }
         );
 
+
     } catch (error) {
 
         console.error(error);
 
     }
+
 
     window.location.href = "/";
 
@@ -2145,7 +3269,7 @@ async function logout() {
 
 
 /* =====================================
-INITIALIZE
+   INITIALIZE
 ===================================== */
 
 async function initialize() {
@@ -2163,9 +3287,14 @@ async function initialize() {
 }
 
 
+/* =====================================
+   START
+===================================== */
+
 initialize();
 
 </script>
 
 </body>
-</html>
+
+    </html>
