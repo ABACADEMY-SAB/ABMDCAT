@@ -6,7 +6,10 @@ const db = require("../config/database");
 
 class TestQuestion {
 
+    // =====================================
     // Get all questions of a test
+    // =====================================
+
     static getByTestId(testId, callback) {
 
         db.query(
@@ -20,10 +23,10 @@ class TestQuestion {
                 m.chapter,
                 m.topic,
                 m.question,
-                m."optionA",
-                m."optionB",
-                m."optionC",
-                m."optionD",
+                m.optiona,
+                m.optionb,
+                m.optionc,
+                m.optiond,
                 m.answer,
                 m.explanation
 
@@ -42,7 +45,10 @@ class TestQuestion {
     }
 
 
+    // =====================================
     // Add one MCQ to a test
+    // =====================================
+
     static add(data, callback) {
 
         db.query(
@@ -65,7 +71,10 @@ class TestQuestion {
     }
 
 
+    // =====================================
     // Remove one MCQ from a test
+    // =====================================
+
     static delete(id, callback) {
 
         db.query(
@@ -78,7 +87,10 @@ class TestQuestion {
     }
 
 
+    // =====================================
     // Remove all MCQs from a test
+    // =====================================
+
     static deleteByTestId(testId, callback) {
 
         db.query(
@@ -91,7 +103,10 @@ class TestQuestion {
     }
 
 
+    // =====================================
     // Count questions in a test
+    // =====================================
+
     static countByTestId(testId, callback) {
 
         db.query(
@@ -105,7 +120,10 @@ class TestQuestion {
     }
 
 
+    // =====================================
     // Check whether MCQ is already attached
+    // =====================================
+
     static exists(testId, mcqId, callback) {
 
         db.query(
