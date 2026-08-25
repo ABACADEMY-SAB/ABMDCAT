@@ -26,8 +26,15 @@ exports.getTestQuestions = (req, res) => {
                 );
 
                 return res.status(500).json({
+
                     success: false,
-                    message: "Database error"
+
+                    message:
+                        "Database error",
+
+                    error:
+                        err.message
+
                 });
 
             }
@@ -79,8 +86,6 @@ exports.addQuestion = (req, res) => {
         Number(question_order) || 1;
 
 
-    // Check duplicate first
-
     TestQuestion.exists(
         testId,
         mcq_id,
@@ -88,14 +93,20 @@ exports.addQuestion = (req, res) => {
 
             if (err) {
 
-                console.error(err);
+                console.error(
+                    "Check duplicate error:",
+                    err
+                );
 
                 return res.status(500).json({
 
                     success: false,
 
                     message:
-                        "Database error"
+                        "Database error",
+
+                    error:
+                        err.message
 
                 });
 
@@ -136,7 +147,10 @@ exports.addQuestion = (req, res) => {
                             success: false,
 
                             message:
-                                "Database error"
+                                "Database error",
+
+                            error:
+                                err.message
 
                         });
 
@@ -188,7 +202,10 @@ exports.deleteQuestion = (req, res) => {
                     success: false,
 
                     message:
-                        "Database error"
+                        "Database error",
+
+                    error:
+                        err.message
 
                 });
 
@@ -248,7 +265,10 @@ exports.clearTest = (req, res) => {
                     success: false,
 
                     message:
-                        "Database error"
+                        "Database error",
+
+                    error:
+                        err.message
 
                 });
 
@@ -297,7 +317,10 @@ exports.countQuestions = (req, res) => {
                     success: false,
 
                     message:
-                        "Database error"
+                        "Database error",
+
+                    error:
+                        err.message
 
                 });
 
