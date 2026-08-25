@@ -16,3 +16,27 @@ router.get("/wrong/:studentId", bookmarkController.getWrongQuestions);
 router.get("/revision/:studentId", bookmarkController.getRevision);
 
 // Smart Practice
+router.get(
+    "/smart-practice/:studentId",
+    bookmarkController.smartPractice
+);
+
+// Get Favorite MCQs
+router.get(
+    "/favorites/:studentId",
+    bookmarkController.getFavorites
+);
+
+// Remove Bookmark
+router.delete(
+    "/remove/:id",
+    bookmarkController.removeBookmark
+);
+
+// Get All Bookmarks
+router.get(
+    "/:studentId",
+    bookmarkController.getBookmarks
+);
+
+module.exports = router;
