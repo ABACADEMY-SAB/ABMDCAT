@@ -1,30 +1,89 @@
 const express = require("express");
+
 const router = express.Router();
 
-const notificationController = require("../controllers/notificationController");
+const notificationController =
+    require("../controllers/notificationController");
 
-// Get All Notifications
-router.get("/", notificationController.getAllNotifications);
 
-// Get Notification By ID
-router.get("/:id", notificationController.getNotificationById);
+// =====================================
+// GET ALL NOTIFICATIONS
+// =====================================
 
-// Send Notification
-router.post("/send", notificationController.sendNotification);
+router.get(
+    "/",
+    notificationController.getAllNotifications
+);
 
-// Send Announcement
-router.post("/announcement", notificationController.sendAnnouncement);
 
-// Broadcast Message
-router.post("/broadcast", notificationController.broadcast);
+// =====================================
+// GET STUDENT NOTIFICATIONS
+// =====================================
 
-// Mark As Read
-router.put("/read/:id", notificationController.markAsRead);
+router.get(
+    "/student/:studentId",
+    notificationController.getStudentNotifications
+);
 
-// Delete Notification
-router.delete("/delete/:id", notificationController.deleteNotification);
 
-// Notification History
-router.get("/history/all", notificationController.history);
+// =====================================
+// UNREAD COUNT
+// =====================================
+
+router.get(
+    "/unread/:studentId",
+    notificationController.unreadCount
+);
+
+
+// =====================================
+// CREATE NOTIFICATION
+// =====================================
+
+router.post(
+    "/add",
+    notificationController.createNotification
+);
+
+
+// =====================================
+// MARK ALL AS READ
+// =====================================
+
+router.put(
+    "/read-all/:studentId",
+    notificationController.markAllAsRead
+);
+
+
+// =====================================
+// MARK ONE AS READ
+// =====================================
+
+router.put(
+    "/read/:id",
+    notificationController.markAsRead
+);
+
+
+// =====================================
+// DELETE NOTIFICATION
+// =====================================
+
+router.delete(
+    "/delete/:id",
+    notificationController.deleteNotification
+);
+
+
+// =====================================
+// GET NOTIFICATION BY ID
+// =====================================
+
+router.get(
+    "/:id",
+    notificationController.getNotificationById
+);
+
 
 module.exports = router;
