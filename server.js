@@ -106,6 +106,13 @@ app.use(
 );
 
 
+// Test Questions
+app.use(
+    "/api/test-question",
+    require("./routes/testQuestion")
+);
+
+
 // Bookmarks
 app.use(
     "/api/bookmark",
