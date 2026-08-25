@@ -1,132 +1,629 @@
 // =====================================
-// NOTES CONTROLLER
+// NOTES CONTROLLER - PostgreSQL
 // =====================================
 
-// Get All Notes
+const Notes = require("../models/notes");
+
+
+// =====================================
+// GET ALL NOTES
+// =====================================
+
 exports.getAllNotes = (req, res) => {
 
-    res.json({
+    Notes.getAll((err, result) => {
 
-        success: true,
+        if (err) {
 
-        notes: []
+            console.error(
+                "Get notes error:",
+                err
+            );
+
+            return res.status(500).json({
+                success: false,
+                message: "Database error",
+                error: err.message
+            });
+
+        }
+
+        return res.json({
+
+            success: true,
+
+            notes: result.rows
+
+        });
 
     });
 
 };
 
-// Get Note By ID
+
+// =====================================
+// GET NOTE BY ID
+// =====================================
+
 exports.getNoteById = (req, res) => {
 
-    res.json({
+    const { id } = req.params;
 
-        success: true,
+    Notes.getById(
+        id,
+        (err, result) => {
 
-        noteId: req.params.id
+            if (err) {
 
-    });
+                console.error(
+                    "Get note error:",
+                    err
+                );
+
+                return res.status(500).json({
+                    success: false,
+                    message: "Database error",
+                    error: err.message
+                });
+
+            }
+
+
+            if (result.rows.length === 0) {
+
+                return res.status(404).json({
+                    success: false,
+                    message: "Note not found"
+                });
+
+            }
+
+
+            return res.json({
+
+                success: true,
+
+                note: result.rows[0]
+
+            });
+
+        }
+    );
 
 };
 
-// Add Note
+
+// =====================================
+// ADD NOTE
+// =====================================
+
 exports.addNote = (req, res) => {
 
-    res.json({
+    const {
+        subject,
+        chapter,
+        title,
+        description,
+        price,
+        pdf_link
+    } = req.body;
 
-        success: true,
 
-        message: "Note Added Successfully"
+    if (
+        !subject ||
+        !chapter ||
+        !title
+    ) {
 
-    });
+        return res.status(400).json({
+
+            success: false,
+
+            message:
+                "Subject, chapter and title are required"
+
+        });
+
+    }
+
+
+    Notes.create(
+        {
+            subject,
+            chapter,
+            title,
+            description,
+            price,
+            pdf_link
+        },
+        (err, result) => {
+
+            if (err) {
+
+                console.error(
+                    "Add note error:",
+                    err
+                );
+
+                return res.status(500).json({
+
+                    success: false,
+
+                    message:
+                        "Database error",
+
+                    error:
+                        err.message
+
+                });
+
+            }
+
+
+            return res.status(201).json({
+
+                success: true,
+
+                message:
+                    "Note Added Successfully",
+
+                note:
+                    result.rows[0]
+
+            });
+
+        }
+    );
 
 };
 
-// Update Note
+
+// =====================================
+// UPDATE NOTE
+// =====================================
+
 exports.updateNote = (req, res) => {
 
-    res.json({
+    const { id } = req.params;
 
-        success: true,
+    const {
+        subject,
+        chapter,
+        title,
+        description,
+        price,
+        pdf_link
+    } = req.body;
 
-        message: "Note Updated Successfully"
 
-    });
+    if (
+        !subject ||
+        !chapter ||
+        !title
+    ) {
+
+        return res.status(400).json({
+
+            success: false,
+
+            message:
+                "Subject, chapter and title are required"
+
+        });
+
+    }
+
+
+    Notes.update(
+        id,
+        {
+            subject,
+            chapter,
+            title,
+            description,
+            price,
+            pdf_link
+        },
+        (err, result) => {
+
+            if (err) {
+
+                console.error(
+                    "Update note error:",
+                    err
+                );
+
+                return res.status(500).json({
+
+                    success: false,
+
+                    message:
+                        "Database error",
+
+                    error:
+                        err.message
+
+                });
+
+            }
+
+
+            if (result.rows.length === 0) {
+
+                return res.status(404).json({
+
+                    success: false,
+
+                    message:
+                        "Note not found"
+
+                });
+
+            }
+
+
+            return res.json({
+
+                success: true,
+
+                message:
+                    "Note Updated Successfully",
+
+                note:
+                    result.rows[0]
+
+            });
+
+        }
+    );
 
 };
 
-// Delete Note
+
+// =====================================
+// DELETE NOTE
+// =====================================
+
 exports.deleteNote = (req, res) => {
 
-    res.json({
+    const { id } = req.params;
 
-        success: true,
 
-        message: "Note Deleted Successfully"
+    Notes.delete(
+        id,
+        (err, result) => {
 
-    });
+            if (err) {
+
+                console.error(
+                    "Delete note error:",
+                    err
+                );
+
+                return res.status(500).json({
+
+                    success: false,
+
+                    message:
+                        "Database error",
+
+                    error:
+                        err.message
+
+                });
+
+            }
+
+
+            if (result.rowCount === 0) {
+
+                return res.status(404).json({
+
+                    success: false,
+
+                    message:
+                        "Note not found"
+
+                });
+
+            }
+
+
+            return res.json({
+
+                success: true,
+
+                message:
+                    "Note Deleted Successfully"
+
+            });
+
+        }
+    );
 
 };
 
-// Buy Note
+
+// =====================================
+// BUY NOTE
+// =====================================
+
 exports.buyNote = (req, res) => {
 
-    res.json({
+    const { id } = req.params;
 
-        success: true,
+    const {
+        student_id,
+        payment_method
+    } = req.body;
 
-        message: "Purchase Successful"
 
-    });
+    if (!student_id) {
+
+        return res.status(400).json({
+
+            success: false,
+
+            message:
+                "Student ID is required"
+
+        });
+
+    }
+
+
+    Notes.buy(
+        student_id,
+        id,
+        payment_method || "manual",
+        (err, result) => {
+
+            if (err) {
+
+                console.error(
+                    "Buy note error:",
+                    err
+                );
+
+                return res.status(500).json({
+
+                    success: false,
+
+                    message:
+                        "Database error",
+
+                    error:
+                        err.message
+
+                });
+
+            }
+
+
+            return res.status(201).json({
+
+                success: true,
+
+                message:
+                    "Purchase Successful",
+
+                purchase:
+                    result.rows[0]
+
+            });
+
+        }
+    );
 
 };
 
-// Download Note
-exports.downloadNote = (req, res) => {
 
-    res.json({
+// =====================================
+// PURCHASE HISTORY
+// =====================================
 
-        success: true,
-
-        download: true
-
-    });
-
-};
-
-// Purchase History
 exports.purchaseHistory = (req, res) => {
 
-    res.json({
+    const { studentId } = req.params;
 
-        success: true,
 
-        purchases: []
+    Notes.purchases(
+        studentId,
+        (err, result) => {
 
-    });
+            if (err) {
+
+                console.error(
+                    "Purchase history error:",
+                    err
+                );
+
+                return res.status(500).json({
+
+                    success: false,
+
+                    message:
+                        "Database error",
+
+                    error:
+                        err.message
+
+                });
+
+            }
+
+
+            return res.json({
+
+                success: true,
+
+                purchases:
+                    result.rows
+
+            });
+
+        }
+    );
 
 };
 
-// Note Categories
+
+// =====================================
+// NOTE CATEGORIES
+// =====================================
+
 exports.categories = (req, res) => {
 
-    res.json({
+    const query = `
 
-        success: true,
+        SELECT DISTINCT subject
 
-        categories: []
+        FROM notes
 
-    });
+        WHERE subject IS NOT NULL
+
+        ORDER BY subject ASC
+
+    `;
+
+
+    require("../config/database").query(
+        query,
+        (err, result) => {
+
+            if (err) {
+
+                console.error(
+                    "Categories error:",
+                    err
+                );
+
+                return res.status(500).json({
+
+                    success: false,
+
+                    message:
+                        "Database error",
+
+                    error:
+                        err.message
+
+                });
+
+            }
+
+
+            return res.json({
+
+                success: true,
+
+                categories:
+                    result.rows.map(
+                        row => row.subject
+                    )
+
+            });
+
+        }
+    );
 
 };
 
-// Upload PDF
+
+// =====================================
+// DOWNLOAD NOTE
+// =====================================
+
+exports.downloadNote = (req, res) => {
+
+    const { id } = req.params;
+
+
+    Notes.getById(
+        id,
+        (err, result) => {
+
+            if (err) {
+
+                console.error(
+                    "Download note error:",
+                    err
+                );
+
+                return res.status(500).json({
+
+                    success: false,
+
+                    message:
+                        "Database error",
+
+                    error:
+                        err.message
+
+                });
+
+            }
+
+
+            if (result.rows.length === 0) {
+
+                return res.status(404).json({
+
+                    success: false,
+
+                    message:
+                        "Note not found"
+
+                });
+
+            }
+
+
+            const note =
+                result.rows[0];
+
+
+            if (!note.pdf_link) {
+
+                return res.status(404).json({
+
+                    success: false,
+
+                    message:
+                        "PDF not available"
+
+                });
+
+            }
+
+
+            return res.json({
+
+                success: true,
+
+                download:
+                    note.pdf_link
+
+            });
+
+        }
+    );
+
+};
+
+
+// =====================================
+// UPLOAD PDF
+// =====================================
+
 exports.uploadPdf = (req, res) => {
 
-    res.json({
+    return res.status(501).json({
 
-        success: true,
+        success: false,
 
-        message: "PDF Uploaded Successfully"
+        message:
+            "PDF upload will be connected after the file upload system is completed"
 
     });
 
