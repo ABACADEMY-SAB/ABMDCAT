@@ -2,7 +2,14 @@
 // ADMIN CONTROLLER
 // =====================================
 
-// Dashboard
+const db = require("../config/database");
+const Admin = require("../models/admin");
+
+
+// =====================================
+// DASHBOARD
+// =====================================
+
 exports.dashboard = (req, res) => {
 
     res.json({
@@ -12,111 +19,313 @@ exports.dashboard = (req, res) => {
 
 };
 
-// Admin Login
+
+// =====================================
+// ADMIN LOGIN
+// =====================================
+
 exports.login = (req, res) => {
 
-    const { username, password } = req.body;
+    const {
+        username,
+        password
+    } = req.body;
+
 
     if (!username || !password) {
+
         return res.status(400).json({
             success: false,
-            message: "Username and password are required"
+            message:
+                "Username and password are required"
         });
+
     }
 
-    const Admin = require("../models/admin");
 
-    Admin.login(username, password, (err, result) => {
+    Admin.login(
+        username,
+        password,
+        (err, result) => {
 
-        if (err) {
-            console.error("Admin login error:", err);
+            if (err) {
 
-            return res.status(500).json({
-                success: false,
-                message: "Database error"
+                console.error(
+                    "Admin login error:",
+                    err
+                );
+
+                return res.status(500).json({
+                    success: false,
+                    message: "Database error",
+                    error: err.message
+                });
+
+            }
+
+
+            if (result.rows.length === 0) {
+
+                return res.status(401).json({
+                    success: false,
+                    message:
+                        "Invalid username or password"
+                });
+
+            }
+
+
+            return res.json({
+
+                success: true,
+
+                message:
+                    "Admin Login Successful",
+
+                admin:
+                    result.rows[0]
+
             });
-        }
 
-        if (result.rows.length === 0) {
-            return res.status(401).json({
-                success: false,
-                message: "Invalid username or password"
+        }
+    );
+
+};
+
+
+// =====================================
+// ADMIN PROFILE
+// =====================================
+
+exports.profile = (req, res) => {
+
+    const id =
+        req.query.id ||
+        req.body.id;
+
+
+    if (!id) {
+
+        return res.status(400).json({
+            success: false,
+            message:
+                "Admin ID is required"
+        });
+
+    }
+
+
+    Admin.getById(
+        id,
+        (err, result) => {
+
+            if (err) {
+
+                console.error(
+                    "Admin profile error:",
+                    err
+                );
+
+                return res.status(500).json({
+                    success: false,
+                    message: "Database error",
+                    error: err.message
+                });
+
+            }
+
+
+            if (result.rows.length === 0) {
+
+                return res.status(404).json({
+                    success: false,
+                    message:
+                        "Admin not found"
+                });
+
+            }
+
+
+            return res.json({
+
+                success: true,
+
+                admin:
+                    result.rows[0]
+
             });
-        }
 
-        res.json({
+        }
+    );
+
+};
+
+
+// =====================================
+// DASHBOARD STATISTICS
+// =====================================
+
+exports.statistics = (req, res) => {
+
+    const queries = [
+
+        `SELECT COUNT(*) AS total FROM students`,
+
+        `SELECT COUNT(*) AS total FROM mcqs`,
+
+        `SELECT COUNT(*) AS total FROM tests`,
+
+        `SELECT COUNT(*) AS total FROM notes`,
+
+        `SELECT COUNT(*) AS total FROM results`
+
+    ];
+
+
+    Promise.all(
+        queries.map(query => {
+
+            return new Promise(
+                (resolve, reject) => {
+
+                    db.query(
+                        query,
+                        (err, result) => {
+
+                            if (err) {
+                                reject(err);
+                            } else {
+                                resolve(
+                                    Number(
+                                        result.rows[0].total
+                                    )
+                                );
+                            }
+
+                        }
+                    );
+
+                }
+            );
+
+        })
+    )
+    .then(counts => {
+
+        return res.json({
+
             success: true,
-            message: "Admin Login Successful",
-            admin: result.rows[0]
+
+            totalStudents: counts[0],
+
+            totalMcqs: counts[1],
+
+            totalTests: counts[2],
+
+            totalNotes: counts[3],
+
+            totalResults: counts[4]
+
+        });
+
+    })
+    .catch(err => {
+
+        console.error(
+            "Admin statistics error:",
+            err
+        );
+
+        return res.status(500).json({
+
+            success: false,
+
+            message:
+                "Database error",
+
+            error:
+                err.message
+
         });
 
     });
 
 };
 
-// Admin Profile
-exports.profile = (req, res) => {
 
-    res.json({
-        success: true,
-        admin: {
-            username: "SAB@madina06",
-            fullname: "Super Admin"
-        }
-    });
+// =====================================
+// WEBSITE SETTINGS
+// =====================================
 
-};
-
-// Dashboard Statistics
-exports.statistics = (req, res) => {
-
-    res.json({
-        totalStudents: 0,
-        totalMcqs: 0,
-        totalTests: 0,
-        totalNotes: 0,
-        totalResults: 0
-    });
-
-};
-
-// Website Settings
 exports.settings = (req, res) => {
 
     res.json({
-        website: "ABMDCAT",
-        version: "1.0",
-        maintenance: false
+
+        success: true,
+
+        website:
+            "ABMDCAT",
+
+        version:
+            "1.0",
+
+        maintenance:
+            false
+
     });
 
 };
 
-// Enable Maintenance
+
+// =====================================
+// ENABLE MAINTENANCE
+// =====================================
+
 exports.enableMaintenance = (req, res) => {
 
     res.json({
+
         success: true,
-        message: "Maintenance Mode Enabled"
+
+        message:
+            "Maintenance Mode Enabled"
+
     });
 
 };
 
-// Disable Maintenance
+
+// =====================================
+// DISABLE MAINTENANCE
+// =====================================
+
 exports.disableMaintenance = (req, res) => {
 
     res.json({
+
         success: true,
-        message: "Maintenance Mode Disabled"
+
+        message:
+            "Maintenance Mode Disabled"
+
     });
 
 };
 
-// Logout
+
+// =====================================
+// LOGOUT
+// =====================================
+
 exports.logout = (req, res) => {
 
     res.json({
+
         success: true,
-        message: "Admin Logged Out Successfully"
+
+        message:
+            "Admin Logged Out Successfully"
+
     });
 
 };
