@@ -7,7 +7,7 @@ const db = require("../config/database");
 class Mcq {
 
     // =====================================
-    // Get All MCQs
+    // GET ALL MCQs
     // =====================================
 
     static getAll(callback) {
@@ -23,7 +23,7 @@ class Mcq {
 
 
     // =====================================
-    // Get MCQ By ID
+    // GET MCQ BY ID
     // =====================================
 
     static getById(id, callback) {
@@ -40,7 +40,7 @@ class Mcq {
 
 
     // =====================================
-    // Add MCQ
+    // ADD MCQ
     // =====================================
 
     static create(data, callback) {
@@ -52,10 +52,10 @@ class Mcq {
                 chapter,
                 topic,
                 question,
-                optionA,
-                optionB,
-                optionC,
-                optionD,
+                optiona,
+                optionb,
+                optionc,
+                optiond,
                 answer,
                 explanation
             )
@@ -81,7 +81,7 @@ class Mcq {
 
 
     // =====================================
-    // Update MCQ
+    // UPDATE MCQ
     // =====================================
 
     static update(id, data, callback) {
@@ -93,10 +93,10 @@ class Mcq {
                 chapter = $2,
                 topic = $3,
                 question = $4,
-                optionA = $5,
-                optionB = $6,
-                optionC = $7,
-                optionD = $8,
+                optiona = $5,
+                optionb = $6,
+                optionc = $7,
+                optiond = $8,
                 answer = $9,
                 explanation = $10
              WHERE id = $11
@@ -121,7 +121,7 @@ class Mcq {
 
 
     // =====================================
-    // Delete MCQ
+    // DELETE MCQ
     // =====================================
 
     static delete(id, callback) {
@@ -137,7 +137,7 @@ class Mcq {
 
 
     // =====================================
-    // Search MCQs
+    // SEARCH MCQs
     // =====================================
 
     static search(keyword, callback) {
@@ -155,7 +155,7 @@ class Mcq {
 
 
     // =====================================
-    // Subject Filter
+    // SUBJECT FILTER
     // =====================================
 
     static subject(subject, callback) {
@@ -173,7 +173,7 @@ class Mcq {
 
 
     // =====================================
-    // Chapter Filter
+    // CHAPTER FILTER
     // =====================================
 
     static chapter(chapter, callback) {
@@ -191,7 +191,7 @@ class Mcq {
 
 
     // =====================================
-    // Topic Filter
+    // TOPIC FILTER
     // =====================================
 
     static topic(topic, callback) {
@@ -209,7 +209,7 @@ class Mcq {
 
 
     // =====================================
-    // Random MCQs
+    // RANDOM MCQs
     // =====================================
 
     static random(limit, callback) {
@@ -227,7 +227,7 @@ class Mcq {
 
 
     // =====================================
-    // Count MCQs
+    // COUNT MCQs
     // =====================================
 
     static count(callback) {
