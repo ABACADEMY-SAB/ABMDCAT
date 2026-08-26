@@ -36,8 +36,7 @@ exports.login = (req, res) => {
 
         return res.status(400).json({
             success: false,
-            message:
-                "Username and password are required"
+            message: "Username and password are required"
         });
 
     }
@@ -75,6 +74,9 @@ exports.login = (req, res) => {
             }
 
 
+            const admin = result.rows[0];
+
+
             return res.json({
 
                 success: true,
@@ -82,8 +84,20 @@ exports.login = (req, res) => {
                 message:
                     "Admin Login Successful",
 
-                admin:
-                    result.rows[0]
+                admin: {
+
+                    id: admin.id,
+
+                    username:
+                        admin.username,
+
+                    fullname:
+                        admin.fullname,
+
+                    created_at:
+                        admin.created_at
+
+                }
 
             });
 
@@ -146,12 +160,28 @@ exports.profile = (req, res) => {
             }
 
 
+            const admin =
+                result.rows[0];
+
+
             return res.json({
 
                 success: true,
 
-                admin:
-                    result.rows[0]
+                admin: {
+
+                    id: admin.id,
+
+                    username:
+                        admin.username,
+
+                    fullname:
+                        admin.fullname,
+
+                    created_at:
+                        admin.created_at
+
+                }
 
             });
 
@@ -183,6 +213,7 @@ exports.statistics = (req, res) => {
 
 
     Promise.all(
+
         queries.map(query => {
 
             return new Promise(
@@ -193,13 +224,17 @@ exports.statistics = (req, res) => {
                         (err, result) => {
 
                             if (err) {
+
                                 reject(err);
+
                             } else {
+
                                 resolve(
                                     Number(
                                         result.rows[0].total
                                     )
                                 );
+
                             }
 
                         }
@@ -209,26 +244,34 @@ exports.statistics = (req, res) => {
             );
 
         })
+
     )
+
     .then(counts => {
 
         return res.json({
 
             success: true,
 
-            totalStudents: counts[0],
+            totalStudents:
+                counts[0],
 
-            totalMcqs: counts[1],
+            totalMcqs:
+                counts[1],
 
-            totalTests: counts[2],
+            totalTests:
+                counts[2],
 
-            totalNotes: counts[3],
+            totalNotes:
+                counts[3],
 
-            totalResults: counts[4]
+            totalResults:
+                counts[4]
 
         });
 
     })
+
     .catch(err => {
 
         console.error(
