@@ -3,7 +3,6 @@
 // =====================================
 
 const Mcq = require("../models/mcq");
-
 const XLSX = require("xlsx");
 
 
@@ -569,15 +568,14 @@ exports.importExcel = async (req, res) => {
 
                 success: false,
 
-                message:
-                    "Please upload an Excel or CSV file"
+                message: "Please upload an Excel or CSV file"
 
             });
 
         }
 
 
-        // Read uploaded file
+        // Read Excel file from memory
         const workbook =
             XLSX.read(
                 req.file.buffer,
@@ -587,7 +585,7 @@ exports.importExcel = async (req, res) => {
             );
 
 
-        // Get first sheet
+        // Get first worksheet
         const sheetName =
             workbook.SheetNames[0];
 
@@ -595,7 +593,7 @@ exports.importExcel = async (req, res) => {
             workbook.Sheets[sheetName];
 
 
-        // Convert sheet to JSON
+        // Convert worksheet to JSON
         const rows =
             XLSX.utils.sheet_to_json(
                 worksheet,
@@ -605,14 +603,13 @@ exports.importExcel = async (req, res) => {
             );
 
 
-        if (!rows.length) {
+        if (rows.length === 0) {
 
             return res.status(400).json({
 
                 success: false,
 
-                message:
-                    "The uploaded file is empty"
+                message: "Excel file is empty"
 
             });
 
@@ -620,114 +617,44 @@ exports.importExcel = async (req, res) => {
 
 
         let imported = 0;
-
-        let failed = 0;
-
-        const errors = [];
+        let skipped = 0;
 
 
-        // Process every MCQ
-        for (
-            let i = 0;
-            i < rows.length;
-            i++
-        ) {
-
-            const row = rows[i];
-
-
-            // Accept both lowercase
-            // and normal Excel column names
+        // Process every row
+        for (const row of rows) {
 
             const subject =
-                String(
-                    row.subject ||
-                    row.Subject ||
-                    ""
-                ).trim();
-
+                row.Subject || "";
 
             const chapter =
-                String(
-                    row.chapter ||
-                    row.Chapter ||
-                    ""
-                ).trim();
-
+                row.Chapter || "";
 
             const topic =
-                String(
-                    row.topic ||
-                    row.Topic ||
-                    ""
-                ).trim();
-
+                row.Topic || "";
 
             const question =
-                String(
-                    row.question ||
-                    row.Question ||
-                    ""
-                ).trim();
-
+                row.Question || "";
 
             const optionA =
-                String(
-                    row.optionA ||
-                    row.OptionA ||
-                    row["Option A"] ||
-                    row.optiona ||
-                    ""
-                ).trim();
-
+                row["Option A"] || "";
 
             const optionB =
-                String(
-                    row.optionB ||
-                    row.OptionB ||
-                    row["Option B"] ||
-                    row.optionb ||
-                    ""
-                ).trim();
-
+                row["Option B"] || "";
 
             const optionC =
-                String(
-                    row.optionC ||
-                    row.OptionC ||
-                    row["Option C"] ||
-                    row.optionc ||
-                    ""
-                ).trim();
-
+                row["Option C"] || "";
 
             const optionD =
-                String(
-                    row.optionD ||
-                    row.OptionD ||
-                    row["Option D"] ||
-                    row.optiond ||
-                    ""
-                ).trim();
-
+                row["Option D"] || "";
 
             const answer =
-                String(
-                    row.answer ||
-                    row.Answer ||
-                    ""
-                ).trim().toUpperCase();
-
+                row.Answer || "";
 
             const explanation =
-                String(
-                    row.explanation ||
-                    row.Explanation ||
-                    ""
-                ).trim();
+                row.Explanation || "";
 
 
-            // Validate required fields
+            // Skip incomplete rows
             if (
                 !subject ||
                 !chapter ||
@@ -740,104 +667,50 @@ exports.importExcel = async (req, res) => {
                 !answer
             ) {
 
-                failed++;
-
-                errors.push({
-
-                    row:
-                        i + 2,
-
-                    message:
-                        "Required field is missing"
-
-                });
+                skipped++;
 
                 continue;
 
             }
 
 
-            // Validate answer
-            if (
-                !["A", "B", "C", "D"]
-                .includes(answer)
-            ) {
+            await new Promise(
+                (resolve, reject) => {
 
-                failed++;
+                    Mcq.create(
+                        {
+                            subject,
+                            chapter,
+                            topic,
+                            question,
+                            optionA,
+                            optionB,
+                            optionC,
+                            optionD,
+                            answer,
+                            explanation
+                        },
 
-                errors.push({
+                        (err) => {
 
-                    row:
-                        i + 2,
+                            if (err) {
 
-                    message:
-                        "Answer must be A, B, C or D"
+                                reject(err);
 
-                });
+                            } else {
 
-                continue;
-
-            }
-
-
-            try {
-
-                await new Promise(
-                    (resolve, reject) => {
-
-                        Mcq.create(
-
-                            {
-                                subject,
-                                chapter,
-                                topic,
-                                question,
-                                optionA,
-                                optionB,
-                                optionC,
-                                optionD,
-                                answer,
-                                explanation
-                            },
-
-                            (err) => {
-
-                                if (err) {
-
-                                    reject(err);
-
-                                } else {
-
-                                    resolve();
-
-                                }
+                                resolve();
 
                             }
 
-                        );
+                        }
+                    );
 
-                    }
-                );
-
-
-                imported++;
+                }
+            );
 
 
-            } catch (error) {
-
-                failed++;
-
-                errors.push({
-
-                    row:
-                        i + 2,
-
-                    message:
-                        error.message
-
-                });
-
-            }
+            imported++;
 
         }
 
@@ -847,16 +720,14 @@ exports.importExcel = async (req, res) => {
             success: true,
 
             message:
-                "MCQ import completed",
-
-            totalRows:
-                rows.length,
+                "MCQs imported successfully",
 
             imported,
 
-            failed,
+            skipped,
 
-            errors
+            totalRows:
+                rows.length
 
         });
 
@@ -864,7 +735,7 @@ exports.importExcel = async (req, res) => {
     } catch (error) {
 
         console.error(
-            "MCQ Excel import error:",
+            "Excel import error:",
             error
         );
 
@@ -874,7 +745,7 @@ exports.importExcel = async (req, res) => {
             success: false,
 
             message:
-                "Unable to import MCQs",
+                "Excel import failed",
 
             error:
                 error.message
@@ -884,3 +755,6 @@ exports.importExcel = async (req, res) => {
     }
 
 };
+
+
+        
