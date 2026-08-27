@@ -4110,6 +4110,740 @@ async function deleteResult(id) {
 
 }
 
+
+/* =====================================
+   MCQ MANAGEMENT
+===================================== */
+
+let allMcqs = [];
+
+
+/* =====================================
+   LOAD MCQs
+===================================== */
+
+async function loadMcqs() {
+
+    try {
+
+        const response =
+            await fetch("/api/mcq");
+
+        const data =
+            await response.json();
+
+
+        if (
+            !response.ok ||
+            !data.success
+        ) {
+
+            throw new Error(
+                data.message ||
+                "Unable to load MCQs"
+            );
+
+        }
+
+
+        allMcqs =
+            data.mcqs || [];
+
+
+        renderMcqs(
+            allMcqs
+        );
+
+
+        const count =
+            document.getElementById(
+                "mcqCount"
+            );
+
+
+        if (count) {
+
+            count.textContent =
+                allMcqs.length;
+
+        }
+
+
+    } catch (error) {
+
+        console.error(
+            "Load MCQs error:",
+            error
+        );
+
+
+        const table =
+            document.getElementById(
+                "mcqsTable"
+            );
+
+
+        if (table) {
+
+            table.innerHTML = `
+                <tr>
+                    <td colspan="7">
+                        Unable to load MCQs
+                    </td>
+                </tr>
+            `;
+
+        }
+
+
+        showMessage(
+            error.message ||
+            "Unable to load MCQs"
+        );
+
+    }
+
+}
+
+
+/* =====================================
+   DISPLAY MCQs
+===================================== */
+
+function renderMcqs(
+    mcqs
+) {
+
+    const table =
+        document.getElementById(
+            "mcqsTable"
+        );
+
+
+    if (!table) return;
+
+
+    if (
+        !mcqs ||
+        mcqs.length === 0
+    ) {
+
+        table.innerHTML = `
+            <tr>
+                <td colspan="7">
+                    No MCQs found.
+                </td>
+            </tr>
+        `;
+
+        return;
+
+    }
+
+
+    table.innerHTML =
+        mcqs.map(mcq => `
+
+            <tr>
+
+                <td>
+                    ${mcq.id ?? ""}
+                </td>
+
+                <td>
+                    ${mcq.subject ?? ""}
+                </td>
+
+                <td>
+                    ${mcq.chapter ?? ""}
+                </td>
+
+                <td>
+                    ${mcq.topic ?? ""}
+                </td>
+
+                <td>
+                    ${mcq.question ?? ""}
+                </td>
+
+                <td>
+                    ${mcq.answer ?? ""}
+                </td>
+
+                <td>
+
+                    <button
+                    class="button secondary"
+                    onclick="editMcq(${mcq.id})">
+
+                        Edit
+
+                    </button>
+
+
+                    <button
+                    class="button danger"
+                    onclick="deleteMcq(${mcq.id})">
+
+                        Delete
+
+                    </button>
+
+                </td>
+
+            </tr>
+
+        `).join("");
+
+}
+
+
+/* =====================================
+   OPEN ADD MCQ MODAL
+===================================== */
+
+function openMcqModal() {
+
+    const modal =
+        document.getElementById(
+            "mcqModal"
+        );
+
+
+    if (!modal) return;
+
+
+    document.getElementById(
+        "mcqModalTitle"
+    ).textContent =
+        "Add MCQ";
+
+
+    document.getElementById(
+        "mcqId"
+    ).value = "";
+
+
+    document.getElementById(
+        "mcqSubject"
+    ).value = "";
+
+
+    document.getElementById(
+        "mcqChapter"
+    ).value = "";
+
+
+    document.getElementById(
+        "mcqTopic"
+    ).value = "";
+
+
+    document.getElementById(
+        "mcqQuestion"
+    ).value = "";
+
+
+    document.getElementById(
+        "mcqOptionA"
+    ).value = "";
+
+
+    document.getElementById(
+        "mcqOptionB"
+    ).value = "";
+
+
+    document.getElementById(
+        "mcqOptionC"
+    ).value = "";
+
+
+    document.getElementById(
+        "mcqOptionD"
+    ).value = "";
+
+
+    document.getElementById(
+        "mcqAnswer"
+    ).value = "";
+
+
+    document.getElementById(
+        "mcqExplanation"
+    ).value = "";
+
+
+    modal.style.display =
+        "flex";
+
+}
+
+
+/* =====================================
+   CLOSE MCQ MODAL
+===================================== */
+
+function closeMcqModal() {
+
+    const modal =
+        document.getElementById(
+            "mcqModal"
+        );
+
+
+    if (!modal) return;
+
+
+    modal.style.display =
+        "none";
+
+}
+
+
+/* =====================================
+   SAVE MCQ
+===================================== */
+
+async function saveMcq() {
+
+    const id =
+        document.getElementById(
+            "mcqId"
+        ).value;
+
+
+    const mcqData = {
+
+        subject:
+            document.getElementById(
+                "mcqSubject"
+            ).value.trim(),
+
+        chapter:
+            document.getElementById(
+                "mcqChapter"
+            ).value.trim(),
+
+        topic:
+            document.getElementById(
+                "mcqTopic"
+            ).value.trim(),
+
+        question:
+            document.getElementById(
+                "mcqQuestion"
+            ).value.trim(),
+
+        optionA:
+            document.getElementById(
+                "mcqOptionA"
+            ).value.trim(),
+
+        optionB:
+            document.getElementById(
+                "mcqOptionB"
+            ).value.trim(),
+
+        optionC:
+            document.getElementById(
+                "mcqOptionC"
+            ).value.trim(),
+
+        optionD:
+            document.getElementById(
+                "mcqOptionD"
+            ).value.trim(),
+
+        answer:
+            document.getElementById(
+                "mcqAnswer"
+            ).value,
+
+        explanation:
+            document.getElementById(
+                "mcqExplanation"
+            ).value.trim()
+
+    };
+
+
+    if (
+        !mcqData.subject ||
+        !mcqData.chapter ||
+        !mcqData.topic ||
+        !mcqData.question ||
+        !mcqData.optionA ||
+        !mcqData.optionB ||
+        !mcqData.optionC ||
+        !mcqData.optionD ||
+        !mcqData.answer
+    ) {
+
+        showMessage(
+            "Please fill all required MCQ fields"
+        );
+
+        return;
+
+    }
+
+
+    try {
+
+        const url =
+            id
+                ? `/api/mcq/update/${id}`
+                : "/api/mcq/add";
+
+
+        const method =
+            id
+                ? "PUT"
+                : "POST";
+
+
+        const response =
+            await fetch(
+                url,
+                {
+                    method,
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body:
+                        JSON.stringify(
+                            mcqData
+                        )
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (
+            !response.ok ||
+            !data.success
+        ) {
+
+            throw new Error(
+                data.message ||
+                "Unable to save MCQ"
+            );
+
+        }
+
+
+        showMessage(
+            id
+                ? "MCQ updated successfully"
+                : "MCQ added successfully"
+        );
+
+
+        closeMcqModal();
+
+
+        await loadMcqs();
+
+    } catch (error) {
+
+        console.error(
+            "Save MCQ error:",
+            error
+        );
+
+
+        showMessage(
+            error.message ||
+            "Unable to save MCQ"
+        );
+
+    }
+
+}
+
+
+/* =====================================
+   EDIT MCQ
+===================================== */
+
+function editMcq(id) {
+
+    const mcq =
+        allMcqs.find(
+            item =>
+                Number(item.id) ===
+                Number(id)
+        );
+
+
+    if (!mcq) {
+
+        showMessage(
+            "MCQ not found"
+        );
+
+        return;
+
+    }
+
+
+    document.getElementById(
+        "mcqModalTitle"
+    ).textContent =
+        "Edit MCQ";
+
+
+    document.getElementById(
+        "mcqId"
+    ).value =
+        mcq.id;
+
+
+    document.getElementById(
+        "mcqSubject"
+    ).value =
+        mcq.subject || "";
+
+
+    document.getElementById(
+        "mcqChapter"
+    ).value =
+        mcq.chapter || "";
+
+
+    document.getElementById(
+        "mcqTopic"
+    ).value =
+        mcq.topic || "";
+
+
+    document.getElementById(
+        "mcqQuestion"
+    ).value =
+        mcq.question || "";
+
+
+    document.getElementById(
+        "mcqOptionA"
+    ).value =
+        mcq.optiona || "";
+
+
+    document.getElementById(
+        "mcqOptionB"
+    ).value =
+        mcq.optionb || "";
+
+
+    document.getElementById(
+        "mcqOptionC"
+    ).value =
+        mcq.optionc || "";
+
+
+    document.getElementById(
+        "mcqOptionD"
+    ).value =
+        mcq.optiond || "";
+
+
+    document.getElementById(
+        "mcqAnswer"
+    ).value =
+        mcq.answer || "";
+
+
+    document.getElementById(
+        "mcqExplanation"
+    ).value =
+        mcq.explanation || "";
+
+
+    document.getElementById(
+        "mcqModal"
+    ).style.display =
+        "flex";
+
+}
+
+
+/* =====================================
+   DELETE MCQ
+===================================== */
+
+async function deleteMcq(id) {
+
+    if (
+        !confirm(
+            "Are you sure you want to delete this MCQ?"
+        )
+    ) {
+
+        return;
+
+    }
+
+
+    try {
+
+        const response =
+            await fetch(
+                `/api/mcq/delete/${id}`,
+                {
+                    method: "DELETE"
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (
+            !response.ok ||
+            !data.success
+        ) {
+
+            throw new Error(
+                data.message ||
+                "Unable to delete MCQ"
+            );
+
+        }
+
+
+        showMessage(
+            "MCQ deleted successfully"
+        );
+
+
+        await loadMcqs();
+
+    } catch (error) {
+
+        console.error(
+            "Delete MCQ error:",
+            error
+        );
+
+
+        showMessage(
+            error.message ||
+            "Unable to delete MCQ"
+        );
+
+    }
+
+}
+
+
+/* =====================================
+   SEARCH AND FILTER MCQs
+===================================== */
+
+function filterMcqs() {
+
+    const search =
+        (
+            document.getElementById(
+                "mcqSearch"
+            )?.value || ""
+        ).toLowerCase();
+
+
+    const subject =
+        (
+            document.getElementById(
+                "mcqSubjectFilter"
+            )?.value || ""
+        ).toLowerCase();
+
+
+    const chapter =
+        (
+            document.getElementById(
+                "mcqChapterFilter"
+            )?.value || ""
+        ).toLowerCase();
+
+
+    const topic =
+        (
+            document.getElementById(
+                "mcqTopicFilter"
+            )?.value || ""
+        ).toLowerCase();
+
+
+    const filtered =
+        allMcqs.filter(mcq => {
+
+            const text =
+                `${mcq.id || ""}
+                 ${mcq.subject || ""}
+                 ${mcq.chapter || ""}
+                 ${mcq.topic || ""}
+                 ${mcq.question || ""}`
+                .toLowerCase();
+
+
+            return (
+
+                text.includes(search)
+
+                &&
+
+                (
+                    !subject ||
+                    String(
+                        mcq.subject || ""
+                    ).toLowerCase() ===
+                    subject
+                )
+
+                &&
+
+                (
+                    !chapter ||
+                    String(
+                        mcq.chapter || ""
+                    ).toLowerCase()
+                    .includes(chapter)
+                )
+
+                &&
+
+                (
+                    !topic ||
+                    String(
+                        mcq.topic || ""
+                    ).toLowerCase()
+                    .includes(topic)
+                )
+
+            );
+
+        });
+
+
+    renderMcqs(
+        filtered
+    );
+
+}
+
+
+/* =====================================
+   END MCQ MANAGEMENT
+===================================== */
+    
     
 /* =====================================
    INITIALIZE
@@ -4126,6 +4860,8 @@ async function initialize() {
     await loadSettings();
 
     await loadStudents();
+
+    await loadMcqs();
 
 }
 
