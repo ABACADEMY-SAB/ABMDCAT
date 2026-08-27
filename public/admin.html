@@ -3354,6 +3354,421 @@ async function logout() {
 }
 
 
+    /* =====================================
+   RESULTS
+===================================== */
+
+let allResults = [];
+
+
+/* =====================================
+   LOAD RESULTS
+===================================== */
+
+async function loadResults() {
+
+    const table =
+        document.getElementById(
+            "resultsTable"
+        );
+
+    table.innerHTML = `
+        <tr>
+            <td colspan="10">
+                Loading results...
+            </td>
+        </tr>
+    `;
+
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/result"
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (
+            !response.ok ||
+            !data.success
+        ) {
+
+            throw new Error(
+                data.message ||
+                "Unable to load results"
+            );
+
+        }
+
+
+        allResults =
+            data.results || [];
+
+
+        document.getElementById(
+            "resultCount"
+        ).textContent =
+            allResults.length;
+
+
+        renderResults(
+            allResults
+        );
+
+
+    } catch (error) {
+
+        console.error(error);
+
+
+        table.innerHTML = `
+            <tr>
+                <td colspan="10">
+                    Unable to load results.
+                </td>
+            </tr>
+        `;
+
+
+        showMessage(
+            error.message
+        );
+
+    }
+
+}
+
+
+/* =====================================
+   RENDER RESULTS
+===================================== */
+
+function renderResults(results) {
+
+    const table =
+        document.getElementById(
+            "resultsTable"
+        );
+
+
+    if (!results.length) {
+
+        table.innerHTML = `
+            <tr>
+                <td colspan="10">
+                    No results found.
+                </td>
+            </tr>
+        `;
+
+        return;
+
+    }
+
+
+    table.innerHTML =
+        results.map(result => {
+
+            return `
+
+            <tr>
+
+                <td>
+                    ${escapeHtml(result.id)}
+                </td>
+
+                <td>
+                    ${escapeHtml(result.student_id)}
+                </td>
+
+                <td>
+                    ${escapeHtml(
+                        result.subject || "-"
+                    )}
+                </td>
+
+                <td>
+                    ${escapeHtml(
+                        result.chapter || "-"
+                    )}
+                </td>
+
+                <td>
+                    ${escapeHtml(
+                        result.topic || "-"
+                    )}
+                </td>
+
+                <td>
+                    ${escapeHtml(
+                        result.total_questions
+                    )}
+                </td>
+
+                <td>
+                    ${escapeHtml(
+                        result.correct_answers
+                    )}
+                </td>
+
+                <td>
+                    ${escapeHtml(
+                        result.wrong_answers
+                    )}
+                </td>
+
+                <td>
+                    ${escapeHtml(
+                        result.percentage
+                    )}%
+                </td>
+
+                <td>
+
+                    <button
+                    class="button primary"
+                    onclick="viewResult(${result.id})">
+
+                        View
+
+                    </button>
+
+
+                    <button
+                    class="button danger"
+                    onclick="deleteResult(${result.id})">
+
+                        Delete
+
+                    </button>
+
+                </td>
+
+            </tr>
+
+            `;
+
+        }).join("");
+
+}
+
+
+/* =====================================
+   SEARCH RESULTS
+===================================== */
+
+function filterResults() {
+
+    const keyword =
+        document
+            .getElementById(
+                "resultSearch"
+            )
+            .value
+            .toLowerCase()
+            .trim();
+
+
+    if (!keyword) {
+
+        renderResults(
+            allResults
+        );
+
+        return;
+
+    }
+
+
+    const filtered =
+        allResults.filter(result => {
+
+            return (
+
+                String(
+                    result.student_id || ""
+                )
+                .toLowerCase()
+                .includes(keyword)
+
+                ||
+
+                String(
+                    result.subject || ""
+                )
+                .toLowerCase()
+                .includes(keyword)
+
+                ||
+
+                String(
+                    result.chapter || ""
+                )
+                .toLowerCase()
+                .includes(keyword)
+
+                ||
+
+                String(
+                    result.topic || ""
+                )
+                .toLowerCase()
+                .includes(keyword)
+
+            );
+
+        });
+
+
+    renderResults(
+        filtered
+    );
+
+}
+
+
+/* =====================================
+   VIEW RESULT
+===================================== */
+
+async function viewResult(id) {
+
+    try {
+
+        const response =
+            await fetch(
+                `/api/result/${id}`
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (
+            !response.ok ||
+            !data.success
+        ) {
+
+            throw new Error(
+                data.message ||
+                "Unable to load result"
+            );
+
+        }
+
+
+        const result =
+            data.result;
+
+
+        alert(
+`Result Details
+
+Result ID: ${result.id}
+
+Student ID: ${result.student_id}
+
+Subject: ${result.subject || "-"}
+
+Chapter: ${result.chapter || "-"}
+
+Topic: ${result.topic || "-"}
+
+Total Questions: ${result.total_questions}
+
+Correct Answers: ${result.correct_answers}
+
+Wrong Answers: ${result.wrong_answers}
+
+Percentage: ${result.percentage}%`
+        );
+
+
+    } catch (error) {
+
+        console.error(error);
+
+        showMessage(
+            error.message
+        );
+
+    }
+
+}
+
+
+/* =====================================
+   DELETE RESULT
+===================================== */
+
+async function deleteResult(id) {
+
+    if (
+        !confirm(
+            "Are you sure you want to permanently delete this result?"
+        )
+    ) {
+
+        return;
+
+    }
+
+
+    try {
+
+        const response =
+            await fetch(
+                `/api/result/${id}`,
+                {
+                    method: "DELETE"
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (
+            !response.ok ||
+            !data.success
+        ) {
+
+            throw new Error(
+                data.message ||
+                "Unable to delete result"
+            );
+
+        }
+
+
+        showMessage(
+            "Result deleted successfully"
+        );
+
+
+        await loadResults();
+
+
+    } catch (error) {
+
+        console.error(error);
+
+        showMessage(
+            error.message
+        );
+
+    }
+
+}
+
+    
 /* =====================================
    INITIALIZE
 ===================================== */
