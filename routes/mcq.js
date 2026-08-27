@@ -12,15 +12,6 @@ const mcqController =
 
 
 // =====================================
-// EXCEL UPLOAD CONFIGURATION
-// =====================================
-
-const upload = multer({
-    storage: multer.memoryStorage()
-});
-
-
-// =====================================
 // FILE UPLOAD CONFIGURATION
 // =====================================
 
