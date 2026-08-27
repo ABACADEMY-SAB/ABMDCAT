@@ -1035,13 +1035,99 @@ class="section">
 Results
 </h2>
 
+<p class="page-description">
+View and manage all student practice and test results.
+</p>
+
+<div class="cards">
+
+    <div class="card">
+
+        <div class="card-title">
+            Total Results
+        </div>
+
+        <div
+        class="number"
+        id="resultCount">
+            0
+        </div>
+
+    </div>
+
+</div>
+
+
 <div class="panel">
 
-<h3>Results Management</h3>
+    <button
+    class="button secondary"
+    onclick="loadResults()">
 
-<p>
-Results management will be connected later.
-</p>
+        Refresh
+
+    </button>
+
+    <input
+    type="text"
+    class="input"
+    id="resultSearch"
+    placeholder="Search by student ID, subject, chapter or topic..."
+    oninput="filterResults()">
+
+</div>
+
+
+<div class="panel">
+
+<div class="table-container">
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>ID</th>
+
+<th>Student ID</th>
+
+<th>Subject</th>
+
+<th>Chapter</th>
+
+<th>Topic</th>
+
+<th>Total</th>
+
+<th>Correct</th>
+
+<th>Wrong</th>
+
+<th>Percentage</th>
+
+<th>Actions</th>
+
+</tr>
+
+</thead>
+
+
+<tbody id="resultsTable">
+
+<tr>
+
+<td colspan="10">
+Loading results...
+</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
 
 </div>
 
