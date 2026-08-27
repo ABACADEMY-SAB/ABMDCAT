@@ -9,6 +9,21 @@ const router = express.Router();
 const mcqController =
     require("../controllers/mcqController");
 
+const multer = require("multer");
+
+
+// =====================================
+// FILE UPLOAD CONFIGURATION
+// =====================================
+
+const upload = multer({
+    storage: multer.memoryStorage(),
+
+    limits: {
+        fileSize: 10 * 1024 * 1024
+    }
+});
+
 
 // =====================================
 // Get All MCQs
@@ -111,11 +126,12 @@ router.delete(
 
 
 // =====================================
-// Excel Import
+// Excel / CSV Import
 // =====================================
 
 router.post(
     "/import-excel",
+    upload.single("file"),
     mcqController.importExcel
 );
 
