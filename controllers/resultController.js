@@ -137,6 +137,57 @@ exports.getResultById = (req, res) => {
 
 
 // =====================================
+// DELETE RESULT
+// =====================================
+
+exports.deleteResult = (req, res) => {
+
+    const { resultId } = req.params;
+
+    Result.delete(
+        resultId,
+        (err, result) => {
+
+            if (err) {
+
+                console.error(
+                    "Delete result error:",
+                    err
+                );
+
+                return res.status(500).json({
+                    success: false,
+                    message: "Database error",
+                    error: err.message
+                });
+
+            }
+
+            if (result.rowCount === 0) {
+
+                return res.status(404).json({
+                    success: false,
+                    message: "Result not found"
+                });
+
+            }
+
+            return res.json({
+
+                success: true,
+
+                message:
+                    "Result deleted successfully"
+
+            });
+
+        }
+    );
+
+};
+
+
+// =====================================
 // SAVE PRACTICE RESULT
 // =====================================
 
