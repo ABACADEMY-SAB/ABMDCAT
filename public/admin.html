@@ -879,7 +879,7 @@ Loading students...
 
 
 <!-- =========================
-     MCQS
+     MCQs MANAGEMENT
 ========================= -->
 
 <section
@@ -887,20 +887,355 @@ id="mcqs"
 class="section">
 
 <h2 class="page-title">
-MCQs
+MCQs Management
 </h2>
+
+<p class="page-description">
+Add, edit, search, filter and delete MCQs.
+</p>
+
+
+<!-- =========================
+     MCQ STATISTICS
+========================= -->
+
+<div class="cards">
+
+    <div class="card">
+
+        <div class="card-title">
+            Total MCQs
+        </div>
+
+        <div
+        class="number"
+        id="mcqCount">
+
+            0
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================
+     MCQ CONTROLS
+========================= -->
 
 <div class="panel">
 
-<h3>MCQ Management</h3>
+    <button
+    class="button primary"
+    onclick="openMcqModal()">
 
-<p>
-MCQ management will be connected after the Tests module.
-</p>
+        + Add MCQ
+
+    </button>
+
+
+    <button
+    class="button secondary"
+    onclick="loadMcqs()">
+
+        Refresh
+
+    </button>
+
+
+    <input
+    type="text"
+    class="input"
+    id="mcqSearch"
+    placeholder="Search MCQs..."
+    oninput="filterMcqs()">
+
+</div>
+
+
+<!-- =========================
+     MCQ FILTERS
+========================= -->
+
+<div class="panel">
+
+    <select
+    class="input"
+    id="mcqSubjectFilter"
+    onchange="filterMcqs()">
+
+        <option value="">
+            All Subjects
+        </option>
+
+        <option value="Biology">
+            Biology
+        </option>
+
+        <option value="Chemistry">
+            Chemistry
+        </option>
+
+        <option value="Physics">
+            Physics
+        </option>
+
+        <option value="English">
+            English
+        </option>
+
+    </select>
+
+
+    <input
+    type="text"
+    class="input"
+    id="mcqChapterFilter"
+    placeholder="Filter by chapter..."
+    oninput="filterMcqs()">
+
+
+    <input
+    type="text"
+    class="input"
+    id="mcqTopicFilter"
+    placeholder="Filter by topic..."
+    oninput="filterMcqs()">
+
+</div>
+
+
+<!-- =========================
+     MCQ TABLE
+========================= -->
+
+<div class="panel">
+
+<div class="table-container">
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>ID</th>
+
+<th>Subject</th>
+
+<th>Chapter</th>
+
+<th>Topic</th>
+
+<th>Question</th>
+
+<th>Answer</th>
+
+<th>Actions</th>
+
+</tr>
+
+</thead>
+
+
+<tbody id="mcqsTable">
+
+<tr>
+
+<td colspan="7">
+
+Loading MCQs...
+
+</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
 
 </div>
 
 </section>
+
+
+<!-- =========================
+     ADD / EDIT MCQ MODAL
+========================= -->
+
+<div
+id="mcqModal"
+class="modal">
+
+<div class="modal-content">
+
+<h2 id="mcqModalTitle">
+Add MCQ
+</h2>
+
+
+<input
+type="hidden"
+id="mcqId">
+
+
+<label>
+Subject
+</label>
+
+<input
+type="text"
+class="input"
+id="mcqSubject"
+placeholder="e.g. Biology">
+
+
+<label>
+Chapter
+</label>
+
+<input
+type="text"
+class="input"
+id="mcqChapter"
+placeholder="Chapter name">
+
+
+<label>
+Topic
+</label>
+
+<input
+type="text"
+class="input"
+id="mcqTopic"
+placeholder="Topic name">
+
+
+<label>
+Question
+</label>
+
+<textarea
+class="input"
+id="mcqQuestion"
+placeholder="Enter question">
+</textarea>
+
+
+<label>
+Option A
+</label>
+
+<input
+type="text"
+class="input"
+id="mcqOptionA"
+placeholder="Option A">
+
+
+<label>
+Option B
+</label>
+
+<input
+type="text"
+class="input"
+id="mcqOptionB"
+placeholder="Option B">
+
+
+<label>
+Option C
+</label>
+
+<input
+type="text"
+class="input"
+id="mcqOptionC"
+placeholder="Option C">
+
+
+<label>
+Option D
+</label>
+
+<input
+type="text"
+class="input"
+id="mcqOptionD"
+placeholder="Option D">
+
+
+<label>
+Correct Answer
+</label>
+
+<select
+class="input"
+id="mcqAnswer">
+
+    <option value="">
+        Select Correct Answer
+    </option>
+
+    <option value="A">
+        A
+    </option>
+
+    <option value="B">
+        B
+    </option>
+
+    <option value="C">
+        C
+    </option>
+
+    <option value="D">
+        D
+    </option>
+
+</select>
+
+
+<label>
+Explanation
+</label>
+
+<textarea
+class="input"
+id="mcqExplanation"
+placeholder="Explanation (optional)">
+</textarea>
+
+
+<div class="modal-actions">
+
+<button
+class="button primary"
+onclick="saveMcq()">
+
+Save MCQ
+
+</button>
+
+
+<button
+class="button secondary"
+onclick="closeMcqModal()">
+
+Cancel
+
+</button>
+
+</div>
+
+</div>
+
+</div>
 
 
 <!-- =========================
