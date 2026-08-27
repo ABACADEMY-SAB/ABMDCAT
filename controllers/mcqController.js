@@ -555,18 +555,332 @@ exports.randomPractice = (req, res) => {
 
 
 // =====================================
-// Excel Import
+// EXCEL / CSV IMPORT
 // =====================================
 
-exports.importExcel = (req, res) => {
+exports.importExcel = async (req, res) => {
 
-    return res.status(501).json({
+    try {
 
-        success: false,
+        // Check if file was uploaded
+        if (!req.file) {
 
-        message:
-            "Excel import is not configured yet"
+            return res.status(400).json({
 
-    });
+                success: false,
+
+                message:
+                    "Please upload an Excel or CSV file"
+
+            });
+
+        }
+
+
+        // Read uploaded file
+        const workbook =
+            XLSX.read(
+                req.file.buffer,
+                {
+                    type: "buffer"
+                }
+            );
+
+
+        // Get first sheet
+        const sheetName =
+            workbook.SheetNames[0];
+
+        const worksheet =
+            workbook.Sheets[sheetName];
+
+
+        // Convert sheet to JSON
+        const rows =
+            XLSX.utils.sheet_to_json(
+                worksheet,
+                {
+                    defval: ""
+                }
+            );
+
+
+        if (!rows.length) {
+
+            return res.status(400).json({
+
+                success: false,
+
+                message:
+                    "The uploaded file is empty"
+
+            });
+
+        }
+
+
+        let imported = 0;
+
+        let failed = 0;
+
+        const errors = [];
+
+
+        // Process every MCQ
+        for (
+            let i = 0;
+            i < rows.length;
+            i++
+        ) {
+
+            const row = rows[i];
+
+
+            // Accept both lowercase
+            // and normal Excel column names
+
+            const subject =
+                String(
+                    row.subject ||
+                    row.Subject ||
+                    ""
+                ).trim();
+
+
+            const chapter =
+                String(
+                    row.chapter ||
+                    row.Chapter ||
+                    ""
+                ).trim();
+
+
+            const topic =
+                String(
+                    row.topic ||
+                    row.Topic ||
+                    ""
+                ).trim();
+
+
+            const question =
+                String(
+                    row.question ||
+                    row.Question ||
+                    ""
+                ).trim();
+
+
+            const optionA =
+                String(
+                    row.optionA ||
+                    row.OptionA ||
+                    row["Option A"] ||
+                    row.optiona ||
+                    ""
+                ).trim();
+
+
+            const optionB =
+                String(
+                    row.optionB ||
+                    row.OptionB ||
+                    row["Option B"] ||
+                    row.optionb ||
+                    ""
+                ).trim();
+
+
+            const optionC =
+                String(
+                    row.optionC ||
+                    row.OptionC ||
+                    row["Option C"] ||
+                    row.optionc ||
+                    ""
+                ).trim();
+
+
+            const optionD =
+                String(
+                    row.optionD ||
+                    row.OptionD ||
+                    row["Option D"] ||
+                    row.optiond ||
+                    ""
+                ).trim();
+
+
+            const answer =
+                String(
+                    row.answer ||
+                    row.Answer ||
+                    ""
+                ).trim().toUpperCase();
+
+
+            const explanation =
+                String(
+                    row.explanation ||
+                    row.Explanation ||
+                    ""
+                ).trim();
+
+
+            // Validate required fields
+            if (
+                !subject ||
+                !chapter ||
+                !topic ||
+                !question ||
+                !optionA ||
+                !optionB ||
+                !optionC ||
+                !optionD ||
+                !answer
+            ) {
+
+                failed++;
+
+                errors.push({
+
+                    row:
+                        i + 2,
+
+                    message:
+                        "Required field is missing"
+
+                });
+
+                continue;
+
+            }
+
+
+            // Validate answer
+            if (
+                !["A", "B", "C", "D"]
+                .includes(answer)
+            ) {
+
+                failed++;
+
+                errors.push({
+
+                    row:
+                        i + 2,
+
+                    message:
+                        "Answer must be A, B, C or D"
+
+                });
+
+                continue;
+
+            }
+
+
+            try {
+
+                await new Promise(
+                    (resolve, reject) => {
+
+                        Mcq.create(
+
+                            {
+                                subject,
+                                chapter,
+                                topic,
+                                question,
+                                optionA,
+                                optionB,
+                                optionC,
+                                optionD,
+                                answer,
+                                explanation
+                            },
+
+                            (err) => {
+
+                                if (err) {
+
+                                    reject(err);
+
+                                } else {
+
+                                    resolve();
+
+                                }
+
+                            }
+
+                        );
+
+                    }
+                );
+
+
+                imported++;
+
+
+            } catch (error) {
+
+                failed++;
+
+                errors.push({
+
+                    row:
+                        i + 2,
+
+                    message:
+                        error.message
+
+                });
+
+            }
+
+        }
+
+
+        return res.json({
+
+            success: true,
+
+            message:
+                "MCQ import completed",
+
+            totalRows:
+                rows.length,
+
+            imported,
+
+            failed,
+
+            errors
+
+        });
+
+
+    } catch (error) {
+
+        console.error(
+            "MCQ Excel import error:",
+            error
+        );
+
+
+        return res.status(500).json({
+
+            success: false,
+
+            message:
+                "Unable to import MCQs",
+
+            error:
+                error.message
+
+        });
+
+    }
 
 };
