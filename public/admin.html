@@ -929,20 +929,27 @@ Add, edit, search, filter and delete MCQs.
     <button
     class="button primary"
     onclick="openMcqModal()">
-
         + Add MCQ
-
     </button>
-
 
     <button
     class="button secondary"
     onclick="loadMcqs()">
-
         Refresh
-
     </button>
 
+    <input
+    type="file"
+    id="mcqExcelFile"
+    accept=".xlsx,.xls,.csv"
+    style="display:none"
+    onchange="uploadMcqExcel()">
+
+    <button
+    class="button secondary"
+    onclick="document.getElementById('mcqExcelFile').click()">
+        Upload Excel
+    </button>
 
     <input
     type="text"
