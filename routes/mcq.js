@@ -3,13 +3,21 @@
 // =====================================
 
 const express = require("express");
+const multer = require("multer");
 
 const router = express.Router();
 
 const mcqController =
     require("../controllers/mcqController");
 
-const multer = require("multer");
+
+// =====================================
+// EXCEL UPLOAD CONFIGURATION
+// =====================================
+
+const upload = multer({
+    storage: multer.memoryStorage()
+});
 
 
 // =====================================
