@@ -12,6 +12,9 @@ router.get("/student/:studentId", resultController.getStudentResults);
 // Result Details
 router.get("/:resultId", resultController.getResultById);
 
+// Delete Result
+router.delete("/:resultId", resultController.deleteResult);
+
 // Performance Report
 router.get("/report/:studentId", resultController.performanceReport);
 
