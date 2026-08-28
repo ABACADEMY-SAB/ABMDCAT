@@ -4848,6 +4848,110 @@ function filterMcqs() {
 
 
 /* =====================================
+   EXCEL / CSV MCQ UPLOAD
+===================================== */
+
+async function uploadMcqExcel() {
+
+    const fileInput =
+        document.getElementById(
+            "mcqExcelFile"
+        );
+
+    const file =
+        fileInput.files[0];
+
+
+    // Check file
+    if (!file) {
+
+        showMessage(
+            "Please select an Excel or CSV file"
+        );
+
+        return;
+
+    }
+
+
+    try {
+
+        // Create form data
+        const formData =
+            new FormData();
+
+        formData.append(
+            "file",
+            file
+        );
+
+
+        // Upload file
+        const response =
+            await fetch(
+                "/api/mcq/import-excel",
+                {
+                    method: "POST",
+                    body: formData
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        // Check response
+        if (
+            !response.ok ||
+            !data.success
+        ) {
+
+            throw new Error(
+                data.message ||
+                "MCQ import failed"
+            );
+
+        }
+
+
+        // Success message
+        showMessage(
+            "MCQs imported successfully: " +
+            data.imported +
+            " added"
+        );
+
+
+        // Refresh MCQ list
+        await loadMcqs();
+
+
+    } catch (error) {
+
+        console.error(
+            "Excel upload error:",
+            error
+        );
+
+
+        showMessage(
+            error.message ||
+            "Unable to import MCQs"
+        );
+
+
+    } finally {
+
+        // Clear selected file
+        fileInput.value = "";
+
+    }
+
+}
+
+    
+/* =====================================
    END MCQ MANAGEMENT
 ===================================== */
     
