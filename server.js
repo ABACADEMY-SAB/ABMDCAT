@@ -26,6 +26,18 @@ app.use(
 
 
 // ==============================
+// Serve Uploaded Files
+// ==============================
+
+app.use(
+    "/uploads",
+    express.static(
+        path.join(__dirname, "uploads")
+    )
+);
+
+
+// ==============================
 // Serve Frontend
 // ==============================
 
