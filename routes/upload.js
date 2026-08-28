@@ -1,6 +1,7 @@
 const express = require("express");
 
-const router = express.Router();
+const router =
+    express.Router();
 
 const uploadController =
     require("../controllers/uploadController");
@@ -37,11 +38,14 @@ router.get(
 
 
 // =====================================
-// SAVE UPLOAD INFORMATION
+// PHYSICAL FILE UPLOAD
 // =====================================
 
 router.post(
     "/add",
+
+    uploadController.uploadMiddleware,
+
     uploadController.saveUpload
 );
 
