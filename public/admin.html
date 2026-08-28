@@ -1825,21 +1825,130 @@ id="ranking"
 class="section">
 
 <h2 class="page-title">
-Ranking
+    Ranking
 </h2>
 
 <div class="panel">
 
-<h3>Ranking</h3>
+    <div style="
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        gap:10px;
+        flex-wrap:wrap;
+        margin-bottom:20px;
+    ">
 
-<p>
-Ranking will be connected later.
-</p>
+        <div>
+            <h3 style="margin-bottom:5px;">
+                Overall Student Ranking
+            </h3>
+
+            <p style="margin:0;">
+                Ranking calculated from students' average result percentage.
+            </p>
+        </div>
+
+        <button
+            type="button"
+            onclick="loadAdminRanking()"
+        >
+            🔄 Refresh
+        </button>
+
+    </div>
+
+
+    <!-- Ranking Statistics -->
+
+    <div style="
+        display:grid;
+        grid-template-columns:
+            repeat(auto-fit,minmax(160px,1fr));
+        gap:15px;
+        margin-bottom:20px;
+    ">
+
+        <div class="panel">
+            <h4>Total Ranked Students</h4>
+
+            <h2 id="rankingTotalStudents">
+                0
+            </h2>
+        </div>
+
+
+        <div class="panel">
+            <h4>Top Student</h4>
+
+            <h2 id="rankingTopStudent">
+                —
+            </h2>
+        </div>
+
+
+        <div class="panel">
+            <h4>Highest Average</h4>
+
+            <h2 id="rankingHighestAverage">
+                0%
+            </h2>
+        </div>
+
+    </div>
+
+
+    <!-- Ranking Table -->
+
+    <div style="overflow-x:auto;">
+
+        <table
+            style="
+                width:100%;
+                border-collapse:collapse;
+            "
+        >
+
+            <thead>
+
+                <tr>
+
+                    <th>Rank</th>
+
+                    <th>Student ID</th>
+
+                    <th>Average Percentage</th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody
+                id="adminRankingTableBody"
+            >
+
+                <tr>
+
+                    <td
+                        colspan="3"
+                        style="text-align:center;"
+                    >
+                        Loading ranking...
+                    </td>
+
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
 
 </div>
 
 </section>
-
+    
 
 <!-- =========================
      BOOKMARKS
@@ -5891,7 +6000,276 @@ document.addEventListener(
 
     }
 );
-    
+
+
+    /* =====================================
+   ADMIN RANKING MANAGEMENT
+===================================== */
+
+async function loadAdminRanking() {
+
+    const tbody =
+        document.getElementById(
+            "adminRankingTableBody"
+        );
+
+
+    if (!tbody) {
+
+        return;
+
+    }
+
+
+    tbody.innerHTML = `
+        <tr>
+            <td
+                colspan="3"
+                style="text-align:center;"
+            >
+                Loading ranking...
+            </td>
+        </tr>
+    `;
+
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/result/ranking/all"
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (
+            !response.ok ||
+            !data.success
+        ) {
+
+            throw new Error(
+                data.message ||
+                "Failed to load ranking"
+            );
+
+        }
+
+
+        const ranking =
+            data.ranking || [];
+
+
+        /*
+         * Update total students
+         */
+
+        const totalElement =
+            document.getElementById(
+                "rankingTotalStudents"
+            );
+
+
+        if (totalElement) {
+
+            totalElement.textContent =
+                ranking.length;
+
+        }
+
+
+        /*
+         * Empty ranking
+         */
+
+        if (ranking.length === 0) {
+
+            tbody.innerHTML = `
+                <tr>
+                    <td
+                        colspan="3"
+                        style="text-align:center;"
+                    >
+                        No ranking data available yet.
+                    </td>
+                </tr>
+            `;
+
+
+            const topStudent =
+                document.getElementById(
+                    "rankingTopStudent"
+                );
+
+
+            const highestAverage =
+                document.getElementById(
+                    "rankingHighestAverage"
+                );
+
+
+            if (topStudent) {
+
+                topStudent.textContent =
+                    "—";
+
+            }
+
+
+            if (highestAverage) {
+
+                highestAverage.textContent =
+                    "0%";
+
+            }
+
+
+            return;
+
+        }
+
+
+        /*
+         * Top student
+         */
+
+        const first =
+            ranking[0];
+
+
+        const topStudent =
+            document.getElementById(
+                "rankingTopStudent"
+            );
+
+
+        const highestAverage =
+            document.getElementById(
+                "rankingHighestAverage"
+            );
+
+
+        if (topStudent) {
+
+            topStudent.textContent =
+                first.student_id;
+
+        }
+
+
+        if (highestAverage) {
+
+            highestAverage.textContent =
+                Number(
+                    first.average_percentage || 0
+                ).toFixed(2) + "%";
+
+        }
+
+
+        /*
+         * Build table
+         */
+
+        tbody.innerHTML =
+            ranking.map(
+                (student, index) => {
+
+                    const rank =
+                        index + 1;
+
+
+                    const percentage =
+                        Number(
+                            student.average_percentage || 0
+                        );
+
+
+                    return `
+                        <tr>
+
+                            <td>
+                                ${rank}
+                            </td>
+
+                            <td>
+                                ${escapeRankingHtml(
+                                    student.student_id
+                                )}
+                            </td>
+
+                            <td>
+                                ${percentage.toFixed(2)}%
+                            </td>
+
+                        </tr>
+                    `;
+
+                }
+            ).join("");
+
+
+    } catch (error) {
+
+        console.error(
+            "Admin ranking error:",
+            error
+        );
+
+
+        tbody.innerHTML = `
+            <tr>
+
+                <td
+                    colspan="3"
+                    style="
+                        text-align:center;
+                        color:red;
+                    "
+                >
+
+                    Failed to load ranking:
+                    ${escapeRankingHtml(
+                        error.message
+                    )}
+
+                </td>
+
+            </tr>
+        `;
+
+    }
+
+}
+
+
+/* =====================================
+   RANKING HTML ESCAPE
+===================================== */
+
+function escapeRankingHtml(value) {
+
+    if (
+        value === null ||
+        value === undefined
+    ) {
+
+        return "";
+
+    }
+
+
+    return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+
+}
+
     
 /* =====================================
    INITIALIZE
@@ -5913,8 +6291,10 @@ async function initialize() {
 
     await loadAdminNotes();
 
-}
+    await loadAdminRanking();
 
+}
+    
 
 /* =====================================
    START
