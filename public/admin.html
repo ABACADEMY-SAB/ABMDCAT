@@ -1959,21 +1959,156 @@ id="bookmarks"
 class="section">
 
 <h2 class="page-title">
-Bookmarks
+    Bookmarks
 </h2>
 
 <div class="panel">
 
-<h3>Bookmarks</h3>
+    <div style="
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        gap:10px;
+        flex-wrap:wrap;
+        margin-bottom:20px;
+    ">
 
-<p>
-Bookmark management will be connected later.
-</p>
+        <div>
+
+            <h3>
+                Student Bookmarks
+            </h3>
+
+            <p>
+                View and manage MCQs bookmarked by a student.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- Student Search -->
+
+    <div style="
+        display:flex;
+        gap:10px;
+        flex-wrap:wrap;
+        margin-bottom:20px;
+    ">
+
+        <input
+            type="number"
+            id="bookmarkStudentId"
+            placeholder="Enter Student ID"
+            min="1"
+            style="
+                padding:10px;
+                max-width:220px;
+            "
+        >
+
+        <button
+            type="button"
+            onclick="loadAdminBookmarks()"
+        >
+            🔍 View Bookmarks
+        </button>
+
+        <button
+            type="button"
+            onclick="clearAdminBookmarks()"
+        >
+            Clear
+        </button>
+
+    </div>
+
+
+    <!-- Bookmark Count -->
+
+    <div
+        id="bookmarkCount"
+        style="
+            margin-bottom:15px;
+            font-weight:bold;
+        "
+    >
+        Enter a Student ID to view bookmarks.
+    </div>
+
+
+    <!-- Bookmark Table -->
+
+    <div style="overflow-x:auto;">
+
+        <table
+            style="
+                width:100%;
+                border-collapse:collapse;
+            "
+        >
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        Bookmark ID
+                    </th>
+
+                    <th>
+                        MCQ ID
+                    </th>
+
+                    <th>
+                        Subject
+                    </th>
+
+                    <th>
+                        Chapter
+                    </th>
+
+                    <th>
+                        Question
+                    </th>
+
+                    <th>
+                        Action
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody
+                id="adminBookmarksTableBody"
+            >
+
+                <tr>
+
+                    <td
+                        colspan="6"
+                        style="
+                            text-align:center;
+                        "
+                    >
+                        Enter a Student ID above.
+                    </td>
+
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
 
 </div>
 
 </section>
-
+    
 
 <!-- =========================
      UPLOADS
@@ -6270,6 +6405,353 @@ function escapeRankingHtml(value) {
 
 }
 
+
+/* =====================================
+   ADMIN BOOKMARK MANAGEMENT
+===================================== */
+
+async function loadAdminBookmarks() {
+
+    const studentId =
+        document.getElementById(
+            "bookmarkStudentId"
+        ).value.trim();
+
+
+    const tbody =
+        document.getElementById(
+            "adminBookmarksTableBody"
+        );
+
+
+    const count =
+        document.getElementById(
+            "bookmarkCount"
+        );
+
+
+    if (!studentId) {
+
+        alert(
+            "Please enter a Student ID."
+        );
+
+        return;
+
+    }
+
+
+    tbody.innerHTML = `
+        <tr>
+            <td
+                colspan="6"
+                style="text-align:center;"
+            >
+                Loading bookmarks...
+            </td>
+        </tr>
+    `;
+
+
+    count.textContent =
+        "Loading...";
+
+
+    try {
+
+        /*
+         * We use the existing Favorites endpoint
+         * because it also returns the MCQ information.
+         */
+
+        const response =
+            await fetch(
+                `/api/bookmark/favorites/${encodeURIComponent(studentId)}`
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (
+            !response.ok ||
+            !data.success
+        ) {
+
+            throw new Error(
+                data.message ||
+                "Failed to load bookmarks"
+            );
+
+        }
+
+
+        const bookmarks =
+            data.favorites || [];
+
+
+        count.textContent =
+            `Total Bookmarks: ${bookmarks.length}`;
+
+
+        if (bookmarks.length === 0) {
+
+            tbody.innerHTML = `
+                <tr>
+
+                    <td
+                        colspan="6"
+                        style="
+                            text-align:center;
+                        "
+                    >
+                        No bookmarks found for Student ID
+                        ${escapeBookmarkHtml(studentId)}.
+                    </td>
+
+                </tr>
+            `;
+
+            return;
+
+        }
+
+
+        tbody.innerHTML =
+            bookmarks.map(
+                bookmark => {
+
+                    return `
+                        <tr>
+
+                            <td>
+                                ${escapeBookmarkHtml(
+                                    bookmark.bookmark_id
+                                )}
+                            </td>
+
+                            <td>
+                                ${escapeBookmarkHtml(
+                                    bookmark.id
+                                )}
+                            </td>
+
+                            <td>
+                                ${escapeBookmarkHtml(
+                                    bookmark.subject
+                                )}
+                            </td>
+
+                            <td>
+                                ${escapeBookmarkHtml(
+                                    bookmark.chapter
+                                )}
+                            </td>
+
+                            <td>
+                                ${escapeBookmarkHtml(
+                                    bookmark.question
+                                )}
+                            </td>
+
+                            <td>
+
+                                <button
+                                    type="button"
+                                    onclick="removeAdminBookmark(
+                                        ${Number(
+                                            bookmark.bookmark_id
+                                        )}
+                                    )"
+                                >
+                                    🗑️ Remove
+                                </button>
+
+                            </td>
+
+                        </tr>
+                    `;
+
+                }
+            ).join("");
+
+
+    } catch (error) {
+
+        console.error(
+            "Load bookmarks error:",
+            error
+        );
+
+
+        count.textContent =
+            "Unable to load bookmarks.";
+
+
+        tbody.innerHTML = `
+            <tr>
+
+                <td
+                    colspan="6"
+                    style="
+                        text-align:center;
+                        color:red;
+                    "
+                >
+                    Failed to load bookmarks:
+                    ${escapeBookmarkHtml(
+                        error.message
+                    )}
+                </td>
+
+            </tr>
+        `;
+
+    }
+
+}
+
+
+/* =====================================
+   REMOVE BOOKMARK
+===================================== */
+
+async function removeAdminBookmark(
+    bookmarkId
+) {
+
+    const confirmed =
+        confirm(
+            "Are you sure you want to remove this bookmark?"
+        );
+
+
+    if (!confirmed) {
+
+        return;
+
+    }
+
+
+    try {
+
+        const response =
+            await fetch(
+                `/api/bookmark/remove/${bookmarkId}`,
+                {
+                    method: "DELETE"
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (
+            !response.ok ||
+            !data.success
+        ) {
+
+            throw new Error(
+                data.message ||
+                "Failed to remove bookmark"
+            );
+
+        }
+
+
+        alert(
+            "Bookmark removed successfully."
+        );
+
+
+        /*
+         * Reload the current student's bookmarks.
+         */
+
+        await loadAdminBookmarks();
+
+
+    } catch (error) {
+
+        console.error(
+            "Remove bookmark error:",
+            error
+        );
+
+
+        alert(
+            "Error: " +
+            error.message
+        );
+
+    }
+
+}
+
+
+/* =====================================
+   CLEAR BOOKMARKS VIEW
+===================================== */
+
+function clearAdminBookmarks() {
+
+    document.getElementById(
+        "bookmarkStudentId"
+    ).value = "";
+
+
+    document.getElementById(
+        "bookmarkCount"
+    ).textContent =
+        "Enter a Student ID to view bookmarks.";
+
+
+    document.getElementById(
+        "adminBookmarksTableBody"
+    ).innerHTML = `
+        <tr>
+
+            <td
+                colspan="6"
+                style="text-align:center;"
+            >
+                Enter a Student ID above.
+            </td>
+
+        </tr>
+    `;
+
+}
+
+
+/* =====================================
+   BOOKMARK HTML ESCAPE
+===================================== */
+
+function escapeBookmarkHtml(value) {
+
+    if (
+        value === null ||
+        value === undefined
+    ) {
+
+        return "";
+
+    }
+
+
+    return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+
+}
+    
     
 /* =====================================
    INITIALIZE
