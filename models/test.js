@@ -25,42 +25,59 @@ class Test {
     }
 
 
-    // Create Test
-    static create(data, callback) {
-        db.query(
-            `INSERT INTO tests
-            (
-                title,
-                description,
-                subject,
-                chapter,
-                topic,
-                total_questions,
-                duration_minutes,
-                start_time,
-                end_time,
-                status
-            )
-            VALUES
-            ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)
-            RETURNING *`,
-            [
-                data.title,
-                data.description,
-                data.subject,
-                data.chapter,
-                data.topic,
-                data.total_questions,
-                data.duration_minutes,
-                data.start_time,
-                data.end_time,
-                data.status
-            ],
-            callback
-        );
-    }
+// Create Test
+static create(data, callback) {
 
+    db.query(
 
+        `INSERT INTO tests
+        (
+            title,
+            description,
+            subject,
+            chapter,
+            topic,
+            total_questions,
+            duration_minutes,
+            start_time,
+            end_time,
+            status
+        )
+        VALUES
+        (
+            $1,
+            $2,
+            $3,
+            $4,
+            $5,
+            $6,
+            $7,
+            $8,
+            $9,
+            $10
+        )
+        RETURNING *`,
+
+        [
+            data.title,
+            data.description || null,
+            data.subject,
+            data.chapter || null,
+            data.topic || null,
+            Number(data.total_questions),
+            Number(data.duration_minutes),
+            data.start_time || null,
+            data.end_time || null,
+            data.status || "draft"
+        ],
+
+        callback
+
+    );
+
+}
+
+    
     // Update Test
     static update(id, data, callback) {
         db.query(
