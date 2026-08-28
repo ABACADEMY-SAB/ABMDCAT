@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+p<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -1344,23 +1344,338 @@ Loading tests...
      NOTES
 ========================= -->
 
-<section
-id="notes"
-class="section">
+<section id="notes" class="section">
 
-<h2 class="page-title">
-Notes
-</h2>
+    <h2 class="page-title">
+        Notes
+    </h2>
 
-<div class="panel">
+    <div class="panel">
 
-<h3>Notes Management</h3>
+        <div style="
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            gap:10px;
+            flex-wrap:wrap;
+            margin-bottom:20px;
+        ">
 
-<p>
-Notes management will be connected later.
-</p>
+            <div>
+                <h3 style="margin:0;">
+                    Notes Management
+                </h3>
 
-</div>
+                <p style="margin:5px 0 0;">
+                    Add, edit, view and delete study notes.
+                </p>
+            </div>
+
+            <div style="
+                display:flex;
+                gap:10px;
+                flex-wrap:wrap;
+            ">
+
+                <button
+                    type="button"
+                    onclick="loadAdminNotes()"
+                    class="btn">
+                    🔄 Refresh
+                </button>
+
+                <button
+                    type="button"
+                    onclick="openNoteModal()"
+                    class="btn">
+                    ➕ Add Note
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <!-- Notes Table -->
+
+        <div style="
+            width:100%;
+            overflow-x:auto;
+        ">
+
+            <table
+                style="
+                    width:100%;
+                    border-collapse:collapse;
+                    min-width:850px;
+                "
+            >
+
+                <thead>
+
+                    <tr>
+
+                        <th>ID</th>
+
+                        <th>Subject</th>
+
+                        <th>Chapter</th>
+
+                        <th>Title</th>
+
+                        <th>Price</th>
+
+                        <th>PDF</th>
+
+                        <th>Actions</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody id="adminNotesTableBody">
+
+                    <tr>
+
+                        <td
+                            colspan="7"
+                            style="text-align:center;"
+                        >
+                            Loading notes...
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         ADD / EDIT NOTE MODAL
+    ========================= -->
+
+    <div
+        id="noteModal"
+        style="
+            display:none;
+            position:fixed;
+            inset:0;
+            background:rgba(0,0,0,.55);
+            z-index:9999;
+            padding:20px;
+            overflow-y:auto;
+        "
+    >
+
+        <div
+            style="
+                max-width:600px;
+                margin:40px auto;
+                background:white;
+                border-radius:12px;
+                padding:25px;
+            "
+        >
+
+            <div style="
+                display:flex;
+                justify-content:space-between;
+                align-items:center;
+                margin-bottom:20px;
+            ">
+
+                <h3 id="noteModalTitle">
+                    Add Note
+                </h3>
+
+                <button
+                    type="button"
+                    onclick="closeNoteModal()"
+                    style="
+                        border:none;
+                        background:none;
+                        font-size:25px;
+                        cursor:pointer;
+                    "
+                >
+                    ×
+                </button>
+
+            </div>
+
+
+            <form
+                id="adminNoteForm"
+                onsubmit="saveAdminNote(event)"
+            >
+
+                <input
+                    type="hidden"
+                    id="adminNoteId"
+                >
+
+
+                <div style="margin-bottom:15px;">
+
+                    <label>
+                        Subject
+                    </label>
+
+                    <input
+                        type="text"
+                        id="adminNoteSubject"
+                        required
+                        style="
+                            width:100%;
+                            padding:10px;
+                            margin-top:5px;
+                        "
+                    >
+
+                </div>
+
+
+                <div style="margin-bottom:15px;">
+
+                    <label>
+                        Chapter
+                    </label>
+
+                    <input
+                        type="text"
+                        id="adminNoteChapter"
+                        required
+                        style="
+                            width:100%;
+                            padding:10px;
+                            margin-top:5px;
+                        "
+                    >
+
+                </div>
+
+
+                <div style="margin-bottom:15px;">
+
+                    <label>
+                        Title
+                    </label>
+
+                    <input
+                        type="text"
+                        id="adminNoteTitle"
+                        required
+                        style="
+                            width:100%;
+                            padding:10px;
+                            margin-top:5px;
+                        "
+                    >
+
+                </div>
+
+
+                <div style="margin-bottom:15px;">
+
+                    <label>
+                        Description
+                    </label>
+
+                    <textarea
+                        id="adminNoteDescription"
+                        rows="4"
+                        style="
+                            width:100%;
+                            padding:10px;
+                            margin-top:5px;
+                            resize:vertical;
+                        "
+                    ></textarea>
+
+                </div>
+
+
+                <div style="margin-bottom:15px;">
+
+                    <label>
+                        Price
+                    </label>
+
+                    <input
+                        type="number"
+                        id="adminNotePrice"
+                        min="0"
+                        step="0.01"
+                        value="0"
+                        style="
+                            width:100%;
+                            padding:10px;
+                            margin-top:5px;
+                        "
+                    >
+
+                </div>
+
+
+                <div style="margin-bottom:20px;">
+
+                    <label>
+                        PDF Link
+                    </label>
+
+                    <input
+                        type="url"
+                        id="adminNotePdfLink"
+                        placeholder="https://..."
+                        style="
+                            width:100%;
+                            padding:10px;
+                            margin-top:5px;
+                        "
+                    >
+
+                    <small>
+                        Enter the PDF URL. Direct PDF upload is not
+                        connected yet.
+                    </small>
+
+                </div>
+
+
+                <div style="
+                    display:flex;
+                    justify-content:flex-end;
+                    gap:10px;
+                ">
+
+                    <button
+                        type="button"
+                        onclick="closeNoteModal()"
+                        class="btn"
+                    >
+                        Cancel
+                    </button>
+
+                    <button
+                        type="submit"
+                        class="btn"
+                        id="saveNoteButton"
+                    >
+                        Save Note
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
 
 </section>
 
