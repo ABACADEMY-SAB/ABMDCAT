@@ -839,7 +839,14 @@ class="section">
 Website Settings
 </h2>
 
+
+<!-- WEBSITE INFORMATION -->
+
 <div class="panel">
+
+<h3>
+Website Information
+</h3>
 
 <p>
 <strong>Website:</strong>
@@ -855,9 +862,20 @@ Loading...
 </span>
 </p>
 
+</div>
+
+
+<!-- MAINTENANCE -->
+
+<div class="panel">
+
+<h3>
+Maintenance Mode
+</h3>
+
 <p>
 
-<strong>Maintenance:</strong>
+<strong>Status:</strong>
 
 <span
 id="settingsMaintenance"
@@ -866,6 +884,115 @@ OFF
 </span>
 
 </p>
+
+
+<div style="margin-top:15px;">
+
+<button
+type="button"
+onclick="enableMaintenance()">
+Enable Maintenance
+</button>
+
+
+<button
+type="button"
+onclick="disableMaintenance()">
+Disable Maintenance
+</button>
+
+</div>
+
+</div>
+
+
+<!-- STUDENT REGISTRATION -->
+
+<div class="panel">
+
+<h3>
+Student Registration
+</h3>
+
+<p>
+
+<strong>Status:</strong>
+
+<span
+id="studentRegistrationStatus"
+class="status status-on">
+ON
+</span>
+
+</p>
+
+
+<button
+type="button"
+onclick="toggleStudentRegistration()">
+
+Toggle Registration
+
+</button>
+
+</div>
+
+
+<!-- STUDENT ACTIVITIES -->
+
+<div class="panel">
+
+<h3>
+Student Activities
+</h3>
+
+
+<p>
+
+<strong>Practice MCQs:</strong>
+
+<span
+id="practiceMcqsStatus"
+class="status status-on">
+ON
+</span>
+
+</p>
+
+
+<p>
+
+<strong>Online Tests:</strong>
+
+<span
+id="onlineTestsStatus"
+class="status status-on">
+ON
+</span>
+
+</p>
+
+
+<div style="margin-top:15px;">
+
+<button
+type="button"
+onclick="togglePracticeMcqs()">
+
+Toggle Practice MCQs
+
+</button>
+
+
+<button
+type="button"
+onclick="toggleOnlineTests()">
+
+Toggle Online Tests
+
+</button>
+
+</div>
 
 </div>
 
