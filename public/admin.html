@@ -609,21 +609,154 @@ class="section">
 Admin Profile
 </h2>
 
+
 <div class="panel">
 
-<p>
-<strong>Username:</strong>
-<span id="profileUsername">
-Loading...
-</span>
-</p>
+    <h3>
+        Profile Information
+    </h3>
 
-<p>
-<strong>Full Name:</strong>
-<span id="profileFullname">
-Loading...
-</span>
-</p>
+
+    <p>
+        <strong>Admin ID:</strong>
+        <span id="profileId">
+            Loading...
+        </span>
+    </p>
+
+
+    <p>
+        <strong>Username:</strong>
+        <span id="profileUsername">
+            Loading...
+        </span>
+    </p>
+
+
+    <p>
+        <strong>Full Name:</strong>
+        <span id="profileFullname">
+            Loading...
+        </span>
+    </p>
+
+
+    <p>
+        <strong>Account Created:</strong>
+        <span id="profileCreatedAt">
+            Loading...
+        </span>
+    </p>
+
+
+    <div style="margin-top:20px;">
+
+        <button
+            type="button"
+            onclick="openEditProfile()">
+            Edit Profile
+        </button>
+
+
+        <button
+            type="button"
+            onclick="openChangePassword()">
+            Change Password
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- EDIT PROFILE -->
+
+<div
+id="editProfilePanel"
+class="panel"
+style="display:none; margin-top:20px;">
+
+    <h3>
+        Edit Profile
+    </h3>
+
+
+    <input
+        type="text"
+        id="editProfileUsername"
+        placeholder="Username"
+    >
+
+
+    <input
+        type="text"
+        id="editProfileFullname"
+        placeholder="Full Name"
+    >
+
+
+    <div style="margin-top:15px;">
+
+        <button
+            type="button"
+            onclick="updateAdminProfile()">
+            Save Changes
+        </button>
+
+
+        <button
+            type="button"
+            onclick="closeEditProfile()">
+            Cancel
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- CHANGE PASSWORD -->
+
+<div
+id="changePasswordPanel"
+class="panel"
+style="display:none; margin-top:20px;">
+
+    <h3>
+        Change Password
+    </h3>
+
+
+    <input
+        type="password"
+        id="newAdminPassword"
+        placeholder="New Password"
+    >
+
+
+    <input
+        type="password"
+        id="confirmAdminPassword"
+        placeholder="Confirm New Password"
+    >
+
+
+    <div style="margin-top:15px;">
+
+        <button
+            type="button"
+            onclick="changeAdminPassword()">
+            Update Password
+        </button>
+
+
+        <button
+            type="button"
+            onclick="closeChangePassword()">
+            Cancel
+        </button>
+
+    </div>
 
 </div>
 
@@ -4084,7 +4217,7 @@ async function loadDashboard() {
 }
 
 
-/* =====================================
+ /* =====================================
    PROFILE
 ===================================== */
 
@@ -4092,9 +4225,9 @@ async function loadProfile() {
 
     try {
 
-        // Get logged-in admin from localStorage
         const adminData =
             localStorage.getItem("admin");
+
 
         if (!adminData) {
 
@@ -4120,7 +4253,6 @@ async function loadProfile() {
         }
 
 
-        // Request profile using Admin ID
         const response =
             await fetch(
                 `/api/admin/profile?id=${admin.id}`
@@ -4145,6 +4277,12 @@ async function loadProfile() {
         if (data.success && data.admin) {
 
             document.getElementById(
+                "profileId"
+            ).textContent =
+                data.admin.id || "-";
+
+
+            document.getElementById(
                 "profileUsername"
             ).textContent =
                 data.admin.username || "-";
@@ -4155,8 +4293,17 @@ async function loadProfile() {
             ).textContent =
                 data.admin.fullname || "-";
 
-        }
 
+            document.getElementById(
+                "profileCreatedAt"
+            ).textContent =
+                data.admin.created_at
+                ? new Date(
+                    data.admin.created_at
+                ).toLocaleDateString()
+                : "-";
+
+        }
 
     } catch (error) {
 
@@ -4167,7 +4314,7 @@ async function loadProfile() {
 
     }
 
-}
+}           
 
 
 /* =====================================
