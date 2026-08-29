@@ -4092,9 +4092,38 @@ async function loadProfile() {
 
     try {
 
+        // Get logged-in admin from localStorage
+        const adminData =
+            localStorage.getItem("admin");
+
+        if (!adminData) {
+
+            console.error(
+                "Admin data not found"
+            );
+
+            return;
+        }
+
+
+        const admin =
+            JSON.parse(adminData);
+
+
+        if (!admin.id) {
+
+            console.error(
+                "Admin ID not found"
+            );
+
+            return;
+        }
+
+
+        // Request profile using Admin ID
         const response =
             await fetch(
-                "/api/admin/profile"
+                `/api/admin/profile?id=${admin.id}`
             );
 
 
@@ -4102,7 +4131,18 @@ async function loadProfile() {
             await response.json();
 
 
-        if (data.admin) {
+        if (!response.ok) {
+
+            console.error(
+                data.message ||
+                "Failed to load profile"
+            );
+
+            return;
+        }
+
+
+        if (data.success && data.admin) {
 
             document.getElementById(
                 "profileUsername"
@@ -4120,7 +4160,10 @@ async function loadProfile() {
 
     } catch (error) {
 
-        console.error(error);
+        console.error(
+            "Profile loading error:",
+            error
+        );
 
     }
 
