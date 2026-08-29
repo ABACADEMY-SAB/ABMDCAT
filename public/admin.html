@@ -4965,6 +4965,57 @@ async function loadSettings() {
 
 
 /* =====================================
+   UPDATE SETTING STATUS
+===================================== */
+
+function updateSettingStatus(
+    elementId,
+    enabled
+) {
+
+    const element =
+        document.getElementById(
+            elementId
+        );
+
+
+    if (!element) {
+        return;
+    }
+
+
+    if (enabled) {
+
+        element.textContent =
+            "ON";
+
+        element.classList.remove(
+            "status-off"
+        );
+
+        element.classList.add(
+            "status-on"
+        );
+
+    } else {
+
+        element.textContent =
+            "OFF";
+
+        element.classList.remove(
+            "status-on"
+        );
+
+        element.classList.add(
+            "status-off"
+        );
+
+    }
+
+    }
+
+    
+/* =====================================
    MAINTENANCE
 ===================================== */
 
