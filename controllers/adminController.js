@@ -4,6 +4,7 @@
 
 const db = require("../config/database");
 const Admin = require("../models/admin");
+const Settings = require("../models/settings");
 
 
 // =====================================
