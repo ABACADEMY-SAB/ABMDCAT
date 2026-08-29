@@ -266,6 +266,75 @@ exports.updateProfile = (req, res) => {
 
 
 // =====================================
+// CHANGE ADMIN PASSWORD
+// =====================================
+
+exports.changePassword = (req, res) => {
+
+    const id =
+        req.body.id;
+
+    const password =
+        req.body.password;
+
+
+    if (!id || !password) {
+
+        return res.status(400).json({
+
+            success: false,
+
+            message:
+                "Admin ID and password are required"
+
+        });
+
+    }
+
+
+    Admin.changePassword(
+        id,
+        password,
+        (err, result) => {
+
+            if (err) {
+
+                console.error(
+                    "Change password error:",
+                    err
+                );
+
+                return res.status(500).json({
+
+                    success: false,
+
+                    message:
+                        "Database error",
+
+                    error:
+                        err.message
+
+                });
+
+            }
+
+
+            return res.json({
+
+                success: true,
+
+                message:
+                    "Password changed successfully"
+
+            });
+
+        }
+    );
+
+};
+
+
+// =====================================
 // DASHBOARD STATISTICS
 // =====================================
 
