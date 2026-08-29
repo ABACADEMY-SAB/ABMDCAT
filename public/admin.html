@@ -4886,30 +4886,78 @@ async function loadSettings() {
             await response.json();
 
 
+        if (!response.ok || !data.success) {
+
+            console.error(
+                data.message ||
+                "Failed to load settings"
+            );
+
+            return;
+        }
+
+
+        const settings =
+            data.settings;
+
+
+        // Website
         document.getElementById(
             "websiteName"
         ).textContent =
-            data.website ||
+            settings.website_name ||
             "ABMDCAT";
 
 
+        // Version
         document.getElementById(
             "websiteVersion"
         ).textContent =
-            data.version ||
+            settings.version ||
             "1.0";
 
 
+        // Maintenance
         updateMaintenanceStatus(
             Boolean(
-                data.maintenance
+                settings.maintenance
+            )
+        );
+
+
+        // Student Registration
+        updateSettingStatus(
+            "studentRegistrationStatus",
+            Boolean(
+                settings.student_registration
+            )
+        );
+
+
+        // Practice MCQs
+        updateSettingStatus(
+            "practiceMcqsStatus",
+            Boolean(
+                settings.practice_mcqs
+            )
+        );
+
+
+        // Online Tests
+        updateSettingStatus(
+            "onlineTestsStatus",
+            Boolean(
+                settings.online_tests
             )
         );
 
 
     } catch (error) {
 
-        console.error(error);
+        console.error(
+            "Settings loading error:",
+            error
+        );
 
     }
 
