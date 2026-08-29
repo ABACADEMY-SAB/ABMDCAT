@@ -446,20 +446,59 @@ exports.statistics = (req, res) => {
 
 exports.settings = (req, res) => {
 
-    res.json({
+    Settings.getSettings(
+        (err, result) => {
 
-        success: true,
+            if (err) {
 
-        website:
-            "ABMDCAT",
+                console.error(
+                    "Settings error:",
+                    err
+                );
 
-        version:
-            "1.0",
+                return res.status(500).json({
 
-        maintenance:
-            false
+                    success: false,
 
-    });
+                    message:
+                        "Database error",
+
+                    error:
+                        err.message
+
+                });
+
+            }
+
+
+            if (result.rows.length === 0) {
+
+                return res.status(404).json({
+
+                    success: false,
+
+                    message:
+                        "Settings not found"
+
+                });
+
+            }
+
+
+            const settings =
+                result.rows[0];
+
+
+            return res.json({
+
+                success: true,
+
+                settings: settings
+
+            });
+
+        }
+    );
 
 };
 
