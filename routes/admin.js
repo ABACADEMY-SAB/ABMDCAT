@@ -12,6 +12,11 @@ router.get("/dashboard", adminController.dashboard);
 // Profile
 router.get("/profile", adminController.profile);
 
+router.put(
+    "/profile",
+    adminController.updateProfile
+);
+
 // Statistics
 router.get("/statistics", adminController.statistics);
 
