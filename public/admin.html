@@ -4471,6 +4471,168 @@ async function updateAdminProfile() {
     }
 }
 
+
+    /* =====================================
+   CHANGE PASSWORD
+===================================== */
+
+function openChangePassword() {
+
+    document.getElementById(
+        "changePasswordPanel"
+    ).style.display =
+        "block";
+
+}
+
+
+/* =====================================
+   CLOSE CHANGE PASSWORD
+===================================== */
+
+function closeChangePassword() {
+
+    document.getElementById(
+        "changePasswordPanel"
+    ).style.display =
+        "none";
+
+}
+
+
+/* =====================================
+   CHANGE ADMIN PASSWORD
+===================================== */
+
+async function changeAdminPassword() {
+
+    try {
+
+        const adminData =
+            localStorage.getItem("admin");
+
+
+        if (!adminData) {
+
+            alert(
+                "Admin information not found."
+            );
+
+            return;
+        }
+
+
+        const admin =
+            JSON.parse(adminData);
+
+
+        const password =
+            document.getElementById(
+                "newAdminPassword"
+            ).value;
+
+
+        const confirmPassword =
+            document.getElementById(
+                "confirmAdminPassword"
+            ).value;
+
+
+        if (!password || !confirmPassword) {
+
+            alert(
+                "Please enter and confirm your new password."
+            );
+
+            return;
+        }
+
+
+        if (password !== confirmPassword) {
+
+            alert(
+                "Passwords do not match."
+            );
+
+            return;
+        }
+
+
+        const response =
+            await fetch(
+                "/api/admin/profile/password",
+                {
+                    method: "PUT",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body: JSON.stringify({
+
+                        id: admin.id,
+
+                        password: password
+
+                    })
+
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (!response.ok) {
+
+            alert(
+                data.message ||
+                "Failed to change password."
+            );
+
+            return;
+        }
+
+
+        if (data.success) {
+
+            alert(
+                "Password changed successfully."
+            );
+
+
+            document.getElementById(
+                "newAdminPassword"
+            ).value = "";
+
+
+            document.getElementById(
+                "confirmAdminPassword"
+            ).value = "";
+
+
+            closeChangePassword();
+
+        }
+
+    } catch (error) {
+
+        console.error(
+            "Change password error:",
+            error
+        );
+
+
+        alert(
+            "Unable to connect to the server."
+        );
+
+    }
+
+}
+
     
 /* =====================================
    STATISTICS
