@@ -17,6 +17,11 @@ router.put(
     adminController.updateProfile
 );
 
+router.put(
+    "/profile/password",
+    adminController.changePassword
+);
+
 // Statistics
 router.get("/statistics", adminController.statistics);
 
