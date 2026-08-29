@@ -4317,6 +4317,161 @@ async function loadProfile() {
 }           
 
 
+    /* =====================================
+   EDIT PROFILE
+===================================== */
+
+function openEditProfile() {
+
+    const adminData =
+        localStorage.getItem("admin");
+
+    if (!adminData) {
+        alert("Admin information not found.");
+        return;
+    }
+
+    const admin =
+        JSON.parse(adminData);
+
+    document.getElementById(
+        "editProfileUsername"
+    ).value =
+        admin.username || "";
+
+    document.getElementById(
+        "editProfileFullname"
+    ).value =
+        admin.fullname || "";
+
+    document.getElementById(
+        "editProfilePanel"
+    ).style.display =
+        "block";
+}
+
+
+/* =====================================
+   CLOSE EDIT PROFILE
+===================================== */
+
+function closeEditProfile() {
+
+    document.getElementById(
+        "editProfilePanel"
+    ).style.display =
+        "none";
+}
+
+
+/* =====================================
+   UPDATE ADMIN PROFILE
+===================================== */
+
+async function updateAdminProfile() {
+
+    try {
+
+        const adminData =
+            localStorage.getItem("admin");
+
+        if (!adminData) {
+            alert("Admin information not found.");
+            return;
+        }
+
+        const admin =
+            JSON.parse(adminData);
+
+        const username =
+            document.getElementById(
+                "editProfileUsername"
+            ).value.trim();
+
+        const fullname =
+            document.getElementById(
+                "editProfileFullname"
+            ).value.trim();
+
+        if (!username || !fullname) {
+
+            alert(
+                "Username and Full Name are required."
+            );
+
+            return;
+        }
+
+        const response =
+            await fetch(
+                "/api/admin/profile",
+                {
+                    method: "PUT",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body: JSON.stringify({
+
+                        id: admin.id,
+                        username: username,
+                        fullname: fullname
+
+                    })
+                }
+            );
+
+        const data =
+            await response.json();
+
+        if (!response.ok) {
+
+            alert(
+                data.message ||
+                "Failed to update profile."
+            );
+
+            return;
+        }
+
+        if (data.success) {
+
+            admin.username =
+                username;
+
+            admin.fullname =
+                fullname;
+
+            localStorage.setItem(
+                "admin",
+                JSON.stringify(admin)
+            );
+
+            alert(
+                "Profile updated successfully."
+            );
+
+            closeEditProfile();
+
+            await loadProfile();
+        }
+
+    } catch (error) {
+
+        console.error(
+            "Update profile error:",
+            error
+        );
+
+        alert(
+            "Unable to connect to the server."
+        );
+    }
+}
+
+    
 /* =====================================
    STATISTICS
 ===================================== */
