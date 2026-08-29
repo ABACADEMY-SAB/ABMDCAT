@@ -192,6 +192,80 @@ exports.profile = (req, res) => {
 
 
 // =====================================
+// UPDATE ADMIN PROFILE
+// =====================================
+
+exports.updateProfile = (req, res) => {
+
+    const id =
+        req.body.id;
+
+    const {
+        username,
+        fullname
+    } = req.body;
+
+
+    if (!id || !username || !fullname) {
+
+        return res.status(400).json({
+
+            success: false,
+
+            message:
+                "Admin ID, username and full name are required"
+
+        });
+
+    }
+
+
+    Admin.updateProfile(
+        id,
+        {
+            username: username,
+            fullname: fullname
+        },
+        (err, result) => {
+
+            if (err) {
+
+                console.error(
+                    "Update profile error:",
+                    err
+                );
+
+                return res.status(500).json({
+
+                    success: false,
+
+                    message:
+                        "Database error",
+
+                    error:
+                        err.message
+
+                });
+
+            }
+
+
+            return res.json({
+
+                success: true,
+
+                message:
+                    "Profile updated successfully"
+
+            });
+
+        }
+    );
+
+};
+
+
+// =====================================
 // DASHBOARD STATISTICS
 // =====================================
 
