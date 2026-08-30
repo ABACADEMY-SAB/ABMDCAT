@@ -6,7 +6,10 @@ const db = require("../config/database");
 
 class Settings {
 
-    // Get Website Settings
+    // =====================================
+    // GET WEBSITE SETTINGS
+    // =====================================
+
     static getSettings(callback) {
 
         db.query(
@@ -20,7 +23,10 @@ class Settings {
     }
 
 
-    // Update Website Settings
+    // =====================================
+    // UPDATE WEBSITE SETTINGS
+    // =====================================
+
     static updateSettings(
         data,
         callback
@@ -49,55 +55,56 @@ class Settings {
 
     }
 
-}
 
+    // =====================================
+    // UPDATE SINGLE SETTING
+    // =====================================
 
-/* =====================================
-   UPDATE SINGLE SETTING
-===================================== */
-
-static updateSingleSetting(
-    setting,
-    value,
-    callback
-) {
-
-    const allowedSettings = [
-        "maintenance",
-        "student_registration",
-        "practice_mcqs",
-        "online_tests"
-    ];
-
-
-    if (
-        !allowedSettings.includes(
-            setting
-        )
+    static updateSingleSetting(
+        setting,
+        value,
+        callback
     ) {
 
-        return callback(
-            new Error(
-                "Invalid setting"
+        const allowedSettings = [
+            "maintenance",
+            "student_registration",
+            "practice_mcqs",
+            "online_tests"
+        ];
+
+
+        if (
+            !allowedSettings.includes(
+                setting
             )
+        ) {
+
+            return callback(
+                new Error(
+                    "Invalid setting"
+                )
+            );
+
+        }
+
+
+        const query = `
+            UPDATE site_settings
+            SET ${setting} = $1
+            WHERE id = 1
+        `;
+
+
+        db.query(
+            query,
+            [value],
+            callback
         );
 
     }
 
-
-    const query = `
-        UPDATE site_settings
-        SET ${setting} = $1
-        WHERE id = 1
-    `;
-
-
-    db.query(
-        query,
-        [value],
-        callback
-    );
-
 }
+
 
 module.exports = Settings;
