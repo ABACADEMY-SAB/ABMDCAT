@@ -5014,6 +5014,79 @@ function updateSettingStatus(
 
     }
 
+
+/* =====================================
+   UPDATE SETTING
+===================================== */
+
+async function updateSetting(
+    setting,
+    value
+) {
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/admin/settings",
+                {
+                    method: "PUT",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body: JSON.stringify({
+
+                        setting: setting,
+
+                        value: value
+
+                    })
+
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (!response.ok || !data.success) {
+
+            alert(
+                data.message ||
+                "Failed to update setting."
+            );
+
+            return false;
+
+        }
+
+
+        return true;
+
+
+    } catch (error) {
+
+        console.error(
+            "Update setting error:",
+            error
+        );
+
+
+        alert(
+            "Unable to connect to the server."
+        );
+
+
+        return false;
+
+    }
+
+    }
+
     
 /* =====================================
    MAINTENANCE
