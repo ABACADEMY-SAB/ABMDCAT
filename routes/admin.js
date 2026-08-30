@@ -28,6 +28,12 @@ router.get("/statistics", adminController.statistics);
 // Settings
 router.get("/settings", adminController.settings);
 
+// Update Setting
+router.put(
+    "/settings",
+    adminController.updateSetting
+);
+
 // Enable Maintenance
 router.post("/maintenance/on", adminController.enableMaintenance);
 
