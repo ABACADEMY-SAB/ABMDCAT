@@ -51,4 +51,53 @@ class Settings {
 
 }
 
+
+/* =====================================
+   UPDATE SINGLE SETTING
+===================================== */
+
+static updateSingleSetting(
+    setting,
+    value,
+    callback
+) {
+
+    const allowedSettings = [
+        "maintenance",
+        "student_registration",
+        "practice_mcqs",
+        "online_tests"
+    ];
+
+
+    if (
+        !allowedSettings.includes(
+            setting
+        )
+    ) {
+
+        return callback(
+            new Error(
+                "Invalid setting"
+            )
+        );
+
+    }
+
+
+    const query = `
+        UPDATE site_settings
+        SET ${setting} = $1
+        WHERE id = 1
+    `;
+
+
+    db.query(
+        query,
+        [value],
+        callback
+    );
+
+}
+
 module.exports = Settings;
