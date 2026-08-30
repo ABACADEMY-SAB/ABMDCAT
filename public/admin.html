@@ -1,4 +1,4 @@
-p<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -4963,6 +4963,111 @@ async function loadSettings() {
 
 }
 
+
+/* =====================================
+   TOGGLE STUDENT REGISTRATION
+===================================== */
+
+async function toggleStudentRegistration() {
+
+    const element =
+        document.getElementById(
+            "studentRegistrationStatus"
+        );
+
+    const currentState =
+        element.textContent === "ON";
+
+    const newState =
+        !currentState;
+
+    const success =
+        await updateSetting(
+            "student_registration",
+            newState
+        );
+
+    if (success) {
+
+        updateSettingStatus(
+            "studentRegistrationStatus",
+            newState
+        );
+
+    }
+
+}
+
+
+/* =====================================
+   TOGGLE PRACTICE MCQS
+===================================== */
+
+async function togglePracticeMcqs() {
+
+    const element =
+        document.getElementById(
+            "practiceMcqsStatus"
+        );
+
+    const currentState =
+        element.textContent === "ON";
+
+    const newState =
+        !currentState;
+
+    const success =
+        await updateSetting(
+            "practice_mcqs",
+            newState
+        );
+
+    if (success) {
+
+        updateSettingStatus(
+            "practiceMcqsStatus",
+            newState
+        );
+
+    }
+
+}
+
+
+/* =====================================
+   TOGGLE ONLINE TESTS
+===================================== */
+
+async function toggleOnlineTests() {
+
+    const element =
+        document.getElementById(
+            "onlineTestsStatus"
+        );
+
+    const currentState =
+        element.textContent === "ON";
+
+    const newState =
+        !currentState;
+
+    const success =
+        await updateSetting(
+            "online_tests",
+            newState
+        );
+
+    if (success) {
+
+        updateSettingStatus(
+            "onlineTestsStatus",
+            newState
+        );
+
+    }
+
+    }
+    
 
 /* =====================================
    UPDATE SETTING STATUS
