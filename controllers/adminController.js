@@ -504,6 +504,77 @@ exports.settings = (req, res) => {
 
 
 // =====================================
+// UPDATE SINGLE SETTING
+// =====================================
+
+exports.updateSetting = (req, res) => {
+
+    const {
+        setting,
+        value
+    } = req.body;
+
+
+    if (!setting) {
+
+        return res.status(400).json({
+
+            success: false,
+
+            message:
+                "Setting name is required"
+
+        });
+
+    }
+
+
+    Settings.updateSingleSetting(
+        setting,
+        Boolean(value),
+        (err, result) => {
+
+            if (err) {
+
+                console.error(
+                    "Update setting error:",
+                    err
+                );
+
+                return res.status(400).json({
+
+                    success: false,
+
+                    message:
+                        err.message
+
+                });
+
+            }
+
+
+            return res.json({
+
+                success: true,
+
+                message:
+                    "Setting updated successfully",
+
+                setting:
+                    setting,
+
+                value:
+                    Boolean(value)
+
+            });
+
+        }
+    );
+
+};
+
+
+// =====================================
 // ENABLE MAINTENANCE
 // =====================================
 
