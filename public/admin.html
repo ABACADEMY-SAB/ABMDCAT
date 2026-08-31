@@ -8672,6 +8672,514 @@ if (adminUploadForm) {
 
     }
     
+
+/* =====================================
+   NOTIFICATION MANAGEMENT
+===================================== */
+
+
+// =====================================
+// LOAD ALL NOTIFICATIONS
+// =====================================
+
+async function loadNotifications() {
+
+    const container =
+        document.getElementById(
+            "notificationsTableContainer"
+        );
+
+    if (!container) return;
+
+    try {
+
+        const response =
+            await fetch("/api/notification");
+
+        const data =
+            await response.json();
+
+        if (!response.ok || !data.success) {
+
+            throw new Error(
+                data.message ||
+                "Failed to load notifications"
+            );
+
+        }
+
+
+        const notifications =
+            data.notifications || [];
+
+
+        if (notifications.length === 0) {
+
+            container.innerHTML = `
+                <p>
+                    No notifications found.
+                </p>
+            `;
+
+            return;
+
+        }
+
+
+        container.innerHTML = `
+
+            <div style="overflow-x:auto;">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+
+                            <th>ID</th>
+
+                            <th>Title</th>
+
+                            <th>Message</th>
+
+                            <th>Type</th>
+
+                            <th>Student</th>
+
+                            <th>Status</th>
+
+                            <th>Action</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        ${notifications.map(
+                            notification => `
+
+                            <tr>
+
+                                <td>
+                                    ${notification.id}
+                                </td>
+
+                                <td>
+                                    ${escapeNotificationHTML(
+                                        notification.title
+                                    )}
+                                </td>
+
+                                <td>
+                                    ${escapeNotificationHTML(
+                                        notification.message
+                                    )}
+                                </td>
+
+                                <td>
+                                    ${escapeNotificationHTML(
+                                        notification.notification_type ||
+                                        "general"
+                                    )}
+                                </td>
+
+                                <td>
+
+                                    ${
+                                        notification.student_id
+                                        ? "Student #" +
+                                          notification.student_id
+                                        : "All Students"
+                                    }
+
+                                </td>
+
+                                <td>
+
+                                    ${
+                                        notification.is_read
+                                        ? "Read"
+                                        : "Unread"
+                                    }
+
+                                </td>
+
+                                <td>
+
+                                    <button
+                                        type="button"
+                                        onclick="deleteNotification(${notification.id})">
+
+                                        Delete
+
+                                    </button>
+
+                                </td>
+
+                            </tr>
+
+                        `).join("")}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        `;
+
+    } catch (error) {
+
+        console.error(
+            "Load notifications error:",
+            error
+        );
+
+        container.innerHTML = `
+
+            <p>
+                Failed to load notifications.
+            </p>
+
+        `;
+
+    }
+
+}
+
+
+
+// =====================================
+// SEND NOTIFICATION
+// =====================================
+
+async function sendNotification() {
+
+    const title =
+        document.getElementById(
+            "notificationTitle"
+        ).value.trim();
+
+
+    const message =
+        document.getElementById(
+            "notificationMessage"
+        ).value.trim();
+
+
+    const notificationType =
+        document.getElementById(
+            "notificationType"
+        ).value;
+
+
+    const student =
+        document.getElementById(
+            "notificationStudent"
+        ).value;
+
+
+    if (!title) {
+
+        alert(
+            "Please enter notification title."
+        );
+
+        return;
+
+    }
+
+
+    if (!message) {
+
+        alert(
+            "Please enter notification message."
+        );
+
+        return;
+
+    }
+
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/notification/add",
+                {
+
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body: JSON.stringify({
+
+                        title: title,
+
+                        message: message,
+
+                        notification_type:
+                            notificationType,
+
+                        student_id:
+                            student
+                            ? Number(student)
+                            : null
+
+                    })
+
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (!response.ok || !data.success) {
+
+            throw new Error(
+                data.message ||
+                "Failed to send notification"
+            );
+
+        }
+
+
+        alert(
+            "Notification sent successfully."
+        );
+
+
+        // Clear form
+
+        document.getElementById(
+            "notificationTitle"
+        ).value = "";
+
+
+        document.getElementById(
+            "notificationMessage"
+        ).value = "";
+
+
+        document.getElementById(
+            "notificationType"
+        ).value = "general";
+
+
+        document.getElementById(
+            "notificationStudent"
+        ).value = "";
+
+
+        // Reload notifications
+
+        await loadNotifications();
+
+
+    } catch (error) {
+
+        console.error(
+            "Send notification error:",
+            error
+        );
+
+        alert(
+            error.message ||
+            "Failed to send notification."
+        );
+
+    }
+
+}
+
+
+
+// =====================================
+// DELETE NOTIFICATION
+// =====================================
+
+async function deleteNotification(id) {
+
+    const confirmDelete =
+        confirm(
+            "Are you sure you want to delete this notification?"
+        );
+
+
+    if (!confirmDelete) return;
+
+
+    try {
+
+        const response =
+            await fetch(
+                `/api/notification/delete/${id}`,
+                {
+                    method: "DELETE"
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (!response.ok || !data.success) {
+
+            throw new Error(
+                data.message ||
+                "Failed to delete notification"
+            );
+
+        }
+
+
+        alert(
+            "Notification deleted successfully."
+        );
+
+
+        await loadNotifications();
+
+
+    } catch (error) {
+
+        console.error(
+            "Delete notification error:",
+            error
+        );
+
+        alert(
+            error.message ||
+            "Failed to delete notification."
+        );
+
+    }
+
+}
+
+
+
+// =====================================
+// LOAD STUDENTS INTO NOTIFICATION DROPDOWN
+// =====================================
+
+async function loadNotificationStudents() {
+
+    const select =
+        document.getElementById(
+            "notificationStudent"
+        );
+
+
+    if (!select) return;
+
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/admin/students"
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                data.message ||
+                "Failed to load students"
+            );
+
+        }
+
+
+        const students =
+            data.students ||
+            data.data ||
+            [];
+
+
+        select.innerHTML = `
+
+            <option value="">
+                All Students
+            </option>
+
+        `;
+
+
+        students.forEach(student => {
+
+            const option =
+                document.createElement(
+                    "option"
+                );
+
+
+            option.value =
+                student.id;
+
+
+            option.textContent =
+                `${student.id} - ${
+                    student.full_name ||
+                    student.name ||
+                    student.username ||
+                    "Student"
+                }`;
+
+
+            select.appendChild(option);
+
+        });
+
+
+    } catch (error) {
+
+        console.error(
+            "Load notification students error:",
+            error
+        );
+
+    }
+
+}
+
+
+
+// =====================================
+// ESCAPE HTML
+// =====================================
+
+function escapeNotificationHTML(value) {
+
+    if (value === null ||
+        value === undefined) {
+
+        return "";
+
+    }
+
+
+    return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+
+    }
+
     
 /* =====================================
    INITIALIZE
@@ -8697,7 +9205,11 @@ async function initialize() {
 
     await loadAdminUploads();
 
-    }
+    await loadNotifications();
+
+    await loadNotificationStudents();
+
+        }
     
 
 /* =====================================
