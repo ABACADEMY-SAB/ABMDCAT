@@ -554,6 +554,97 @@ exports.randomPractice = (req, res) => {
 
 
 // =====================================
+// STUDENT PRACTICE MCQs
+// =====================================
+
+exports.practice = (req, res) => {
+
+    const {
+        subject,
+        chapter,
+        topic,
+        limit
+    } = req.query;
+
+
+    const count =
+        Number(limit) || 10;
+
+
+    if (count < 1 || count > 180) {
+
+        return res.status(400).json({
+
+            success: false,
+
+            message:
+                "Number of MCQs must be between 1 and 180"
+
+        });
+
+    }
+
+
+    Mcq.practice(
+        {
+            subject,
+            chapter,
+            topic,
+            limit: count
+        },
+
+        (err, result) => {
+
+            if (err) {
+
+                console.error(
+                    "Student practice MCQ error:",
+                    err
+                );
+
+                return res.status(500).json({
+
+                    success: false,
+
+                    message:
+                        "Database error",
+
+                    error:
+                        err.message
+
+                });
+
+            }
+
+
+            return res.json({
+
+                success: true,
+
+                subject:
+                    subject || "mixed",
+
+                chapter:
+                    chapter || null,
+
+                topic:
+                    topic || null,
+
+                count:
+                    result.rows.length,
+
+                questions:
+                    result.rows
+
+            });
+
+        }
+    );
+
+};
+
+
+// =====================================
 // EXCEL / CSV IMPORT
 // =====================================
 
