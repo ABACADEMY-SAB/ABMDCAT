@@ -1847,7 +1847,751 @@ async function loadStatistics() {
 }
 
 
+/* ==========================================
+   STUDENT PRACTICE MCQs
+========================================== */
 
+let practiceSubjectValue = "";
+let practiceQuestions = [];
+let currentPracticeIndex = 0;
+let practiceAnswers = {};
+let practiceModeValue = "untimed";
+
+
+/* ==========================================
+   OPEN PRACTICE SETUP
+========================================== */
+
+async function openPracticeSetup(subject) {
+
+  practiceSubjectValue = subject;
+
+  document.getElementById(
+    "practiceSubject"
+  ).textContent =
+    subject === "mixed"
+      ? "Mixed — All Subjects"
+      : subject;
+
+
+  document.getElementById(
+    "practiceSetup"
+  ).style.display = "block";
+
+
+  document.getElementById(
+    "practiceQuestions"
+  ).style.display = "none";
+
+
+  await loadPracticeChapters();
+
+}
+
+
+
+/* ==========================================
+   LOAD CHAPTERS
+========================================== */
+
+async function loadPracticeChapters() {
+
+  const chapterSelect =
+    document.getElementById(
+      "practiceChapter"
+    );
+
+
+  const topicSelect =
+    document.getElementById(
+      "practiceTopic"
+    );
+
+
+  chapterSelect.innerHTML =
+    `<option value="">
+       All Chapters
+     </option>`;
+
+
+  topicSelect.innerHTML =
+    `<option value="">
+       All Topics
+     </option>`;
+
+
+  try {
+
+    const response =
+      await fetch(
+        "/api/mcq"
+      );
+
+
+    const data =
+      await response.json();
+
+
+    if (!data.success) {
+
+      showMessage(
+        "Unable to load MCQs"
+      );
+
+      return;
+
+    }
+
+
+    let mcqs =
+      data.mcqs || [];
+
+
+    /* Filter subject */
+
+    if (
+      practiceSubjectValue &&
+      practiceSubjectValue !== "mixed"
+    ) {
+
+      mcqs =
+        mcqs.filter(
+          function(mcq) {
+
+            return (
+              String(mcq.subject)
+                .toLowerCase() ===
+              String(practiceSubjectValue)
+                .toLowerCase()
+            );
+
+          }
+        );
+
+    }
+
+
+    /* Get unique chapters */
+
+    const chapters =
+      [
+        ...new Set(
+          mcqs
+            .map(
+              mcq => mcq.chapter
+            )
+            .filter(Boolean)
+        )
+      ];
+
+
+    chapters.sort();
+
+
+    chapters.forEach(
+      function(chapter) {
+
+        const option =
+          document.createElement(
+            "option"
+          );
+
+        option.value =
+          chapter;
+
+        option.textContent =
+          chapter;
+
+        chapterSelect.appendChild(
+          option
+        );
+
+      }
+    );
+
+
+    chapterSelect.onchange =
+      function() {
+
+        loadPracticeTopics(
+          mcqs
+        );
+
+      };
+
+
+  } catch (error) {
+
+    console.error(
+      "Load practice chapters error:",
+      error
+    );
+
+
+    showMessage(
+      "Unable to load chapters"
+    );
+
+  }
+
+}
+
+
+
+/* ==========================================
+   LOAD TOPICS
+========================================== */
+
+function loadPracticeTopics(
+  allMcqs
+) {
+
+  const chapter =
+    document.getElementById(
+      "practiceChapter"
+    ).value;
+
+
+  const topicSelect =
+    document.getElementById(
+      "practiceTopic"
+    );
+
+
+  topicSelect.innerHTML =
+    `<option value="">
+       All Topics
+     </option>`;
+
+
+  let mcqs =
+    allMcqs;
+
+
+  if (chapter) {
+
+    mcqs =
+      mcqs.filter(
+        function(mcq) {
+
+          return (
+            String(mcq.chapter) ===
+            String(chapter)
+          );
+
+        }
+      );
+
+  }
+
+
+  const topics =
+    [
+      ...new Set(
+        mcqs
+          .map(
+            mcq => mcq.topic
+          )
+          .filter(Boolean)
+      )
+    ];
+
+
+  topics.sort();
+
+
+  topics.forEach(
+    function(topic) {
+
+      const option =
+        document.createElement(
+          "option"
+        );
+
+      option.value =
+        topic;
+
+      option.textContent =
+        topic;
+
+      topicSelect.appendChild(
+        option
+      );
+
+    }
+  );
+
+}
+
+
+
+/* ==========================================
+   CLOSE PRACTICE SETUP
+========================================== */
+
+function closePracticeSetup() {
+
+  document.getElementById(
+    "practiceSetup"
+  ).style.display = "none";
+
+
+  document.getElementById(
+    "practiceQuestions"
+  ).style.display = "none";
+
+}
+
+
+
+/* ==========================================
+   START PRACTICE
+========================================== */
+
+async function startPractice() {
+
+  const chapter =
+    document.getElementById(
+      "practiceChapter"
+    ).value;
+
+
+  const topic =
+    document.getElementById(
+      "practiceTopic"
+    ).value;
+
+
+  const count =
+    document.getElementById(
+      "practiceCount"
+    ).value;
+
+
+  practiceModeValue =
+    document.getElementById(
+      "practiceMode"
+    ).value;
+
+
+  let url =
+    "/api/mcq/practice";
+
+
+  const params =
+    new URLSearchParams();
+
+
+  params.append(
+    "subject",
+    practiceSubjectValue
+  );
+
+
+  if (chapter) {
+
+    params.append(
+      "chapter",
+      chapter
+    );
+
+  }
+
+
+  if (topic) {
+
+    params.append(
+      "topic",
+      topic
+    );
+
+  }
+
+
+  params.append(
+    "limit",
+    count
+  );
+
+
+  url +=
+    "?" +
+    params.toString();
+
+
+  try {
+
+    showMessage(
+      "Loading MCQs..."
+    );
+
+
+    const response =
+      await fetch(url);
+
+
+    const data =
+      await response.json();
+
+
+    if (
+      !response.ok ||
+      !data.success
+    ) {
+
+      showMessage(
+        data.message ||
+        "Unable to load MCQs"
+      );
+
+      return;
+
+    }
+
+
+    if (
+      !data.questions ||
+      data.questions.length === 0
+    ) {
+
+      showMessage(
+        "No MCQs found for this selection"
+      );
+
+      return;
+
+    }
+
+
+    practiceQuestions =
+      data.questions;
+
+
+    currentPracticeIndex =
+      0;
+
+
+    practiceAnswers =
+      {};
+
+
+    document.getElementById(
+      "practiceSetup"
+    ).style.display = "none";
+
+
+    document.getElementById(
+      "practiceQuestions"
+    ).style.display = "block";
+
+
+    displayPracticeQuestion();
+
+
+  } catch (error) {
+
+    console.error(
+      "Start practice error:",
+      error
+    );
+
+
+    showMessage(
+      "Unable to connect to server"
+    );
+
+  }
+
+}
+
+
+
+/* ==========================================
+   DISPLAY QUESTION
+========================================== */
+
+function displayPracticeQuestion() {
+
+  const question =
+    practiceQuestions[
+      currentPracticeIndex
+    ];
+
+
+  if (!question) return;
+
+
+  document.getElementById(
+    "practiceProgress"
+  ).textContent =
+    "Question " +
+    (currentPracticeIndex + 1) +
+    " of " +
+    practiceQuestions.length;
+
+
+  document.getElementById(
+    "practiceQuestion"
+  ).textContent =
+    question.question;
+
+
+  const options =
+    document.getElementById(
+      "practiceOptions"
+    );
+
+
+  options.innerHTML = "";
+
+
+  const optionNames = [
+    ["A", question.optiona],
+    ["B", question.optionb],
+    ["C", question.optionc],
+    ["D", question.optiond]
+  ];
+
+
+  optionNames.forEach(
+    function(item) {
+
+      const letter =
+        item[0];
+
+      const text =
+        item[1];
+
+
+      const button =
+        document.createElement(
+          "button"
+        );
+
+
+      button.className =
+        "button secondary";
+
+
+      button.style.display =
+        "block";
+
+
+      button.style.width =
+        "100%";
+
+
+      button.style.textAlign =
+        "left";
+
+
+      button.style.marginBottom =
+        "10px";
+
+
+      button.textContent =
+        letter +
+        ". " +
+        text;
+
+
+      button.onclick =
+        function() {
+
+          selectPracticeAnswer(
+            letter,
+            button
+          );
+
+        };
+
+
+      options.appendChild(
+        button
+      );
+
+    }
+  );
+
+
+  const nextButton =
+    document.getElementById(
+      "nextPracticeButton"
+    );
+
+
+  if (
+    currentPracticeIndex ===
+    practiceQuestions.length - 1
+  ) {
+
+    nextButton.textContent =
+      "Finish Practice";
+
+  } else {
+
+    nextButton.textContent =
+      "Next";
+
+  }
+
+}
+
+
+
+/* ==========================================
+   SELECT ANSWER
+========================================== */
+
+function selectPracticeAnswer(
+  answer,
+  selectedButton
+) {
+
+  practiceAnswers[
+    currentPracticeIndex
+  ] = answer;
+
+
+  const buttons =
+    document.querySelectorAll(
+      "#practiceOptions button"
+    );
+
+
+  buttons.forEach(
+    function(button) {
+
+      button.disabled =
+        true;
+
+    }
+  );
+
+
+  selectedButton.style.fontWeight =
+    "bold";
+
+
+}
+
+
+
+/* ==========================================
+   NEXT QUESTION
+========================================== */
+
+function nextPracticeQuestion() {
+
+  if (
+    currentPracticeIndex ===
+    practiceQuestions.length - 1
+  ) {
+
+    finishPractice();
+
+    return;
+
+  }
+
+
+  currentPracticeIndex++;
+
+
+  displayPracticeQuestion();
+
+}
+
+
+
+/* ==========================================
+   FINISH PRACTICE
+========================================== */
+
+function finishPractice() {
+
+  let correct = 0;
+
+
+  practiceQuestions.forEach(
+    function(question, index) {
+
+      const selected =
+        practiceAnswers[index];
+
+
+      if (
+        selected &&
+        String(selected)
+          .toUpperCase() ===
+        String(question.answer)
+          .toUpperCase()
+      ) {
+
+        correct++;
+
+      }
+
+    }
+  );
+
+
+  const total =
+    practiceQuestions.length;
+
+
+  const percentage =
+    total > 0
+      ? Math.round(
+          (correct / total) * 100
+        )
+      : 0;
+
+
+  document.getElementById(
+    "practiceQuestions"
+  ).innerHTML = `
+
+    <div class="panel">
+
+      <h2>
+        Practice Completed
+      </h2>
+
+      <p>
+        Total Questions:
+        <strong>${total}</strong>
+      </p>
+
+      <p>
+        Correct:
+        <strong>${correct}</strong>
+      </p>
+
+      <p>
+        Wrong:
+        <strong>${total - correct}</strong>
+      </p>
+
+      <p>
+        Score:
+        <strong>${percentage}%</strong>
+      </p>
+
+      <button
+        class="button primary"
+        onclick="location.reload()"
+      >
+        Practice Again
+      </button>
+
+    </div>
+
+  `;
+
+        }
+
+  
 /* ==========================================
    LOGOUT
 ========================================== */
