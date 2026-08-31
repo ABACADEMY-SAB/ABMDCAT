@@ -147,14 +147,14 @@ class Notification {
 
     static unreadCount(studentId, callback) {
 
-        db.query(
-            `SELECT COUNT(*) AS total
-             FROM notifications
-             WHERE student_id = $1
-             AND is_read = false`,
-            [studentId],
-            callback
-        );
+    db.query(
+        `SELECT COUNT(*) AS total
+         FROM notifications
+         WHERE (student_id = $1 OR student_id IS NULL)
+         AND is_read = false`,
+        [studentId],
+        callback
+    );
 
     }
 
