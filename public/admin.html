@@ -5297,21 +5297,26 @@ async function updateSetting(
 
     }
 
-    
+
 /* =====================================
    MAINTENANCE
 ===================================== */
 
-function updateMaintenanceStatus(
-    enabled
-) {
+function updateMaintenanceStatus(enabled) {
 
-    document.getElementById(
-        "maintenanceStatus"
-    ).textContent =
-        enabled
-            ? "ON"
-            : "OFF";
+    const maintenanceStatus =
+        document.getElementById(
+            "maintenanceStatus"
+        );
+
+    if (maintenanceStatus) {
+
+        maintenanceStatus.textContent =
+            enabled
+                ? "ON"
+                : "OFF";
+
+    }
 
 
     const settings =
@@ -5319,104 +5324,133 @@ function updateMaintenanceStatus(
             "settingsMaintenance"
         );
 
+    if (settings) {
 
-    settings.textContent =
-        enabled
-            ? "ON"
-            : "OFF";
+        settings.textContent =
+            enabled
+                ? "ON"
+                : "OFF";
 
+        settings.className =
+            enabled
+                ? "status status-on"
+                : "status status-off";
 
-    settings.className =
-        enabled
-            ? "status status-on"
-            : "status status-off";
+    }
 
 }
 
+
+/* =====================================
+   LOAD MAINTENANCE STATUS
+===================================== */
+
+async function loadMaintenanceStatus() {
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/admin/settings"
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (!response.ok || !data.success) {
+
+            console.error(
+                "Failed to load maintenance status"
+            );
+
+            return;
+
+        }
+
+
+        const settings =
+            data.settings;
+
+
+        const enabled =
+            settings.maintenance === true ||
+            settings.maintenance === "true";
+
+
+        updateMaintenanceStatus(
+            enabled
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Load maintenance status error:",
+            error
+        );
+
+    }
+
+}
+
+
+/* =====================================
+   ENABLE MAINTENANCE
+===================================== */
 
 async function enableMaintenance() {
 
-    try {
-
-        const response =
-            await fetch(
-                "/api/admin/maintenance/on",
-                {
-                    method: "POST"
-                }
-            );
-
-
-        const data =
-            await response.json();
-
-
-        if (data.success) {
-
-            updateMaintenanceStatus(
-                true
-            );
-
-
-            showMessage(
-                "Maintenance Mode Enabled"
-            );
-
-        }
-
-
-    } catch (error) {
-
-        showMessage(
-            "Unable to enable maintenance mode"
+    const success =
+        await updateSetting(
+            "maintenance",
+            true
         );
 
-    }
+
+    if (!success) return;
+
+
+    updateMaintenanceStatus(
+        true
+    );
+
+
+    showMessage(
+        "Maintenance Mode Enabled"
+    );
 
 }
 
+
+/* =====================================
+   DISABLE MAINTENANCE
+===================================== */
 
 async function disableMaintenance() {
 
-    try {
-
-        const response =
-            await fetch(
-                "/api/admin/maintenance/off",
-                {
-                    method: "POST"
-                }
-            );
-
-
-        const data =
-            await response.json();
-
-
-        if (data.success) {
-
-            updateMaintenanceStatus(
-                false
-            );
-
-
-            showMessage(
-                "Maintenance Mode Disabled"
-            );
-
-        }
-
-
-    } catch (error) {
-
-        showMessage(
-            "Unable to disable maintenance mode"
+    const success =
+        await updateSetting(
+            "maintenance",
+            false
         );
 
+
+    if (!success) return;
+
+
+    updateMaintenanceStatus(
+        false
+    );
+
+
+    showMessage(
+        "Maintenance Mode Disabled"
+    );
+
     }
-
-}
-
+    
 
 /* =====================================
    LOGOUT
