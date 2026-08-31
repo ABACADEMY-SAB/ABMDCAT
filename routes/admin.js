@@ -35,10 +35,22 @@ router.put(
 );
 
 // Enable Maintenance
-router.post("/maintenance/on", adminController.enableMaintenance);
+router.post(
+    "/maintenance/on",
+    adminController.enableMaintenance
+);
 
 // Disable Maintenance
-router.post("/maintenance/off", adminController.disableMaintenance);
+router.post(
+    "/maintenance/off",
+    adminController.disableMaintenance
+);
+
+// Maintenance Status
+router.get(
+    "/maintenance/status",
+    adminController.maintenanceStatus
+);
 
 // Logout
 router.post("/logout", adminController.logout);
