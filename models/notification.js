@@ -112,14 +112,15 @@ class Notification {
 
     static markAllAsRead(studentId, callback) {
 
-        db.query(
-            `UPDATE notifications
-             SET is_read = true
-             WHERE student_id = $1
-             RETURNING *`,
-            [studentId],
-            callback
-        );
+    db.query(
+        `UPDATE notifications
+         SET is_read = true
+         WHERE (student_id = $1 OR student_id IS NULL)
+         AND is_read = false
+         RETURNING *`,
+        [studentId],
+        callback
+    );
 
     }
 
