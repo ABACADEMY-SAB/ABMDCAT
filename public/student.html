@@ -1626,12 +1626,82 @@ async function logout() {
 }
 
 
+/* ==========================================
+   CHECK MAINTENANCE MODE
+========================================== */
+
+async function checkMaintenanceMode() {
+
+  try {
+
+    const response =
+      await fetch(
+        "/api/admin/maintenance/status"
+      );
+
+
+    const data =
+      await response.json();
+
+
+    if (
+      response.ok &&
+      data.success &&
+      data.maintenance === true
+    ) {
+
+      const screen =
+        document.getElementById(
+          "maintenanceScreen"
+        );
+
+
+      if (screen) {
+
+        screen.style.display =
+          "flex";
+
+      }
+
+
+      return true;
+
+    }
+
+
+    return false;
+
+
+  } catch (error) {
+
+    console.error(
+      "Maintenance check error:",
+      error
+    );
+
+    return false;
+
+  }
+
+}
+
 
 /* ==========================================
    INITIALIZE
 ========================================== */
 
 async function initializeStudentPanel() {
+
+  const maintenance =
+    await checkMaintenanceMode();
+
+
+  if (maintenance) {
+
+    return;
+
+  }
+
 
   const student =
     getStudent();
