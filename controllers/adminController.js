@@ -504,6 +504,68 @@ exports.settings = (req, res) => {
 
 
 // =====================================
+// PUBLIC MAINTENANCE STATUS
+// =====================================
+
+exports.maintenanceStatus = (req, res) => {
+
+    Settings.getSettings(
+        (err, result) => {
+
+            if (err) {
+
+                console.error(
+                    "Maintenance status error:",
+                    err
+                );
+
+                return res.status(500).json({
+
+                    success: false,
+
+                    message:
+                        "Database error"
+
+                });
+
+            }
+
+
+            if (result.rows.length === 0) {
+
+                return res.status(404).json({
+
+                    success: false,
+
+                    message:
+                        "Settings not found"
+
+                });
+
+            }
+
+
+            const settings =
+                result.rows[0];
+
+
+            return res.json({
+
+                success: true,
+
+                maintenance:
+                    settings.maintenance === true ||
+                    settings.maintenance === "true"
+
+            });
+
+        }
+    );
+
+};
+
+
+// =====================================
 // UPDATE SINGLE SETTING
 // =====================================
 
