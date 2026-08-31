@@ -977,96 +977,351 @@
     </section>
 
 
+<!-- =========================
+     PRACTICE
+========================= -->
 
-    <!-- =========================
-         PRACTICE
-    ========================= -->
+<section
+  id="practice"
+  class="section"
+>
 
-    <section
-      id="practice"
-      class="section"
-    >
+  <h2 class="page-title">
+    Practice MCQs
+  </h2>
 
-      <h2 class="page-title">
-        Practice MCQs
-      </h2>
+  <p class="page-description">
+    Select a subject and customize your MCQ practice.
+  </p>
 
 
-      <p class="page-description">
-        Practice MDCAT multiple choice questions.
+  <!-- =========================
+       SUBJECT SELECTION
+  ========================= -->
+
+  <div class="module-grid">
+
+
+    <!-- BIOLOGY -->
+
+    <div class="module">
+
+      <h3>
+        Biology
+      </h3>
+
+      <p>
+        Practice Biology MCQs.
       </p>
 
+      <button
+        class="button primary"
+        onclick="openPracticeSetup('Biology')"
+      >
+        Start Biology
+      </button>
 
-      <div class="module-grid">
-
-
-        <div class="module">
-
-          <h3>
-            Biology
-          </h3>
-
-          <p>
-            Practice Biology MCQs by subject,
-            chapter and topic.
-          </p>
-
-          <button
-            class="button primary"
-            onclick="showMessage('Biology practice will be connected soon.')"
-          >
-            Start Practice
-          </button>
-
-        </div>
+    </div>
 
 
-        <div class="module">
+    <!-- CHEMISTRY -->
 
-          <h3>
-            Chemistry
-          </h3>
+    <div class="module">
 
-          <p>
-            Practice Chemistry MCQs according
-            to the MDCAT syllabus.
-          </p>
+      <h3>
+        Chemistry
+      </h3>
 
-          <button
-            class="button primary"
-            onclick="showMessage('Chemistry practice will be connected soon.')"
-          >
-            Start Practice
-          </button>
+      <p>
+        Practice Chemistry MCQs.
+      </p>
 
-        </div>
+      <button
+        class="button primary"
+        onclick="openPracticeSetup('Chemistry')"
+      >
+        Start Chemistry
+      </button>
+
+    </div>
 
 
-        <div class="module">
+    <!-- PHYSICS -->
 
-          <h3>
-            Physics
-          </h3>
+    <div class="module">
 
-          <p>
-            Practice Physics MCQs with different
-            topics and chapters.
-          </p>
+      <h3>
+        Physics
+      </h3>
 
-          <button
-            class="button primary"
-            onclick="showMessage('Physics practice will be connected soon.')"
-          >
-            Start Practice
-          </button>
+      <p>
+        Practice Physics MCQs.
+      </p>
 
-        </div>
+      <button
+        class="button primary"
+        onclick="openPracticeSetup('Physics')"
+      >
+        Start Physics
+      </button>
 
+    </div>
+
+
+    <!-- ENGLISH -->
+
+    <div class="module">
+
+      <h3>
+        English
+      </h3>
+
+      <p>
+        Practice English MCQs.
+      </p>
+
+      <button
+        class="button primary"
+        onclick="openPracticeSetup('English')"
+      >
+        Start English
+      </button>
+
+    </div>
+
+
+    <!-- MIXED -->
+
+    <div class="module">
+
+      <h3>
+        Mixed MCQs
+      </h3>
+
+      <p>
+        Practice MCQs from Biology, Chemistry,
+        Physics and English.
+      </p>
+
+      <button
+        class="button primary"
+        onclick="openPracticeSetup('mixed')"
+      >
+        Start Mixed Practice
+      </button>
+
+    </div>
+
+
+  </div>
+
+
+  <!-- =========================
+       PRACTICE SETUP
+  ========================= -->
+
+  <div
+    id="practiceSetup"
+    class="panel"
+    style="display:none;"
+  >
+
+    <h3>
+      Practice Setup
+    </h3>
+
+
+    <div class="row">
+
+      <span class="label">
+        Subject
+      </span>
+
+      <span
+        class="value"
+        id="practiceSubject"
+      >
+        -
+      </span>
+
+    </div>
+
+
+    <!-- CHAPTER -->
+
+    <div class="row">
+
+      <label
+        class="label"
+        for="practiceChapter"
+      >
+        Chapter
+      </label>
+
+      <select
+        id="practiceChapter"
+        style="width:100%;padding:10px;border:1px solid #ddd;border-radius:7px;"
+      >
+
+        <option value="">
+          All Chapters
+        </option>
+
+      </select>
+
+    </div>
+
+
+    <!-- TOPIC -->
+
+    <div class="row">
+
+      <label
+        class="label"
+        for="practiceTopic"
+      >
+        Topic
+      </label>
+
+      <select
+        id="practiceTopic"
+        style="width:100%;padding:10px;border:1px solid #ddd;border-radius:7px;"
+      >
+
+        <option value="">
+          All Topics
+        </option>
+
+      </select>
+
+    </div>
+
+
+    <!-- NUMBER -->
+
+    <div class="row">
+
+      <label
+        class="label"
+        for="practiceCount"
+      >
+        Number of MCQs
+      </label>
+
+      <select
+        id="practiceCount"
+        style="width:100%;padding:10px;border:1px solid #ddd;border-radius:7px;"
+      >
+
+        <option value="10">10</option>
+        <option value="20">20</option>
+        <option value="30">30</option>
+        <option value="40">40</option>
+        <option value="50">50</option>
+        <option value="75">75</option>
+        <option value="100">100</option>
+        <option value="150">150</option>
+        <option value="180">180</option>
+
+      </select>
+
+    </div>
+
+
+    <!-- MODE -->
+
+    <div class="row">
+
+      <label
+        class="label"
+        for="practiceMode"
+      >
+        Practice Mode
+      </label>
+
+      <select
+        id="practiceMode"
+        style="width:100%;padding:10px;border:1px solid #ddd;border-radius:7px;"
+      >
+
+        <option value="untimed">
+          Without Time
+        </option>
+
+        <option value="timed">
+          Timed — 1 minute per MCQ
+        </option>
+
+      </select>
+
+    </div>
+
+
+    <button
+      class="button primary"
+      onclick="startPractice()"
+    >
+      Start Practice
+    </button>
+
+
+    <button
+      class="button secondary"
+      onclick="closePracticeSetup()"
+    >
+      Cancel
+    </button>
+
+  </div>
+
+
+  <!-- =========================
+       PRACTICE QUESTIONS
+  ========================= -->
+
+  <div
+    id="practiceQuestions"
+    style="display:none;"
+  >
+
+    <div class="panel">
+
+      <div
+        id="practiceProgress"
+        style="font-weight:bold;margin-bottom:15px;"
+      >
+        Question 1
+      </div>
+
+
+      <div
+        id="practiceQuestion"
+        style="font-size:18px;font-weight:bold;margin-bottom:20px;"
+      >
+        Loading question...
+      </div>
+
+
+      <div id="practiceOptions">
 
       </div>
 
-    </section>
 
+      <button
+        class="button primary"
+        id="nextPracticeButton"
+        onclick="nextPracticeQuestion()"
+        style="margin-top:20px;"
+      >
+        Next
+      </button>
+
+    </div>
+
+  </div>
+
+
+</section>
 
 
     <!-- =========================
