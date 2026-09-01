@@ -2722,6 +2722,519 @@ async function checkMaintenanceMode() {
 
 
 /* ==========================================
+   PRACTICE MCQ VARIABLES
+========================================== */
+
+let practiceQuestions = [];
+
+let currentPracticeQuestion = 0;
+
+let practiceAnswers = [];
+
+
+
+/* ==========================================
+   START PRACTICE
+========================================== */
+
+async function startPractice() {
+
+  const subject =
+    document.getElementById(
+      "practiceSubject"
+    ).value;
+
+
+  const count =
+    Number(
+      document.getElementById(
+        "practiceCount"
+      ).value
+    );
+
+
+  try {
+
+    let url =
+      `/api/mcq/practice/random/${count}`;
+
+
+    /*
+       Currently the random API returns
+       random MCQs from all subjects.
+
+       We will add subject/chapter/topic
+       filtering to the API next.
+    */
+
+
+    const response =
+      await fetch(url);
+
+
+    const data =
+      await response.json();
+
+
+    if (!response.ok || !data.success) {
+
+      showMessage(
+        data.message ||
+        "Unable to load MCQs."
+      );
+
+      return;
+
+    }
+
+
+    practiceQuestions =
+      data.questions || [];
+
+
+    if (practiceQuestions.length === 0) {
+
+      showMessage(
+        "No MCQs available."
+      );
+
+      return;
+
+    }
+
+
+    /*
+       Store answers.
+       Each position belongs to
+       one question.
+    */
+
+    practiceAnswers =
+      new Array(
+        practiceQuestions.length
+      ).fill(null);
+
+
+    currentPracticeQuestion = 0;
+
+
+    document.getElementById(
+      "practiceSetup"
+    ).style.display = "none";
+
+
+    document.getElementById(
+      "mcqResult"
+    ).style.display = "none";
+
+
+    document.getElementById(
+      "mcqTest"
+    ).style.display = "block";
+
+
+    showPracticeQuestion();
+
+
+  } catch (error) {
+
+    console.error(
+      "Start practice error:",
+      error
+    );
+
+
+    showMessage(
+      "Unable to connect to the server."
+    );
+
+  }
+
+}
+
+
+
+/* ==========================================
+   SHOW CURRENT QUESTION
+========================================== */
+
+function showPracticeQuestion() {
+
+  const question =
+    practiceQuestions[
+      currentPracticeQuestion
+    ];
+
+
+  if (!question) return;
+
+
+  const questionNumber =
+    currentPracticeQuestion + 1;
+
+
+  const total =
+    practiceQuestions.length;
+
+
+  document.getElementById(
+    "mcqProgress"
+  ).textContent =
+    `Question ${questionNumber} of ${total}`;
+
+
+  document.getElementById(
+    "mcqQuestion"
+  ).textContent =
+    question.question;
+
+
+  const optionsContainer =
+    document.getElementById(
+      "mcqOptions"
+    );
+
+
+  optionsContainer.innerHTML = "";
+
+
+  const options = [
+
+    {
+      letter: "A",
+      text: question.optiona
+    },
+
+    {
+      letter: "B",
+      text: question.optionb
+    },
+
+    {
+      letter: "C",
+      text: question.optionc
+    },
+
+    {
+      letter: "D",
+      text: question.optiond
+    }
+
+  ];
+
+
+  options.forEach(
+    function(option) {
+
+      const button =
+        document.createElement(
+          "button"
+        );
+
+
+      button.type = "button";
+
+
+      button.className =
+        "mcq-option";
+
+
+      button.textContent =
+        `${option.letter}. ${option.text}`;
+
+
+      /*
+         If this option was already selected,
+         give it the blue selected class.
+      */
+
+      if (
+        practiceAnswers[
+          currentPracticeQuestion
+        ] === option.letter
+      ) {
+
+        button.classList.add(
+          "selected"
+        );
+
+      }
+
+
+      button.onclick =
+        function() {
+
+          selectPracticeAnswer(
+            option.letter
+          );
+
+        };
+
+
+      optionsContainer.appendChild(
+        button
+      );
+
+    }
+  );
+
+
+  /*
+     Previous button
+  */
+
+  document.getElementById(
+    "previousMcqButton"
+  ).style.display =
+    currentPracticeQuestion === 0
+      ? "none"
+      : "inline-block";
+
+
+  /*
+     Last question = Submit
+  */
+
+  const nextButton =
+    document.getElementById(
+      "nextMcqButton"
+    );
+
+
+  if (
+    currentPracticeQuestion ===
+    practiceQuestions.length - 1
+  ) {
+
+    nextButton.textContent =
+      "Submit Test";
+
+  } else {
+
+    nextButton.textContent =
+      "Next";
+
+  }
+
+}
+
+
+
+/* ==========================================
+   SELECT ANSWER
+========================================== */
+
+function selectPracticeAnswer(
+  answer
+) {
+
+  practiceAnswers[
+    currentPracticeQuestion
+  ] = answer;
+
+
+  /*
+     Remove blue selection
+     from all options.
+  */
+
+  const options =
+    document.querySelectorAll(
+      ".mcq-option"
+    );
+
+
+  options.forEach(
+    function(option) {
+
+      option.classList.remove(
+        "selected"
+      );
+
+    }
+  );
+
+
+  /*
+     Add blue selection to
+     the clicked option.
+  */
+
+  options.forEach(
+    function(option) {
+
+      if (
+        option.textContent
+          .startsWith(
+            answer + "."
+          )
+      ) {
+
+        option.classList.add(
+          "selected"
+        );
+
+      }
+
+    }
+  );
+
+}
+
+
+
+/* ==========================================
+   NEXT QUESTION
+========================================== */
+
+function nextMcq() {
+
+  /*
+     Don't allow moving forward
+     without selecting an answer.
+  */
+
+  if (
+    practiceAnswers[
+      currentPracticeQuestion
+    ] === null
+  ) {
+
+    showMessage(
+      "Please select an answer first."
+    );
+
+    return;
+
+  }
+
+
+  /*
+     Last question
+  */
+
+  if (
+    currentPracticeQuestion ===
+    practiceQuestions.length - 1
+  ) {
+
+    finishPractice();
+
+    return;
+
+  }
+
+
+  currentPracticeQuestion++;
+
+
+  showPracticeQuestion();
+
+}
+
+
+
+/* ==========================================
+   PREVIOUS QUESTION
+========================================== */
+
+function previousMcq() {
+
+  if (
+    currentPracticeQuestion <= 0
+  ) {
+
+    return;
+
+  }
+
+
+  currentPracticeQuestion--;
+
+
+  showPracticeQuestion();
+
+}
+
+
+
+/* ==========================================
+   FINISH PRACTICE
+========================================== */
+
+function finishPractice() {
+
+  let correct = 0;
+
+
+  practiceQuestions.forEach(
+    function(question, index) {
+
+      if (
+        practiceAnswers[index] &&
+        practiceAnswers[index].toUpperCase() ===
+        String(question.answer).toUpperCase()
+      ) {
+
+        correct++;
+
+      }
+
+    }
+  );
+
+
+  document.getElementById(
+    "mcqTest"
+  ).style.display = "none";
+
+
+  document.getElementById(
+    "mcqResult"
+  ).style.display = "block";
+
+
+  document.getElementById(
+    "practiceScore"
+  ).textContent =
+    correct;
+
+
+  document.getElementById(
+    "practiceTotal"
+  ).textContent =
+    practiceQuestions.length;
+
+}
+
+
+
+/* ==========================================
+   RESTART PRACTICE
+========================================== */
+
+function restartPractice() {
+
+  document.getElementById(
+    "mcqResult"
+  ).style.display = "none";
+
+
+  document.getElementById(
+    "practiceSetup"
+  ).style.display = "block";
+
+
+  practiceQuestions = [];
+
+  practiceAnswers = [];
+
+  currentPracticeQuestion = 0;
+
+}
+  
+  
+/* ==========================================
    INITIALIZE
 ========================================== */
 
