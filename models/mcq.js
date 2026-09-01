@@ -241,89 +241,113 @@ class Mcq {
     }
 
 
+
+// =====================================
+// STUDENT PRACTICE MCQs
+// =====================================
+
+static practice(data, callback) {
+
+    let query = `
+        SELECT *
+        FROM mcqs
+    `;
+
+
+    const values = [];
+    const conditions = [];
+
+
     // =====================================
-    // STUDENT PRACTICE MCQs
+    // SUBJECT FILTER
+    // Supports multiple subjects
     // =====================================
 
-    static practice(data, callback) {
+    if (
+        data.subjects &&
+        data.subjects.length > 0
+    ) {
 
-        let query = `
-            SELECT *
-            FROM mcqs
-        `;
+        values.push(data.subjects);
 
-        const values = [];
-        const conditions = [];
-
-
-        // Subject filter
-        if (
-            data.subject &&
-            data.subject.toLowerCase() !== "mixed"
-        ) {
-
-            values.push(data.subject);
-
-            conditions.push(
-                `subject = $${values.length}`
-            );
-
-        }
-
-
-        // Chapter filter
-        if (data.chapter) {
-
-            values.push(data.chapter);
-
-            conditions.push(
-                `chapter = $${values.length}`
-            );
-
-        }
-
-
-        // Topic filter
-        if (data.topic) {
-
-            values.push(data.topic);
-
-            conditions.push(
-                `topic = $${values.length}`
-            );
-
-        }
-
-
-        // Add WHERE conditions
-        if (conditions.length > 0) {
-
-            query +=
-                ` WHERE ` +
-                conditions.join(" AND ");
-
-        }
-
-
-        // Random questions
-        query += `
-            ORDER BY RANDOM()
-            LIMIT $${values.length + 1}
-        `;
-
-
-        values.push(
-            Number(data.limit)
-        );
-
-
-        db.query(
-            query,
-            values,
-            callback
+        conditions.push(
+            `subject = ANY($${values.length})`
         );
 
     }
+
+
+    // =====================================
+    // CHAPTER FILTER
+    // Supports multiple chapters
+    // =====================================
+
+    if (
+        data.chapters &&
+        data.chapters.length > 0
+    ) {
+
+        values.push(data.chapters);
+
+        conditions.push(
+            `chapter = ANY($${values.length})`
+        );
+
+    }
+
+
+    // =====================================
+    // TOPIC FILTER
+    // Supports multiple topics
+    // =====================================
+
+    if (
+        data.topics &&
+        data.topics.length > 0
+    ) {
+
+        values.push(data.topics);
+
+        conditions.push(
+            `topic = ANY($${values.length})`
+        );
+
+    }
+
+
+    // =====================================
+    // WHERE
+    // =====================================
+
+    if (conditions.length > 0) {
+
+        query +=
+            ` WHERE ` +
+            conditions.join(" AND ");
+
+    }
+
+
+    // =====================================
+    // RANDOM QUESTIONS
+    // =====================================
+
+    query += `
+        ORDER BY RANDOM()
+        LIMIT $${values.length + 1}
+    `;
+
+
+    values.push(
+        Number(data.limit)
+    );
+
+
+    db.query(
+        query,
+        values,
+        callback
+    );
 
 }
 
