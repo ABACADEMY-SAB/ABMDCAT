@@ -1103,7 +1103,7 @@
     </section>
     
 
-    <!-- =========================
+<!-- =========================
      PRACTICE MCQs
 ========================= -->
 
@@ -1117,12 +1117,13 @@
   </h2>
 
   <p class="page-description">
-    Select a subject or create a mixed practice test.
+    Create your own practice test by selecting subjects,
+    chapters, topics and number of MCQs.
   </p>
 
 
   <!-- =========================
-       PRACTICE SETUP
+       STEP 1 — SUBJECTS
   ========================= -->
 
   <div
@@ -1131,136 +1132,199 @@
   >
 
     <h3>
-      Create Practice Test
+      1. Select Subject(s)
     </h3>
 
+    <p class="page-description">
+      Select one or more subjects.
+    </p>
 
-    <div class="row">
 
-      <span class="label">
-        Subject
-      </span>
+    <div class="subject-selection">
 
-      <select
-        id="practiceSubject"
-        class="practice-select"
-      >
 
-        <option value="Biology">
+      <label class="subject-option">
+
+        <input
+          type="checkbox"
+          name="practiceSubject"
+          value="Biology"
+        >
+
+        <span>
           Biology
-        </option>
+        </span>
 
-        <option value="Chemistry">
+      </label>
+
+
+      <label class="subject-option">
+
+        <input
+          type="checkbox"
+          name="practiceSubject"
+          value="Chemistry"
+        >
+
+        <span>
           Chemistry
-        </option>
+        </span>
 
-        <option value="Physics">
+      </label>
+
+
+      <label class="subject-option">
+
+        <input
+          type="checkbox"
+          name="practiceSubject"
+          value="Physics"
+        >
+
+        <span>
           Physics
-        </option>
+        </span>
 
-        <option value="English">
+      </label>
+
+
+      <label class="subject-option">
+
+        <input
+          type="checkbox"
+          name="practiceSubject"
+          value="English"
+        >
+
+        <span>
           English
-        </option>
+        </span>
 
-        <option value="mixed">
-          Mixed — All Subjects
-        </option>
+      </label>
 
-      </select>
 
     </div>
 
 
-    <div class="row">
 
-      <span class="label">
-        Chapter
-      </span>
+    <!-- =========================
+         STEP 2 — CHAPTERS
+    ========================= -->
 
-      <select
-        id="practiceChapter"
-        class="practice-select"
-      >
-
-        <option value="">
-          All Chapters
-        </option>
-
-      </select>
-
-    </div>
-
-
-    <div class="row">
-
-      <span class="label">
-        Topic
-      </span>
-
-      <select
-        id="practiceTopic"
-        class="practice-select"
-      >
-
-        <option value="">
-          All Topics
-        </option>
-
-      </select>
-
-    </div>
-
-
-    <div class="row">
-
-      <span class="label">
-        Number of MCQs
-      </span>
-
-      <select
-        id="practiceCount"
-        class="practice-select"
-      >
-
-        <option value="5">
-          5 MCQs
-        </option>
-
-        <option value="10">
-          10 MCQs
-        </option>
-
-        <option value="20">
-          20 MCQs
-        </option>
-
-        <option value="30">
-          30 MCQs
-        </option>
-
-        <option value="50">
-          50 MCQs
-        </option>
-
-        <option value="100">
-          100 MCQs
-        </option>
-
-        <option value="180">
-          180 MCQs
-        </option>
-
-      </select>
-
-    </div>
-
-
-    <button
-      class="button primary"
-      onclick="startPractice()"
+    <div
+      id="practiceChapterArea"
+      style="display:none;"
     >
-      Start Practice
-    </button>
+
+      <h3>
+        2. Select Chapter(s)
+      </h3>
+
+      <p class="page-description">
+        Chapters will appear according to the
+        subject(s) you selected.
+      </p>
+
+
+      <div
+        id="practiceChapters"
+        class="selection-list"
+      >
+
+        <!-- Chapters generated here -->
+
+      </div>
+
+    </div>
+
+
+
+    <!-- =========================
+         STEP 3 — TOPICS
+    ========================= -->
+
+    <div
+      id="practiceTopicArea"
+      style="display:none;"
+    >
+
+      <h3>
+        3. Select Topic(s)
+      </h3>
+
+      <p class="page-description">
+        Topics will appear according to the
+        selected chapter(s).
+      </p>
+
+
+      <div
+        id="practiceTopics"
+        class="selection-list"
+      >
+
+        <!-- Topics generated here -->
+
+      </div>
+
+    </div>
+
+
+
+    <!-- =========================
+         STEP 4 — NUMBER OF MCQs
+    ========================= -->
+
+    <div
+      id="practiceCountArea"
+      style="display:none;"
+    >
+
+      <h3>
+        4. Number of MCQs
+      </h3>
+
+      <p class="page-description">
+        Enter the number of questions you want.
+      </p>
+
+
+      <input
+        type="number"
+        id="practiceCount"
+        class="practice-count"
+        min="1"
+        max="180"
+        value="10"
+        placeholder="Enter number of MCQs"
+      >
+
+
+      <p class="page-description">
+        Maximum 180 MCQs.
+      </p>
+
+    </div>
+
+
+
+    <!-- =========================
+         START BUTTON
+    ========================= -->
+
+    <div
+      id="practiceStartArea"
+      style="display:none;"
+    >
+
+      <button
+        class="button primary"
+        onclick="startPractice()"
+      >
+        Start Practice
+      </button>
+
+    </div>
 
   </div>
 
@@ -1290,8 +1354,6 @@
 
 
     <div id="mcqOptions">
-
-      <!-- Options will be inserted by JavaScript -->
 
     </div>
 
@@ -1352,13 +1414,13 @@
       class="button primary"
       onclick="restartPractice()"
     >
-      Practice Again
+      Create Another Test
     </button>
 
   </div>
 
 </section>
-
+    
 
     <!-- =========================
          TESTS
