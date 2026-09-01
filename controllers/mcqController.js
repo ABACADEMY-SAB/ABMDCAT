@@ -560,9 +560,9 @@ exports.randomPractice = (req, res) => {
 exports.practice = (req, res) => {
 
     const {
-        subject,
-        chapter,
-        topic,
+        subjects,
+        chapters,
+        topics,
         limit
     } = req.query;
 
@@ -571,7 +571,10 @@ exports.practice = (req, res) => {
         Number(limit) || 10;
 
 
-    if (count < 1 || count > 180) {
+    if (
+        count < 1 ||
+        count > 180
+    ) {
 
         return res.status(400).json({
 
@@ -585,11 +588,50 @@ exports.practice = (req, res) => {
     }
 
 
+    // =====================================
+    // CONVERT QUERY VALUES TO ARRAYS
+    // =====================================
+
+    const subjectList =
+        subjects
+            ? String(subjects)
+                .split(",")
+                .map(item => item.trim())
+                .filter(Boolean)
+            : [];
+
+
+    const chapterList =
+        chapters
+            ? String(chapters)
+                .split(",")
+                .map(item => item.trim())
+                .filter(Boolean)
+            : [];
+
+
+    const topicList =
+        topics
+            ? String(topics)
+                .split(",")
+                .map(item => item.trim())
+                .filter(Boolean)
+            : [];
+
+
+    // =====================================
+    // GET PRACTICE QUESTIONS
+    // =====================================
+
     Mcq.practice(
+
         {
-            subject,
-            chapter,
-            topic,
+            subjects: subjectList,
+
+            chapters: chapterList,
+
+            topics: topicList,
+
             limit: count
         },
 
@@ -601,6 +643,7 @@ exports.practice = (req, res) => {
                     "Student practice MCQ error:",
                     err
                 );
+
 
                 return res.status(500).json({
 
@@ -621,14 +664,14 @@ exports.practice = (req, res) => {
 
                 success: true,
 
-                subject:
-                    subject || "mixed",
+                subjects:
+                    subjectList,
 
-                chapter:
-                    chapter || null,
+                chapters:
+                    chapterList,
 
-                topic:
-                    topic || null,
+                topics:
+                    topicList,
 
                 count:
                     result.rows.length,
@@ -639,6 +682,7 @@ exports.practice = (req, res) => {
             });
 
         }
+
     );
 
 };
