@@ -3294,6 +3294,139 @@ function restartPractice() {
   currentPracticeQuestion = 0;
 
 }
+
+
+// =====================================
+// PRACTICE MCQs — SUBJECT SELECTION
+// =====================================
+
+const practiceSubjectCheckboxes =
+    document.querySelectorAll(
+        'input[name="practiceSubject"]'
+    );
+
+
+// Subject selection changed
+practiceSubjectCheckboxes.forEach(function (checkbox) {
+
+    checkbox.addEventListener("change", function () {
+
+        updatePracticeSubjects();
+
+    });
+
+});
+
+
+// =====================================
+// UPDATE SUBJECT SELECTION
+// =====================================
+
+function updatePracticeSubjects() {
+
+    const selectedSubjects = [];
+
+    practiceSubjectCheckboxes.forEach(function (checkbox) {
+
+        if (checkbox.checked) {
+
+            selectedSubjects.push(
+                checkbox.value
+            );
+
+        }
+
+    });
+
+
+    const chapterArea =
+        document.getElementById(
+            "practiceChapterArea"
+        );
+
+    const topicArea =
+        document.getElementById(
+            "practiceTopicArea"
+        );
+
+    const countArea =
+        document.getElementById(
+            "practiceCountArea"
+        );
+
+    const startArea =
+        document.getElementById(
+            "practiceStartArea"
+        );
+
+
+    // No subject selected
+    if (selectedSubjects.length === 0) {
+
+        chapterArea.style.display = "none";
+
+        topicArea.style.display = "none";
+
+        countArea.style.display = "none";
+
+        startArea.style.display = "none";
+
+        return;
+
+    }
+
+
+    // At least one subject selected
+    chapterArea.style.display = "block";
+
+    topicArea.style.display = "none";
+
+    countArea.style.display = "none";
+
+    startArea.style.display = "none";
+
+
+    // For now, show selected subjects
+    // in the chapter area.
+
+    const chapters =
+        document.getElementById(
+            "practiceChapters"
+        );
+
+
+    chapters.innerHTML = "";
+
+
+    selectedSubjects.forEach(function (subject) {
+
+        const div =
+            document.createElement("div");
+
+        div.className =
+            "selection-item";
+
+
+        div.innerHTML = `
+            <label>
+                <input
+                    type="checkbox"
+                    class="practice-chapter"
+                    value="${subject}"
+                >
+
+                <strong>
+                    ${subject}
+                </strong>
+            </label>
+        `;
+
+
+        chapters.appendChild(div);
+
+    });
+
+}
   
   
 /* ==========================================
