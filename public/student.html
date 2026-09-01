@@ -975,10 +975,10 @@
       </div>
 
     </section>
+    
 
-
-<!-- =========================
-     PRACTICE
+    <!-- =========================
+     PRACTICE MCQs
 ========================= -->
 
 <section
@@ -991,129 +991,8 @@
   </h2>
 
   <p class="page-description">
-    Select a subject and customize your MCQ practice.
+    Select a subject or create a mixed practice test.
   </p>
-
-
-  <!-- =========================
-       SUBJECT SELECTION
-  ========================= -->
-
-  <div class="module-grid">
-
-
-    <!-- BIOLOGY -->
-
-    <div class="module">
-
-      <h3>
-        Biology
-      </h3>
-
-      <p>
-        Practice Biology MCQs.
-      </p>
-
-      <button
-        class="button primary"
-        onclick="openPracticeSetup('Biology')"
-      >
-        Start Biology
-      </button>
-
-    </div>
-
-
-    <!-- CHEMISTRY -->
-
-    <div class="module">
-
-      <h3>
-        Chemistry
-      </h3>
-
-      <p>
-        Practice Chemistry MCQs.
-      </p>
-
-      <button
-        class="button primary"
-        onclick="openPracticeSetup('Chemistry')"
-      >
-        Start Chemistry
-      </button>
-
-    </div>
-
-
-    <!-- PHYSICS -->
-
-    <div class="module">
-
-      <h3>
-        Physics
-      </h3>
-
-      <p>
-        Practice Physics MCQs.
-      </p>
-
-      <button
-        class="button primary"
-        onclick="openPracticeSetup('Physics')"
-      >
-        Start Physics
-      </button>
-
-    </div>
-
-
-    <!-- ENGLISH -->
-
-    <div class="module">
-
-      <h3>
-        English
-      </h3>
-
-      <p>
-        Practice English MCQs.
-      </p>
-
-      <button
-        class="button primary"
-        onclick="openPracticeSetup('English')"
-      >
-        Start English
-      </button>
-
-    </div>
-
-
-    <!-- MIXED -->
-
-    <div class="module">
-
-      <h3>
-        Mixed MCQs
-      </h3>
-
-      <p>
-        Practice MCQs from Biology, Chemistry,
-        Physics and English.
-      </p>
-
-      <button
-        class="button primary"
-        onclick="openPracticeSetup('mixed')"
-      >
-        Start Mixed Practice
-      </button>
-
-    </div>
-
-
-  </div>
 
 
   <!-- =========================
@@ -1121,13 +1000,12 @@
   ========================= -->
 
   <div
-    id="practiceSetup"
     class="panel"
-    style="display:none;"
+    id="practiceSetup"
   >
 
     <h3>
-      Practice Setup
+      Create Practice Test
     </h3>
 
 
@@ -1137,30 +1015,45 @@
         Subject
       </span>
 
-      <span
-        class="value"
+      <select
         id="practiceSubject"
+        class="practice-select"
       >
-        -
-      </span>
+
+        <option value="Biology">
+          Biology
+        </option>
+
+        <option value="Chemistry">
+          Chemistry
+        </option>
+
+        <option value="Physics">
+          Physics
+        </option>
+
+        <option value="English">
+          English
+        </option>
+
+        <option value="mixed">
+          Mixed — All Subjects
+        </option>
+
+      </select>
 
     </div>
 
 
-    <!-- CHAPTER -->
-
     <div class="row">
 
-      <label
-        class="label"
-        for="practiceChapter"
-      >
+      <span class="label">
         Chapter
-      </label>
+      </span>
 
       <select
         id="practiceChapter"
-        style="width:100%;padding:10px;border:1px solid #ddd;border-radius:7px;"
+        class="practice-select"
       >
 
         <option value="">
@@ -1172,20 +1065,15 @@
     </div>
 
 
-    <!-- TOPIC -->
-
     <div class="row">
 
-      <label
-        class="label"
-        for="practiceTopic"
-      >
+      <span class="label">
         Topic
-      </label>
+      </span>
 
       <select
         id="practiceTopic"
-        style="width:100%;padding:10px;border:1px solid #ddd;border-radius:7px;"
+        class="practice-select"
       >
 
         <option value="">
@@ -1197,59 +1085,43 @@
     </div>
 
 
-    <!-- NUMBER -->
-
     <div class="row">
 
-      <label
-        class="label"
-        for="practiceCount"
-      >
+      <span class="label">
         Number of MCQs
-      </label>
+      </span>
 
       <select
         id="practiceCount"
-        style="width:100%;padding:10px;border:1px solid #ddd;border-radius:7px;"
+        class="practice-select"
       >
 
-        <option value="10">10</option>
-        <option value="20">20</option>
-        <option value="30">30</option>
-        <option value="40">40</option>
-        <option value="50">50</option>
-        <option value="75">75</option>
-        <option value="100">100</option>
-        <option value="150">150</option>
-        <option value="180">180</option>
-
-      </select>
-
-    </div>
-
-
-    <!-- MODE -->
-
-    <div class="row">
-
-      <label
-        class="label"
-        for="practiceMode"
-      >
-        Practice Mode
-      </label>
-
-      <select
-        id="practiceMode"
-        style="width:100%;padding:10px;border:1px solid #ddd;border-radius:7px;"
-      >
-
-        <option value="untimed">
-          Without Time
+        <option value="5">
+          5 MCQs
         </option>
 
-        <option value="timed">
-          Timed — 1 minute per MCQ
+        <option value="10">
+          10 MCQs
+        </option>
+
+        <option value="20">
+          20 MCQs
+        </option>
+
+        <option value="30">
+          30 MCQs
+        </option>
+
+        <option value="50">
+          50 MCQs
+        </option>
+
+        <option value="100">
+          100 MCQs
+        </option>
+
+        <option value="180">
+          180 MCQs
         </option>
 
       </select>
@@ -1264,62 +1136,100 @@
       Start Practice
     </button>
 
+  </div>
+
+
+
+  <!-- =========================
+       MCQ TEST
+  ========================= -->
+
+  <div
+    class="panel"
+    id="mcqTest"
+    style="display:none;"
+  >
+
+    <div
+      id="mcqProgress"
+      class="page-description"
+    >
+      Question 1
+    </div>
+
+
+    <h3 id="mcqQuestion">
+      Loading question...
+    </h3>
+
+
+    <div id="mcqOptions">
+
+      <!-- Options will be inserted by JavaScript -->
+
+    </div>
+
 
     <button
       class="button secondary"
-      onclick="closePracticeSetup()"
+      onclick="previousMcq()"
+      id="previousMcqButton"
     >
-      Cancel
+      Previous
+    </button>
+
+
+    <button
+      class="button primary"
+      onclick="nextMcq()"
+      id="nextMcqButton"
+    >
+      Next
     </button>
 
   </div>
 
 
+
   <!-- =========================
-       PRACTICE QUESTIONS
+       RESULT
   ========================= -->
 
   <div
-    id="practiceQuestions"
+    class="panel"
+    id="mcqResult"
     style="display:none;"
   >
 
-    <div class="panel">
-
-      <div
-        id="practiceProgress"
-        style="font-weight:bold;margin-bottom:15px;"
-      >
-        Question 1
-      </div>
+    <h3>
+      Practice Result
+    </h3>
 
 
-      <div
-        id="practiceQuestion"
-        style="font-size:18px;font-weight:bold;margin-bottom:20px;"
-      >
-        Loading question...
-      </div>
+    <p>
+      Score:
+      <strong id="practiceScore">
+        0
+      </strong>
+    </p>
 
 
-      <div id="practiceOptions">
+    <p>
+      Total:
+      <strong id="practiceTotal">
+        0
+      </strong>
+    </p>
 
-      </div>
 
-
-      <button
-        class="button primary"
-        id="nextPracticeButton"
-        onclick="nextPracticeQuestion()"
-        style="margin-top:20px;"
-      >
-        Next
-      </button>
-
-    </div>
+    <button
+      class="button primary"
+      onclick="restartPractice()"
+    >
+      Practice Again
+    </button>
 
   </div>
-
 
 </section>
 
