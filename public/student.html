@@ -1718,16 +1718,1234 @@
 <script>
 
 
+/* ==========================================
+   ABMDCAT STUDENT PANEL
+   MAIN JAVASCRIPT
+========================================== */
 
 
+/* ==========================================
+   GET STUDENT
+========================================== */
+
+function getStudent() {
+
+  const saved =
+    localStorage.getItem("student");
+
+  if (!saved) {
+
+    window.location.href = "/";
+
+    return null;
+
+  }
+
+  try {
+
+    return JSON.parse(saved);
+
+  } catch (error) {
+
+    console.error("Student data error:", error);
+
+    localStorage.removeItem("student");
+
+    window.location.href = "/";
+
+    return null;
+
+  }
+
+}
 
 
+/* ==========================================
+   NAVIGATION
+========================================== */
+
+function showSection(sectionId, button) {
+
+  const sections =
+    document.querySelectorAll(".section");
+
+  sections.forEach(function(section) {
+
+    section.classList.remove("active");
+
+  });
 
 
+  const selected =
+    document.getElementById(sectionId);
 
+  if (selected) {
+
+    selected.classList.add("active");
+
+  }
+
+
+  const buttons =
+    document.querySelectorAll(".nav-button");
+
+  buttons.forEach(function(item) {
+
+    item.classList.remove("active");
+
+  });
+
+
+  if (button) {
+
+    button.classList.add("active");
+
+  }
+
+}
+
+
+/* ==========================================
+   MESSAGE
+========================================== */
+
+function showMessage(text) {
+
+  const message =
+    document.getElementById("message");
+
+  if (!message) return;
+
+  message.textContent = text;
+
+  message.style.display = "block";
+
+
+  setTimeout(function() {
+
+    message.style.display = "none";
+
+  }, 3000);
+
+}
+
+
+/* ==========================================
+   LOAD PROFILE
+========================================== */
+
+async function loadProfile() {
+
+  const student = getStudent();
+
+  if (!student) return;
+
+
+  const studentName =
+    document.getElementById("studentName");
+
+  if (studentName) {
+
+    studentName.textContent =
+      student.fullname ||
+      student.username ||
+      "Student";
+
+  }
+
+
+  const username =
+    document.getElementById("profileUsername");
+
+  if (username) {
+
+    username.textContent =
+      student.username ||
+      "Not available";
+
+  }
+
+
+  const fullname =
+    document.getElementById("profileFullname");
+
+  if (fullname) {
+
+    fullname.textContent =
+      student.fullname ||
+      "Not available";
+
+  }
+
+
+  const email =
+    document.getElementById("profileEmail");
+
+  if (email) {
+
+    email.textContent =
+      student.email ||
+      "Not available";
+
+  }
+
+
+  const phone =
+    document.getElementById("profilePhone");
+
+  if (phone) {
+
+    phone.textContent =
+      student.phone ||
+      "Not available";
+
+  }
+
+
+  const status =
+    document.getElementById("profileStatus");
+
+  if (status) {
+
+    status.textContent =
+      student.status ||
+      "Not available";
+
+  }
+
+}
+
+
+/* ==========================================
+   LOAD STATISTICS
+========================================== */
+
+async function loadStatistics() {
+
+  try {
+
+    const response =
+      await fetch(
+        "/api/student/statistics"
+      );
+
+
+    if (!response.ok) {
+
+      return;
+
+    }
+
+
+    const data =
+      await response.json();
+
+
+    if (!data.success) {
+
+      return;
+
+    }
+
+
+    const tests =
+      document.getElementById(
+        "testsAttempted"
+      );
+
+    if (tests) {
+
+      tests.textContent =
+        data.testsAttempted ?? 0;
+
+    }
+
+
+    const average =
+      document.getElementById(
+        "averageScore"
+      );
+
+    if (average) {
+
+      average.textContent =
+        (data.averageScore ?? 0) + "%";
+
+    }
+
+
+    const bookmarks =
+      document.getElementById(
+        "bookmarkCount"
+      );
+
+    if (bookmarks) {
+
+      bookmarks.textContent =
+        data.bookmarks ?? 0;
+
+    }
+
+
+    const wrong =
+      document.getElementById(
+        "wrongCount"
+      );
+
+    if (wrong) {
+
+      wrong.textContent =
+        data.wrongQuestions ?? 0;
+
+    }
+
+  } catch (error) {
+
+    console.error(
+      "Statistics error:",
+      error
+    );
+
+  }
+
+}
+
+
+/* ==========================================
+   LOGOUT
+========================================== */
+
+async function logout() {
+
+  try {
+
+    await fetch(
+      "/api/student/logout",
+      {
+        method: "POST"
+      }
+    );
+
+  } catch (error) {
+
+    console.error(
+      "Logout error:",
+      error
+    );
+
+  }
+
+
+  localStorage.removeItem("student");
+
+  window.location.href = "/";
+
+}
+
+
+/* ==========================================
+   MAINTENANCE MODE
+========================================== */
+
+async function checkMaintenanceMode() {
+
+  try {
+
+    const response =
+      await fetch(
+        "/api/admin/maintenance/status"
+      );
+
+
+    if (!response.ok) {
+
+      return false;
+
+    }
+
+
+    const data =
+      await response.json();
+
+
+    if (
+      data.success &&
+      data.maintenance === true
+    ) {
+
+      const screen =
+        document.getElementById(
+          "maintenanceScreen"
+        );
+
+
+      if (screen) {
+
+        screen.style.display =
+          "flex";
+
+      }
+
+
+      return true;
+
+    }
+
+
+    return false;
+
+  } catch (error) {
+
+    console.error(
+      "Maintenance check error:",
+      error
+    );
+
+    return false;
+
+  }
+
+}
+
+
+/* ==========================================
+   PRACTICE MCQ VARIABLES
+========================================== */
+
+let practiceQuestions = [];
+
+let currentPracticeQuestion = 0;
+
+let practiceAnswers = [];
+
+
+/* ==========================================
+   SUBJECT SELECTION
+========================================== */
+
+const practiceSubjectCheckboxes =
+  document.querySelectorAll(
+    'input[name="practiceSubject"]'
+  );
+
+
+practiceSubjectCheckboxes.forEach(
+  function(checkbox) {
+
+    checkbox.addEventListener(
+      "change",
+      updatePracticeSubjects
+    );
+
+  }
+);
+
+
+/* ==========================================
+   UPDATE SUBJECTS
+========================================== */
+
+function updatePracticeSubjects() {
+
+  const selectedSubjects = [];
+
+
+  practiceSubjectCheckboxes.forEach(
+    function(checkbox) {
+
+      if (checkbox.checked) {
+
+        selectedSubjects.push(
+          checkbox.value
+        );
+
+      }
+
+    }
+  );
+
+
+  const chapterArea =
+    document.getElementById(
+      "practiceChapterArea"
+    );
+
+
+  const topicArea =
+    document.getElementById(
+      "practiceTopicArea"
+    );
+
+
+  const countArea =
+    document.getElementById(
+      "practiceCountArea"
+    );
+
+
+  const startArea =
+    document.getElementById(
+      "practiceStartArea"
+    );
+
+
+  if (
+    selectedSubjects.length === 0
+  ) {
+
+    chapterArea.style.display =
+      "none";
+
+    topicArea.style.display =
+      "none";
+
+    countArea.style.display =
+      "none";
+
+    startArea.style.display =
+      "none";
+
+    return;
+
+  }
+
+
+  chapterArea.style.display =
+    "block";
+
+
+  topicArea.style.display =
+    "none";
+
+
+  countArea.style.display =
+    "none";
+
+
+  startArea.style.display =
+    "none";
+
+
+  const chapters =
+    document.getElementById(
+      "practiceChapters"
+    );
+
+
+  chapters.innerHTML = "";
+
+
+  selectedSubjects.forEach(
+    function(subject) {
+
+      const item =
+        document.createElement(
+          "label"
+        );
+
+
+      item.className =
+        "subject-option";
+
+
+      item.innerHTML = `
+
+        <input
+          type="checkbox"
+          class="practice-chapter"
+          value="${subject}"
+        >
+
+        <span>
+          ${subject}
+        </span>
+
+      `;
+
+
+      chapters.appendChild(item);
+
+    }
+  );
+
+}
+
+
+/* ==========================================
+   CHAPTER SELECTION
+========================================== */
+
+document.addEventListener(
+  "change",
+  function(event) {
+
+    if (
+      event.target.classList.contains(
+        "practice-chapter"
+      )
+    ) {
+
+      updatePracticeChapters();
+
+    }
+
+  }
+);
+
+
+/* ==========================================
+   UPDATE CHAPTERS
+========================================== */
+
+function updatePracticeChapters() {
+
+  const selectedChapters =
+    document.querySelectorAll(
+      ".practice-chapter:checked"
+    );
+
+
+  const topicArea =
+    document.getElementById(
+      "practiceTopicArea"
+    );
+
+
+  const countArea =
+    document.getElementById(
+      "practiceCountArea"
+    );
+
+
+  const startArea =
+    document.getElementById(
+      "practiceStartArea"
+    );
+
+
+  if (
+    selectedChapters.length === 0
+  ) {
+
+    topicArea.style.display =
+      "none";
+
+    countArea.style.display =
+      "none";
+
+    startArea.style.display =
+      "none";
+
+    return;
+
+  }
+
+
+  topicArea.style.display =
+    "block";
+
+
+  countArea.style.display =
+    "none";
+
+
+  startArea.style.display =
+    "none";
+
+
+  const topics =
+    document.getElementById(
+      "practiceTopics"
+    );
+
+
+  topics.innerHTML = `
+
+    <p class="page-description">
+
+      Topic selection will be connected
+      to the selected chapters next.
+
+    </p>
+
+  `;
+
+}
+
+
+/* ==========================================
+   START PRACTICE
+========================================== */
+
+async function startPractice() {
+
+  const countInput =
+    document.getElementById(
+      "practiceCount"
+    );
+
+
+  const count =
+    Number(
+      countInput.value
+    );
+
+
+  if (
+    !Number.isInteger(count) ||
+    count < 1 ||
+    count > 180
+  ) {
+
+    showMessage(
+      "Please enter a number between 1 and 180."
+    );
+
+    return;
+
+  }
+
+
+  const selectedSubjects =
+    Array.from(
+      document.querySelectorAll(
+        'input[name="practiceSubject"]:checked'
+      )
+    ).map(
+      function(item) {
+
+        return item.value;
+
+      }
+    );
+
+
+  if (
+    selectedSubjects.length === 0
+  ) {
+
+    showMessage(
+      "Please select at least one subject."
+    );
+
+    return;
+
+  }
+
+
+  showMessage(
+    "Loading MCQs..."
+  );
+
+
+  try {
+
+    /*
+      Temporary request.
+
+      We will connect the selected
+      subjects, chapters and topics
+      to the API in the next step.
+    */
+
+    const response =
+      await fetch(
+        `/api/mcq/practice/random/${count}`
+      );
+
+
+    const data =
+      await response.json();
+
+
+    if (
+      !response.ok ||
+      !data.success
+    ) {
+
+      showMessage(
+        data.message ||
+        "Unable to load MCQs."
+      );
+
+      return;
+
+    }
+
+
+    practiceQuestions =
+      data.questions || [];
+
+
+    if (
+      practiceQuestions.length === 0
+    ) {
+
+      showMessage(
+        "No MCQs available."
+      );
+
+      return;
+
+    }
+
+
+    practiceAnswers =
+      new Array(
+        practiceQuestions.length
+      ).fill(null);
+
+
+    currentPracticeQuestion = 0;
+
+
+    document.getElementById(
+      "practiceSetup"
+    ).style.display =
+      "none";
+
+
+    document.getElementById(
+      "mcqTest"
+    ).style.display =
+      "block";
+
+
+    document.getElementById(
+      "mcqResult"
+    ).style.display =
+      "none";
+
+
+    showPracticeQuestion();
+
+
+  } catch (error) {
+
+    console.error(
+      "Practice error:",
+      error
+    );
+
+
+    showMessage(
+      "Unable to connect to server."
+    );
+
+  }
+
+}
+
+
+/* ==========================================
+   SHOW QUESTION
+========================================== */
+
+function showPracticeQuestion() {
+
+  const question =
+    practiceQuestions[
+      currentPracticeQuestion
+    ];
+
+
+  if (!question) return;
+
+
+  document.getElementById(
+    "mcqProgress"
+  ).textContent =
+    `Question ${
+      currentPracticeQuestion + 1
+    } of ${
+      practiceQuestions.length
+    }`;
+
+
+  document.getElementById(
+    "mcqQuestion"
+  ).textContent =
+    question.question;
+
+
+  const options =
+    document.getElementById(
+      "mcqOptions"
+    );
+
+
+  options.innerHTML = "";
+
+
+  const optionList = [
+
+    ["A", question.optiona],
+
+    ["B", question.optionb],
+
+    ["C", question.optionc],
+
+    ["D", question.optiond]
+
+  ];
+
+
+  optionList.forEach(
+    function(item) {
+
+      const button =
+        document.createElement(
+          "button"
+        );
+
+
+      button.type =
+        "button";
+
+
+      button.className =
+        "mcq-option";
+
+
+      button.textContent =
+        item[0] +
+        ". " +
+        item[1];
+
+
+      if (
+        practiceAnswers[
+          currentPracticeQuestion
+        ] === item[0]
+      ) {
+
+        button.classList.add(
+          "selected"
+        );
+
+      }
+
+
+      button.onclick =
+        function() {
+
+          selectPracticeAnswer(
+            item[0]
+          );
+
+        };
+
+
+      options.appendChild(
+        button
+      );
+
+    }
+  );
+
+
+  const previous =
+    document.getElementById(
+      "previousMcqButton"
+    );
+
+
+  previous.style.display =
+    currentPracticeQuestion === 0
+      ? "none"
+      : "inline-block";
+
+
+  const next =
+    document.getElementById(
+      "nextMcqButton"
+    );
+
+
+  next.textContent =
+    currentPracticeQuestion ===
+    practiceQuestions.length - 1
+      ? "Submit Test"
+      : "Next";
+
+}
+
+
+/* ==========================================
+   SELECT ANSWER
+========================================== */
+
+function selectPracticeAnswer(
+  answer
+) {
+
+  practiceAnswers[
+    currentPracticeQuestion
+  ] = answer;
+
+
+  const buttons =
+    document.querySelectorAll(
+      "#mcqOptions .mcq-option"
+    );
+
+
+  buttons.forEach(
+    function(button) {
+
+      button.classList.remove(
+        "selected"
+      );
+
+    }
+  );
+
+
+  buttons.forEach(
+    function(button) {
+
+      if (
+        button.textContent.startsWith(
+          answer + "."
+        )
+      ) {
+
+        button.classList.add(
+          "selected"
+        );
+
+      }
+
+    }
+  );
+
+}
+
+
+/* ==========================================
+   NEXT MCQ
+========================================== */
+
+function nextMcq() {
+
+  if (
+    practiceAnswers[
+      currentPracticeQuestion
+    ] === null
+  ) {
+
+    showMessage(
+      "Please select an answer first."
+    );
+
+    return;
+
+  }
+
+
+  if (
+    currentPracticeQuestion ===
+    practiceQuestions.length - 1
+  ) {
+
+    finishPractice();
+
+    return;
+
+  }
+
+
+  currentPracticeQuestion++;
+
+  showPracticeQuestion();
+
+}
+
+
+/* ==========================================
+   PREVIOUS MCQ
+========================================== */
+
+function previousMcq() {
+
+  if (
+    currentPracticeQuestion <= 0
+  ) {
+
+    return;
+
+  }
+
+
+  currentPracticeQuestion--;
+
+  showPracticeQuestion();
+
+}
+
+
+/* ==========================================
+   FINISH PRACTICE
+========================================== */
+
+function finishPractice() {
+
+  let correct = 0;
+
+
+  practiceQuestions.forEach(
+    function(question, index) {
+
+      const selected =
+        practiceAnswers[index];
+
+
+      if (
+        selected &&
+        String(selected).toUpperCase() ===
+        String(question.answer).toUpperCase()
+      ) {
+
+        correct++;
+
+      }
+
+    }
+  );
+
+
+  document.getElementById(
+    "mcqTest"
+  ).style.display =
+    "none";
+
+
+  document.getElementById(
+    "mcqResult"
+  ).style.display =
+    "block";
+
+
+  document.getElementById(
+    "practiceScore"
+  ).textContent =
+    correct;
+
+
+  document.getElementById(
+    "practiceTotal"
+  ).textContent =
+    practiceQuestions.length;
+
+}
+
+
+/* ==========================================
+   RESTART PRACTICE
+========================================== */
+
+function restartPractice() {
+
+  document.getElementById(
+    "mcqResult"
+  ).style.display =
+    "none";
+
+
+  document.getElementById(
+    "mcqTest"
+  ).style.display =
+    "none";
+
+
+  document.getElementById(
+    "practiceSetup"
+  ).style.display =
+    "block";
+
+
+  practiceQuestions = [];
+
+  practiceAnswers = [];
+
+  currentPracticeQuestion = 0;
+
+
+  practiceSubjectCheckboxes.forEach(
+    function(checkbox) {
+
+      checkbox.checked = false;
+
+    }
+  );
+
+
+  document.getElementById(
+    "practiceChapterArea"
+  ).style.display =
+    "none";
+
+
+  document.getElementById(
+    "practiceTopicArea"
+  ).style.display =
+    "none";
+
+
+  document.getElementById(
+    "practiceCountArea"
+  ).style.display =
+    "none";
+
+
+  document.getElementById(
+    "practiceStartArea"
+  ).style.display =
+    "none";
+
+}
+
+
+/* ==========================================
+   INITIALIZE STUDENT PANEL
+========================================== */
+
+async function initializeStudentPanel() {
+
+  const maintenance =
+    await checkMaintenanceMode();
+
+
+  if (maintenance) {
+
+    return;
+
+  }
+
+
+  const student =
+    getStudent();
+
+
+  if (!student) {
+
+    return;
+
+  }
+
+
+  await loadProfile();
+
+  await loadStatistics();
+
+}
+
+
+initializeStudentPanel();
 
   
+</script>
 
+</body>
 
-
-    
+</html>
