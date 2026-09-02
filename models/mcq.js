@@ -349,6 +349,8 @@ static practice(data, callback) {
         callback
     );
 
+    }
+
 }
 
 module.exports = Mcq;
