@@ -1739,7 +1739,7 @@ let practiceAnswers = [];
 function showSection(sectionId, button) {
 
     document
-        .querySelectorAll(".content-section")
+        .querySelectorAll(".section")
         .forEach(section => {
             section.style.display = "none";
         });
@@ -1750,24 +1750,20 @@ function showSection(sectionId, button) {
         section.style.display = "block";
     }
 
-
     document
         .querySelectorAll(".sidebar button")
         .forEach(btn => {
             btn.classList.remove("active");
         });
 
-
     if (button) {
         button.classList.add("active");
     }
-
 
     // Load practice data when Practice is opened
     if (sectionId === "practice") {
         loadPracticeSubjects();
     }
-
 }
 
 
