@@ -1714,17 +1714,1071 @@
 <div id="message"></div>
 
 
+<script>
 
 
+// ==========================================
+// ABMDCAT STUDENT PANEL
+// MAIN JAVASCRIPT
+// ==========================================
 
+
+// ==========================================
+// GLOBAL VARIABLES
+// ==========================================
+
+let practiceQuestions = [];
+let currentPracticeIndex = 0;
+let practiceAnswers = [];
+
+
+// ==========================================
+// SHOW SECTION
+// ==========================================
+
+function showSection(sectionId, button) {
+
+    document
+        .querySelectorAll(".content-section")
+        .forEach(section => {
+            section.style.display = "none";
+        });
+
+    const section = document.getElementById(sectionId);
+
+    if (section) {
+        section.style.display = "block";
+    }
+
+
+    document
+        .querySelectorAll(".sidebar button")
+        .forEach(btn => {
+            btn.classList.remove("active");
+        });
+
+
+    if (button) {
+        button.classList.add("active");
+    }
+
+
+    // Load practice data when Practice is opened
+    if (sectionId === "practice") {
+        loadPracticeSubjects();
+    }
+
+}
+
+
+// ==========================================
+// LOGOUT
+// ==========================================
+
+function logout() {
+
+    localStorage.removeItem("student");
+
+    localStorage.removeItem("studentToken");
+
+    window.location.href = "login.html";
+
+}
+
+
+// ==========================================
+// PRACTICE VARIABLES
+// ==========================================
+
+let selectedSubjects = [];
+let selectedChapters = [];
+let selectedTopics = [];
+
+
+// ==========================================
+// LOAD PRACTICE SUBJECTS
+// ==========================================
+
+function loadPracticeSubjects() {
+
+    const subjectBoxes =
+        document.querySelectorAll(
+            'input[name="practiceSubject"]'
+        );
+
+    subjectBoxes.forEach(box => {
+
+        box.addEventListener(
+            "change",
+            handleSubjectChange
+        );
+
+    });
+
+}
+
+
+// ==========================================
+// SUBJECT CHANGE
+// ==========================================
+
+function handleSubjectChange() {
+
+    selectedSubjects =
+        Array.from(
+            document.querySelectorAll(
+                'input[name="practiceSubject"]:checked'
+            )
+        ).map(box => box.value);
+
+
+    selectedChapters = [];
+    selectedTopics = [];
+
+
+    const chapterArea =
+        document.getElementById(
+            "practiceChapterArea"
+        );
+
+    const topicArea =
+        document.getElementById(
+            "practiceTopicArea"
+        );
+
+    const countArea =
+        document.getElementById(
+            "practiceCountArea"
+        );
+
+    const startArea =
+        document.getElementById(
+            "practiceStartArea"
+        );
+
+
+    if (chapterArea) {
+        chapterArea.style.display =
+            selectedSubjects.length
+                ? "block"
+                : "none";
+    }
+
+
+    if (topicArea) {
+        topicArea.style.display = "none";
+    }
+
+
+    if (countArea) {
+        countArea.style.display = "none";
+    }
+
+
+    if (startArea) {
+        startArea.style.display = "none";
+    }
+
+
+    if (selectedSubjects.length > 0) {
+        loadPracticeChapters();
+    }
+
+}
+
+
+// ==========================================
+// LOAD CHAPTERS FROM DATABASE
+// ==========================================
+
+async function loadPracticeChapters() {
+
+    const container =
+        document.getElementById(
+            "practiceChapters"
+        );
+
+    if (!container) return;
+
+
+    container.innerHTML =
+        "<p>Loading chapters...</p>";
+
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/mcq"
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (!data.success) {
+
+            container.innerHTML =
+                "<p>Unable to load chapters.</p>";
+
+            return;
+
+        }
+
+
+        const mcqs =
+            data.mcqs || [];
+
+
+        // Only selected subjects
+        const filtered =
+            mcqs.filter(mcq =>
+                selectedSubjects.includes(
+                    mcq.subject
+                )
+            );
+
+
+        // Get unique chapters
+        const chapters =
+            [
+                ...new Set(
+                    filtered
+                        .map(mcq => mcq.chapter)
+                        .filter(Boolean)
+                )
+            ]
+            .sort();
+
+
+        if (chapters.length === 0) {
+
+            container.innerHTML =
+                "<p>No chapters found.</p>";
+
+            return;
+
+        }
+
+
+        container.innerHTML = "";
+
+
+        chapters.forEach(chapter => {
+
+            const label =
+                document.createElement("label");
+
+            label.className =
+                "practice-choice";
+
+
+            const checkbox =
+                document.createElement("input");
+
+            checkbox.type = "checkbox";
+
+            checkbox.value = chapter;
+
+            checkbox.name =
+                "practiceChapter";
+
+
+            checkbox.addEventListener(
+                "change",
+                handleChapterChange
+            );
+
+
+            label.appendChild(checkbox);
+
+            label.appendChild(
+                document.createTextNode(
+                    " " + chapter
+                )
+            );
+
+
+            container.appendChild(label);
+
+        });
+
+    } catch (error) {
+
+        console.error(
+            "Chapter loading error:",
+            error
+        );
+
+        container.innerHTML =
+            "<p>Unable to load chapters.</p>";
+
+    }
+
+}
+
+
+// ==========================================
+// CHAPTER CHANGE
+// ==========================================
+
+function handleChapterChange() {
+
+    selectedChapters =
+        Array.from(
+            document.querySelectorAll(
+                'input[name="practiceChapter"]:checked'
+            )
+        ).map(box => box.value);
+
+
+    selectedTopics = [];
+
+
+    const topicArea =
+        document.getElementById(
+            "practiceTopicArea"
+        );
+
+    const countArea =
+        document.getElementById(
+            "practiceCountArea"
+        );
+
+    const startArea =
+        document.getElementById(
+            "practiceStartArea"
+        );
+
+
+    if (selectedChapters.length > 0) {
+
+        topicArea.style.display =
+            "block";
+
+        loadPracticeTopics();
+
+    } else {
+
+        topicArea.style.display =
+            "none";
+
+        countArea.style.display =
+            "none";
+
+        startArea.style.display =
+            "none";
+
+    }
+
+}
+
+
+// ==========================================
+// LOAD TOPICS FROM DATABASE
+// ==========================================
+
+async function loadPracticeTopics() {
+
+    const container =
+        document.getElementById(
+            "practiceTopics"
+        );
+
+
+    if (!container) return;
+
+
+    container.innerHTML =
+        "<p>Loading topics...</p>";
+
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/mcq"
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (!data.success) {
+
+            container.innerHTML =
+                "<p>Unable to load topics.</p>";
+
+            return;
+
+        }
+
+
+        const mcqs =
+            data.mcqs || [];
+
+
+        // Selected subjects + chapters
+        const filtered =
+            mcqs.filter(mcq =>
+
+                selectedSubjects.includes(
+                    mcq.subject
+                )
+
+                &&
+
+                selectedChapters.includes(
+                    mcq.chapter
+                )
+
+            );
+
+
+        // Unique topics
+        const topics =
+            [
+                ...new Set(
+                    filtered
+                        .map(mcq => mcq.topic)
+                        .filter(Boolean)
+                )
+            ]
+            .sort();
+
+
+        if (topics.length === 0) {
+
+            container.innerHTML =
+                "<p>No topics found.</p>";
+
+            return;
+
+        }
+
+
+        container.innerHTML = "";
+
+
+        topics.forEach(topic => {
+
+            const label =
+                document.createElement("label");
+
+            label.className =
+                "practice-choice";
+
+
+            const checkbox =
+                document.createElement("input");
+
+            checkbox.type = "checkbox";
+
+            checkbox.value = topic;
+
+            checkbox.name =
+                "practiceTopic";
+
+
+            checkbox.addEventListener(
+                "change",
+                handleTopicChange
+            );
+
+
+            label.appendChild(checkbox);
+
+            label.appendChild(
+                document.createTextNode(
+                    " " + topic
+                )
+            );
+
+
+            container.appendChild(label);
+
+        });
+
+    } catch (error) {
+
+        console.error(
+            "Topic loading error:",
+            error
+        );
+
+        container.innerHTML =
+            "<p>Unable to load topics.</p>";
+
+    }
+
+}
+
+
+// ==========================================
+// TOPIC CHANGE
+// ==========================================
+
+function handleTopicChange() {
+
+    selectedTopics =
+        Array.from(
+            document.querySelectorAll(
+                'input[name="practiceTopic"]:checked'
+            )
+        ).map(box => box.value);
+
+
+    const countArea =
+        document.getElementById(
+            "practiceCountArea"
+        );
+
+    const startArea =
+        document.getElementById(
+            "practiceStartArea"
+        );
+
+
+    if (selectedTopics.length > 0) {
+
+        countArea.style.display =
+            "block";
+
+        startArea.style.display =
+            "block";
+
+    } else {
+
+        countArea.style.display =
+            "none";
+
+        startArea.style.display =
+            "none";
+
+    }
+
+}
+
+
+// ==========================================
+// START PRACTICE
+// ==========================================
+
+async function startPractice() {
+
+    const countInput =
+        document.getElementById(
+            "practiceCount"
+        );
+
+
+    const count =
+        Number(countInput.value);
+
+
+    if (
+        selectedSubjects.length === 0
+        ||
+        selectedChapters.length === 0
+        ||
+        selectedTopics.length === 0
+    ) {
+
+        alert(
+            "Please select subject, chapter and topic."
+        );
+
+        return;
+
+    }
+
+
+    if (count < 1 || count > 180) {
+
+        alert(
+            "MCQs must be between 1 and 180."
+        );
+
+        return;
+
+    }
+
+
+    try {
+
+        const params =
+            new URLSearchParams();
+
+
+        selectedSubjects.forEach(
+            subject => {
+                params.append(
+                    "subjects",
+                    subject
+                );
+            }
+        );
+
+
+        selectedChapters.forEach(
+            chapter => {
+                params.append(
+                    "chapters",
+                    chapter
+                );
+            }
+        );
+
+
+        selectedTopics.forEach(
+            topic => {
+                params.append(
+                    "topics",
+                    topic
+                );
+            }
+        );
+
+
+        params.append(
+            "limit",
+            count
+        );
+
+
+        const response =
+            await fetch(
+                "/api/mcq/practice?" +
+                params.toString()
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (!data.success) {
+
+            alert(
+                data.message ||
+                "Unable to start practice."
+            );
+
+            return;
+
+        }
+
+
+        practiceQuestions =
+            data.questions || [];
+
+
+        if (practiceQuestions.length === 0) {
+
+            alert(
+                "No MCQs found for the selected topics."
+            );
+
+            return;
+
+        }
+
+
+        currentPracticeIndex = 0;
+
+        practiceAnswers =
+            new Array(
+                practiceQuestions.length
+            ).fill(null);
+
+
+        document.getElementById(
+            "practiceSetup"
+        ).style.display = "none";
+
+
+        document.getElementById(
+            "mcqTest"
+        ).style.display = "block";
+
+
+        document.getElementById(
+            "mcqResult"
+        ).style.display = "none";
+
+
+        displayPracticeQuestion();
+
+    } catch (error) {
+
+        console.error(
+            "Start practice error:",
+            error
+        );
+
+        alert(
+            "Something went wrong while starting practice."
+        );
+
+    }
+
+}
+
+
+// ==========================================
+// DISPLAY QUESTION
+// ==========================================
+
+function displayPracticeQuestion() {
+
+    const question =
+        practiceQuestions[
+            currentPracticeIndex
+        ];
+
+
+    if (!question) return;
+
+
+    const progress =
+        document.getElementById(
+            "mcqProgress"
+        );
+
+
+    const questionBox =
+        document.getElementById(
+            "mcqQuestion"
+        );
+
+
+    const optionsBox =
+        document.getElementById(
+            "mcqOptions"
+        );
+
+
+    progress.textContent =
+        `Question ${
+            currentPracticeIndex + 1
+        } of ${
+            practiceQuestions.length
+        }`;
+
+
+    questionBox.textContent =
+        question.question;
+
+
+    optionsBox.innerHTML = "";
+
+
+    const options = [
+        {
+            key: "A",
+            text: question.optiona
+        },
+        {
+            key: "B",
+            text: question.optionb
+        },
+        {
+            key: "C",
+            text: question.optionc
+        },
+        {
+            key: "D",
+            text: question.optiond
+        }
+    ];
+
+
+    options.forEach(option => {
+
+        const button =
+            document.createElement("button");
+
+
+        button.type = "button";
+
+        button.className =
+            "mcq-option";
+
+
+        button.textContent =
+            `${option.key}. ${option.text}`;
+
+
+        button.onclick = function () {
+
+            selectMcqOption(
+                option.key
+            );
+
+        };
+
+
+        if (
+            practiceAnswers[
+                currentPracticeIndex
+            ] === option.key
+        ) {
+
+            button.classList.add(
+                "selected"
+            );
+
+        }
+
+
+        optionsBox.appendChild(
+            button
+        );
+
+    });
+
+}
+
+
+// ==========================================
+// SELECT MCQ OPTION
+// ==========================================
+
+function selectMcqOption(answer) {
+
+    practiceAnswers[
+        currentPracticeIndex
+    ] = answer;
+
+
+    document
+        .querySelectorAll(
+            ".mcq-option"
+        )
+        .forEach(button => {
+
+            button.classList.remove(
+                "selected"
+            );
+
+        });
+
+
+    const buttons =
+        document.querySelectorAll(
+            ".mcq-option"
+        );
+
+
+    const index =
+        ["A", "B", "C", "D"]
+            .indexOf(answer);
+
+
+    if (buttons[index]) {
+
+        buttons[index].classList.add(
+            "selected"
+        );
+
+    }
+
+}
+
+
+// ==========================================
+// NEXT / SUBMIT
+// ==========================================
+
+function nextMcq() {
+
+    if (
+        currentPracticeIndex <
+        practiceQuestions.length - 1
+    ) {
+
+        currentPracticeIndex++;
+
+        displayPracticeQuestion();
+
+    } else {
+
+        finishPractice();
+
+    }
+
+}
+
+
+// ==========================================
+// PREVIOUS
+// ==========================================
+
+function previousMcq() {
+
+    if (
+        currentPracticeIndex > 0
+    ) {
+
+        currentPracticeIndex--;
+
+        displayPracticeQuestion();
+
+    }
+
+}
+
+
+// ==========================================
+// FINISH PRACTICE
+// ==========================================
+
+function finishPractice() {
+
+    let score = 0;
+
+
+    practiceQuestions.forEach(
+        (question, index) => {
+
+            if (
+                practiceAnswers[index] &&
+                practiceAnswers[index]
+                    .toUpperCase() ===
+                question.answer
+                    .toString()
+                    .toUpperCase()
+            ) {
+
+                score++;
+
+            }
+
+        }
+    );
+
+
+    document.getElementById(
+        "mcqTest"
+    ).style.display = "none";
+
+
+    document.getElementById(
+        "mcqResult"
+    ).style.display = "block";
+
+
+    document.getElementById(
+        "practiceScore"
+    ).textContent =
+        score;
+
+
+    document.getElementById(
+        "practiceTotal"
+    ).textContent =
+        practiceQuestions.length;
+
+}
+
+
+// ==========================================
+// RESTART PRACTICE
+// ==========================================
+
+function restartPractice() {
+
+    practiceQuestions = [];
+
+    practiceAnswers = [];
+
+    currentPracticeIndex = 0;
+
+    selectedSubjects = [];
+
+    selectedChapters = [];
+
+    selectedTopics = [];
+
+
+    document.getElementById(
+        "mcqResult"
+    ).style.display = "none";
+
+
+    document.getElementById(
+        "mcqTest"
+    ).style.display = "none";
+
+
+    document.getElementById(
+        "practiceSetup"
+    ).style.display = "block";
+
+
+    document.querySelectorAll(
+        'input[name="practiceSubject"]'
+    ).forEach(box => {
+
+        box.checked = false;
+
+    });
+
+
+    document.getElementById(
+        "practiceChapterArea"
+    ).style.display = "none";
+
+
+    document.getElementById(
+        "practiceTopicArea"
+    ).style.display = "none";
+
+
+    document.getElementById(
+        "practiceCountArea"
+    ).style.display = "none";
+
+
+    document.getElementById(
+        "practiceStartArea"
+    ).style.display = "none";
+
+}
+
+
+// ==========================================
+// INITIALIZE
+// ==========================================
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        const dashboard =
+            document.getElementById(
+                "dashboard"
+            );
+
+
+        if (dashboard) {
+
+            dashboard.style.display =
+                "block";
+
+        }
+
+
+        loadPracticeSubjects();
+
+    }
+);
+
+
+<script>
   
-
-
-
-
-
-  
-
 </body>
 
 </html>
