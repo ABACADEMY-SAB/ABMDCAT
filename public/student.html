@@ -1380,8 +1380,8 @@
 
 
   <!-- =========================
-       RESULT
-  ========================= -->
+     RESULT
+========================= -->
 
 <div class="panel" id="mcqResult" style="display:none;">
 
@@ -1410,6 +1410,48 @@
     </button>
 
 </div>
+
+
+<!-- =========================
+     REVIEW ANSWERS
+========================= -->
+
+<div class="panel" id="mcqReview" style="display:none;">
+
+    <div id="reviewProgress" class="page-description">
+        Question 1
+    </div>
+
+    <h3 id="reviewQuestion">
+        Loading question...
+    </h3>
+
+    <div id="reviewOptions"></div>
+
+    <div id="reviewExplanation"
+         class="review-explanation">
+    </div>
+
+    <div class="review-navigation">
+
+        <button
+            class="button secondary"
+            onclick="previousReview()"
+            id="previousReviewButton">
+            Previous
+        </button>
+
+        <button
+            class="button primary"
+            onclick="nextReview()"
+            id="nextReviewButton">
+            Next
+        </button>
+
+    </div>
+
+</div>
+
 
 </section>
     
