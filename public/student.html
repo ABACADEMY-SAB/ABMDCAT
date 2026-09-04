@@ -1383,41 +1383,33 @@
        RESULT
   ========================= -->
 
-  <div
-    class="panel"
-    id="mcqResult"
-    style="display:none;"
-  >
+<div class="panel" id="mcqResult" style="display:none;">
 
-    <h3>
-      Practice Result
-    </h3>
-
+    <h3>Practice Result</h3>
 
     <p>
-      Score:
-      <strong id="practiceScore">
-        0
-      </strong>
+        Total Questions:
+        <strong id="practiceTotal">0</strong>
     </p>
-
 
     <p>
-      Total:
-      <strong id="practiceTotal">
-        0
-      </strong>
+        Correct Answers:
+        <strong id="practiceCorrect">0</strong>
     </p>
-
 
     <button
-      class="button primary"
-      onclick="restartPractice()"
-    >
-      Create Another Test
+        class="button primary"
+        onclick="startReview()">
+        Review Answers
     </button>
 
-  </div>
+    <button
+        class="button secondary"
+        onclick="restartPractice()">
+        Create Another Test
+    </button>
+
+</div>
 
 </section>
     
