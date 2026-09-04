@@ -533,6 +533,216 @@
 }
 
 
+/* ==========================================
+   PRACTICE REVIEW DESIGN
+========================================== */
+
+#mcqReview {
+    max-width: 900px;
+    margin: 20px auto;
+    padding: 24px;
+    background: #ffffff;
+    border-radius: 18px;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+
+/* Question number */
+
+#reviewProgress {
+    color: #64748b;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+
+/* Question */
+
+#reviewQuestion {
+    font-size: 21px;
+    line-height: 1.5;
+    color: #111827;
+    margin-bottom: 22px;
+}
+
+
+/* Options container */
+
+#reviewOptions {
+    width: 100%;
+}
+
+
+/* Every option */
+
+.review-option {
+    width: 100%;
+    min-height: 55px;
+    box-sizing: border-box;
+
+    display: flex;
+    align-items: center;
+
+    padding: 14px 18px;
+    margin-bottom: 12px;
+
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+
+    background: #ffffff;
+    color: #111827;
+
+    font-size: 16px;
+    line-height: 1.4;
+
+    transition: 0.2s;
+}
+
+
+/* Option letter */
+
+.review-badge {
+    width: 36px;
+    height: 36px;
+
+    min-width: 36px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-right: 14px;
+
+    border-radius: 10px;
+
+    background: #f3f4f6;
+    color: #374151;
+
+    font-weight: 700;
+    font-size: 15px;
+}
+
+
+/* Correct answer */
+
+.review-option.correct {
+    background: #ecfdf5;
+    border-color: #22c55e;
+    color: #166534;
+    font-weight: 600;
+}
+
+
+/* Green letter */
+
+.review-option.correct .review-badge {
+    background: #10b981;
+    color: white;
+}
+
+
+/* Wrong student answer */
+
+.review-option.wrong {
+    background: #fff1f2;
+    border-color: #f43f5e;
+    color: #be123c;
+    font-weight: 600;
+}
+
+
+/* Red letter */
+
+.review-option.wrong .review-badge {
+    background: #f43f5e;
+    color: white;
+}
+
+
+/* Normal options */
+
+.review-option.neutral {
+    background: #ffffff;
+    border-color: #e5e7eb;
+    color: #374151;
+}
+
+
+/* ==========================================
+   EXPLANATION
+========================================== */
+
+.review-explanation {
+    margin-top: 22px;
+    padding: 18px;
+
+    border-radius: 12px;
+
+    background: #eff6ff;
+    border: 1.5px solid #0ea5e9;
+
+    color: #1e3a5f;
+
+    font-size: 15px;
+    line-height: 1.6;
+}
+
+
+/* Explanation heading */
+
+.review-explanation-title {
+    color: #0284c7;
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 7px;
+}
+
+
+/* ==========================================
+   REVIEW NAVIGATION
+========================================== */
+
+.review-navigation {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    margin-top: 24px;
+    gap: 12px;
+}
+
+
+/* Mobile */
+
+@media (max-width: 600px) {
+
+    #mcqReview {
+        margin: 10px;
+        padding: 18px;
+        border-radius: 15px;
+    }
+
+    #reviewQuestion {
+        font-size: 18px;
+    }
+
+    .review-option {
+        font-size: 15px;
+        padding: 12px;
+    }
+
+    .review-badge {
+        width: 34px;
+        height: 34px;
+        min-width: 34px;
+        margin-right: 11px;
+    }
+
+}
+
+    
 /* =========================
    MCQ QUESTION
 ========================= */
