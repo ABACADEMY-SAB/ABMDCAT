@@ -3123,39 +3123,36 @@ function displayReviewQuestion() {
     });
 
 
-    // ==========================================
-    // EXPLANATION
-    // ==========================================
+// ==========================================
+// EXPLANATION
+// ==========================================
 
-    const explanationBox =
-        document.getElementById(
-            "reviewExplanation"
-        );
+const explanationBox =
+    document.getElementById(
+        "reviewExplanation"
+    );
+
+const correctLetter =
+    correctAnswer || "N/A";
+
+const explanation =
+    question.explanation &&
+    question.explanation.toString().trim() !== ""
+        ? question.explanation
+        : "No explanation for this question.";
 
 
-    if (
-        question.explanation &&
-        question.explanation
-            .toString()
-            .trim() !== ""
-    ) {
+explanationBox.innerHTML =
 
-        explanationBox.innerHTML =
-            '<div class="review-explanation-title">' +
-            'Explanation' +
-            '</div>' +
-            question.explanation;
+    '<div class="review-explanation-title">' +
+    '✓ CORRECT ANSWER · ' +
+    correctLetter +
+    '</div>' +
 
-    } else {
-
-        explanationBox.innerHTML =
-            '<div class="review-explanation-title">' +
-            'Explanation' +
-            '</div>' +
-            'No explanation for this question.';
-
-    }
-
+    '<div>' +
+    explanation +
+    '</div>';
+  
 
     // ==========================================
     // PREVIOUS BUTTON
