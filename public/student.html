@@ -2660,15 +2660,13 @@ function previousMcq() {
 
 }
 
-
 // ==========================================
 // FINISH PRACTICE
 // ==========================================
 
 function finishPractice() {
 
-    let score = 0;
-
+    let correct = 0;
 
     practiceQuestions.forEach(
         (question, index) => {
@@ -2682,7 +2680,7 @@ function finishPractice() {
                     .toUpperCase()
             ) {
 
-                score++;
+                correct++;
 
             }
 
@@ -2690,29 +2688,38 @@ function finishPractice() {
     );
 
 
+    // Hide MCQ test
     document.getElementById(
         "mcqTest"
     ).style.display = "none";
 
 
+    // Hide review
+    document.getElementById(
+        "mcqReview"
+    ).style.display = "none";
+
+
+    // Show result
     document.getElementById(
         "mcqResult"
     ).style.display = "block";
 
 
-    document.getElementById(
-        "practiceScore"
-    ).textContent =
-        score;
-
-
+    // Show total questions
     document.getElementById(
         "practiceTotal"
     ).textContent =
         practiceQuestions.length;
 
-}
 
+    // Show correct answers
+    document.getElementById(
+        "practiceCorrect"
+    ).textContent =
+        correct;
+
+}
 
 // ==========================================
 // RESTART PRACTICE
