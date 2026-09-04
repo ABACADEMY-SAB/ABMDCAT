@@ -2721,6 +2721,334 @@ function finishPractice() {
 
 }
 
+
+// ==========================================
+// REVIEW ANSWERS
+// ==========================================
+
+let currentReviewIndex = 0;
+
+
+// ==========================================
+// START REVIEW
+// ==========================================
+
+function startReview() {
+
+    currentReviewIndex = 0;
+
+    document.getElementById(
+        "mcqResult"
+    ).style.display = "none";
+
+    document.getElementById(
+        "mcqTest"
+    ).style.display = "none";
+
+    document.getElementById(
+        "practiceSetup"
+    ).style.display = "none";
+
+    document.getElementById(
+        "mcqReview"
+    ).style.display = "block";
+
+    displayReviewQuestion();
+}
+
+
+// ==========================================
+// DISPLAY REVIEW QUESTION
+// ==========================================
+
+function displayReviewQuestion() {
+
+    const question =
+        practiceQuestions[currentReviewIndex];
+
+    if (!question) {
+        return;
+    }
+
+
+    // Progress
+    document.getElementById(
+        "reviewProgress"
+    ).textContent =
+        "Question " +
+        (currentReviewIndex + 1) +
+        " / " +
+        practiceQuestions.length;
+
+
+    // Question
+    document.getElementById(
+        "reviewQuestion"
+    ).textContent =
+        question.question;
+
+
+    const optionsContainer =
+        document.getElementById(
+            "reviewOptions"
+        );
+
+    optionsContainer.innerHTML = "";
+
+
+    const options = [
+        {
+            key: "A",
+            text: question.optiona
+        },
+        {
+            key: "B",
+            text: question.optionb
+        },
+        {
+            key: "C",
+            text: question.optionc
+        },
+        {
+            key: "D",
+            text: question.optiond
+        }
+    ];
+
+
+    const studentAnswer =
+        practiceAnswers[currentReviewIndex];
+
+
+    const correctAnswer =
+        question.answer
+            ? question.answer
+                .toString()
+                .toUpperCase()
+            : "";
+
+
+    options.forEach(option => {
+
+        const button =
+            document.createElement("div");
+
+
+        const isStudentAnswer =
+            studentAnswer &&
+            studentAnswer
+                .toUpperCase() ===
+            option.key;
+
+
+        const isCorrectAnswer =
+            correctAnswer === option.key;
+
+
+        // Student answer is correct
+        if (
+            isStudentAnswer &&
+            isCorrectAnswer
+        ) {
+
+            button.className =
+                "review-option correct";
+
+            button.innerHTML =
+                '<span class="review-badge">✓ ' +
+                option.key +
+                '</span>' +
+                option.text;
+
+        }
+
+
+        // Student answer is wrong
+        else if (isStudentAnswer) {
+
+            button.className =
+                "review-option wrong";
+
+            button.innerHTML =
+                '<span class="review-badge">✗ ' +
+                option.key +
+                '</span>' +
+                option.text;
+
+        }
+
+
+        // Correct answer
+        else if (isCorrectAnswer) {
+
+            button.className =
+                "review-option correct";
+
+            button.innerHTML =
+                '<span class="review-badge">✓ ' +
+                option.key +
+                '</span>' +
+                option.text;
+
+        }
+
+
+        // Other options
+        else {
+
+            button.className =
+                "review-option neutral";
+
+            button.innerHTML =
+                '<span class="review-badge">' +
+                option.key +
+                '</span>' +
+                option.text;
+
+        }
+
+
+        optionsContainer.appendChild(button);
+
+    });
+
+
+    // ==========================================
+    // EXPLANATION
+    // ==========================================
+
+    const explanationBox =
+        document.getElementById(
+            "reviewExplanation"
+        );
+
+
+    if (
+        question.explanation &&
+        question.explanation
+            .toString()
+            .trim() !== ""
+    ) {
+
+        explanationBox.innerHTML =
+            '<div class="review-explanation-title">' +
+            'Explanation' +
+            '</div>' +
+            question.explanation;
+
+    } else {
+
+        explanationBox.innerHTML =
+            '<div class="review-explanation-title">' +
+            'Explanation' +
+            '</div>' +
+            'No explanation for this question.';
+
+    }
+
+
+    // ==========================================
+    // PREVIOUS BUTTON
+    // ==========================================
+
+    const previousButton =
+        document.getElementById(
+            "previousReviewButton"
+        );
+
+
+    if (
+        currentReviewIndex === 0
+    ) {
+
+        previousButton.disabled = true;
+        previousButton.style.opacity = "0.5";
+
+    } else {
+
+        previousButton.disabled = false;
+        previousButton.style.opacity = "1";
+
+    }
+
+
+    // ==========================================
+    // NEXT BUTTON
+    // ==========================================
+
+    const nextButton =
+        document.getElementById(
+            "nextReviewButton"
+        );
+
+
+    if (
+        currentReviewIndex ===
+        practiceQuestions.length - 1
+    ) {
+
+        nextButton.textContent =
+            "Back to Result";
+
+    } else {
+
+        nextButton.textContent =
+            "Next";
+
+    }
+
+}
+
+
+// ==========================================
+// NEXT REVIEW
+// ==========================================
+
+function nextReview() {
+
+    if (
+        currentReviewIndex <
+        practiceQuestions.length - 1
+    ) {
+
+        currentReviewIndex++;
+
+        displayReviewQuestion();
+
+    } else {
+
+        document.getElementById(
+            "mcqReview"
+        ).style.display = "none";
+
+        document.getElementById(
+            "mcqResult"
+        ).style.display = "block";
+
+    }
+
+}
+
+
+// ==========================================
+// PREVIOUS REVIEW
+// ==========================================
+
+function previousReview() {
+
+    if (
+        currentReviewIndex > 0
+    ) {
+
+        currentReviewIndex--;
+
+        displayReviewQuestion();
+
+    }
+
+}
+
+  
 // ==========================================
 // RESTART PRACTICE
 // ==========================================
