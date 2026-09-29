@@ -1539,54 +1539,66 @@
   </div>
 
 
+<!-- =========================
+     MCQ TEST
+========================= -->
 
-  <!-- =========================
-       MCQ TEST
-  ========================= -->
+<div
+  class="panel"
+  id="mcqTest"
+  style="display:none;"
+>
 
   <div
-    class="panel"
-    id="mcqTest"
-    style="display:none;"
+    id="mcqProgress"
+    class="page-description"
   >
-
-    <div
-      id="mcqProgress"
-      class="page-description"
-    >
-      Question 1
-    </div>
+    Question 1
+  </div>
 
 
-    <h3 id="mcqQuestion">
-      Loading question...
-    </h3>
+  <h3 id="mcqQuestion">
+    Loading question...
+  </h3>
 
 
-    <div id="mcqOptions">
-
-    </div>
-
-
-    <button
-      class="button secondary"
-      onclick="previousMcq()"
-      id="previousMcqButton"
-    >
-      Previous
-    </button>
-
-
-    <button
-      class="button primary"
-      onclick="nextMcq()"
-      id="nextMcqButton"
-    >
-      Next
-    </button>
+  <div id="mcqOptions">
 
   </div>
 
+
+  <!-- =========================
+       BOOKMARK BUTTON
+  ========================= -->
+
+  <button
+    class="button secondary"
+    onclick="togglePracticeBookmark()"
+    id="practiceBookmarkButton"
+    type="button"
+  >
+    ☆ Bookmark
+  </button>
+
+
+  <button
+    class="button secondary"
+    onclick="previousMcq()"
+    id="previousMcqButton"
+  >
+    Previous
+  </button>
+
+
+  <button
+    class="button primary"
+    onclick="nextMcq()"
+    id="nextMcqButton"
+  >
+    Next
+  </button>
+
+</div>
 
 
   <!-- =========================
