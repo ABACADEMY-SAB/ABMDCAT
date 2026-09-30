@@ -3645,6 +3645,218 @@ function restartPractice() {
 }
 
 
+  // ==========================================
+// LOAD BOOKMARKS SECTION
+// ==========================================
+
+async function loadBookmarksSection() {
+
+    const bookmarksList =
+        document.getElementById(
+            "bookmarksList"
+        );
+
+    if (!bookmarksList) return;
+
+    const studentId =
+        await getPracticeStudentId();
+
+    if (!studentId) {
+
+        bookmarksList.innerHTML =
+            `<div class="module">
+                Student information not found.
+            </div>`;
+
+        return;
+    }
+
+    bookmarksList.innerHTML =
+        `<div class="module">
+            Loading bookmarks...
+        </div>`;
+
+    try {
+
+        const response =
+            await fetch(
+                `/api/bookmark/favorites/${studentId}`
+            );
+
+        const data =
+            await response.json();
+
+        if (
+            !data.success ||
+            !Array.isArray(data.favorites)
+        ) {
+
+            bookmarksList.innerHTML =
+                `<div class="module">
+                    Unable to load bookmarks.
+                </div>`;
+
+            return;
+        }
+
+        if (data.favorites.length === 0) {
+
+            bookmarksList.innerHTML =
+                `<div class="module">
+                    No bookmarked MCQs yet.
+                </div>`;
+
+            return;
+        }
+
+        bookmarksList.innerHTML = "";
+
+        data.favorites.forEach(
+            (bookmark, index) => {
+
+                const box =
+                    document.createElement("div");
+
+                box.className =
+                    "module";
+
+                box.style.marginBottom =
+                    "15px";
+
+                box.innerHTML = `
+                    <h3>
+                        Question ${index + 1}
+                    </h3>
+
+                    <p>
+                        ${bookmark.question}
+                    </p>
+
+                    <p>
+                        <strong>A.</strong>
+                        ${bookmark.optiona}
+                    </p>
+
+                    <p>
+                        <strong>B.</strong>
+                        ${bookmark.optionb}
+                    </p>
+
+                    <p>
+                        <strong>C.</strong>
+                        ${bookmark.optionc}
+                    </p>
+
+                    <p>
+                        <strong>D.</strong>
+                        ${bookmark.optiond}
+                    </p>
+
+                    <button
+                        type="button"
+                        class="button secondary"
+                        onclick="removeBookmarkFromSection(${bookmark.bookmark_id})"
+                    >
+                        Remove Bookmark
+                    </button>
+                `;
+
+                bookmarksList.appendChild(
+                    box
+                );
+
+            }
+        );
+
+    } catch (error) {
+
+        console.error(
+            "Load bookmarks section error:",
+            error
+        );
+
+        bookmarksList.innerHTML =
+            `<div class="module">
+                Something went wrong while loading bookmarks.
+            </div>`;
+    }
+}
+
+
+// ==========================================
+// REMOVE BOOKMARK FROM SECTION
+// ==========================================
+
+async function removeBookmarkFromSection(
+    bookmarkId
+) {
+
+    try {
+
+        const response =
+            await fetch(
+                `/api/bookmark/remove/${bookmarkId}`,
+                {
+                    method: "DELETE"
+                }
+            );
+
+        const data =
+            await response.json();
+
+        if (!data.success) {
+
+            alert(
+                data.message ||
+                "Unable to remove bookmark."
+            );
+
+            return;
+        }
+
+        // Reload the list
+        loadBookmarksSection();
+
+        // Update Practice bookmark state
+        if (typeof practiceBookmarks !== "undefined") {
+
+            for (
+                const [
+                    mcqId,
+                    savedBookmarkId
+                ] of practiceBookmarks
+            ) {
+
+                if (
+                    savedBookmarkId ===
+                    bookmarkId
+                ) {
+
+                    practiceBookmarks.delete(
+                        mcqId
+                    );
+
+                    break;
+                }
+            }
+
+            updatePracticeBookmarkButton();
+        }
+
+    } catch (error) {
+
+        console.error(
+            "Remove bookmark error:",
+            error
+        );
+
+        alert(
+            "Something went wrong while removing bookmark."
+        );
+    }
+}
+
+  
 // ==========================================
 // INITIALIZE
 // ==========================================
