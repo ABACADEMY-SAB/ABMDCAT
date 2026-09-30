@@ -3861,6 +3861,114 @@ async function removeBookmarkFromSection(
     }
 }
 
+
+  // =====================================
+// STUDENT DASHBOARD
+// =====================================
+
+async function loadDashboard() {
+
+    try {
+
+        const student =
+            JSON.parse(
+                localStorage.getItem("student")
+            );
+
+        if (!student || !student.id) {
+            console.log("Student data not found");
+            return;
+        }
+
+
+        // Load student name
+
+        const nameElement =
+            document.getElementById("studentName");
+
+        if (nameElement) {
+            nameElement.textContent =
+                student.fullname || student.username || "Student";
+        }
+
+
+        // Load statistics
+
+        const response =
+            await fetch(
+                `/api/student/statistics?id=${student.id}`
+            );
+
+        const data =
+            await response.json();
+
+
+        if (!data.success) {
+            console.log(
+                "Could not load dashboard statistics"
+            );
+            return;
+        }
+
+
+        // Tests Attempted
+
+        const testsElement =
+            document.getElementById("testsAttempted");
+
+        if (testsElement) {
+            testsElement.textContent =
+                data.testsAttempted || 0;
+        }
+
+
+        // Average Score
+
+        const averageElement =
+            document.getElementById("averageScore");
+
+        if (averageElement) {
+            averageElement.textContent =
+                `${data.averageScore || 0}%`;
+        }
+
+
+        // Bookmarks
+
+        const bookmarkElement =
+            document.getElementById("bookmarkCount");
+
+        if (bookmarkElement) {
+            bookmarkElement.textContent =
+                data.bookmarks || 0;
+        }
+
+
+        // Wrong Questions
+
+        const wrongElement =
+            document.getElementById("wrongCount");
+
+        if (wrongElement) {
+            wrongElement.textContent =
+                data.wrongQuestions || 0;
+        }
+
+
+    } catch (error) {
+
+        console.error(
+            "Dashboard loading error:",
+            error
+        );
+
+    }
+
+}
+
+  // Load dashboard when page opens
+loadDashboard();
+
   
 // ==========================================
 // INITIALIZE
