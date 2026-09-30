@@ -2817,27 +2817,34 @@ async function getPracticeStudentId() {
         return practiceStudentId;
     }
 
-    // Try common existing student ID locations
-    const possibleIds = [
-        window.studentId,
-        window.currentStudentId,
-        localStorage.getItem("studentId"),
-        localStorage.getItem("student_id")
-    ];
+    try {
 
-    for (const id of possibleIds) {
+        const studentData =
+            localStorage.getItem("student");
 
-        if (id) {
-
-            practiceStudentId = id;
-
-            return id;
+        if (!studentData) {
+            return null;
         }
-    }
 
-    alert(
-        "Student ID not found. Please login again."
-    );
+        const student =
+            JSON.parse(studentData);
+
+        if (student && student.id) {
+
+            practiceStudentId =
+                student.id;
+
+            return student.id;
+        }
+
+    } catch (error) {
+
+        console.error(
+            "Student ID error:",
+            error
+        );
+
+    }
 
     return null;
 }
