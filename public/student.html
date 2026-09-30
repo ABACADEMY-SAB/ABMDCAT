@@ -2660,7 +2660,10 @@ async function startPractice() {
             "mcqResult"
         ).style.display = "none";
 
+        
+        loadPracticeBookmarks();
 
+      
         displayPracticeQuestion();
 
     } catch (error) {
@@ -2795,7 +2798,318 @@ function displayPracticeQuestion() {
 
 }
 
+  
+// ==========================================
+// PRACTICE BOOKMARK
+// ==========================================
 
+let practiceBookmarks = new Map();
+let practiceStudentId = null;
+
+
+// ==========================================
+// GET STUDENT ID
+// ==========================================
+
+async function getPracticeStudentId() {
+
+    if (practiceStudentId) {
+        return practiceStudentId;
+    }
+
+    try {
+
+        const response = await fetch(
+            "/api/student/profile"
+        );
+
+        const data = await response.json();
+
+        if (
+            data.success &&
+            data.student &&
+            data.student.id
+        ) {
+
+            practiceStudentId =
+                data.student.id;
+
+            return practiceStudentId;
+        }
+
+    } catch (error) {
+
+        console.error(
+            "Student ID error:",
+            error
+        );
+
+    }
+
+    return null;
+}
+
+
+// ==========================================
+// LOAD EXISTING BOOKMARKS
+// ==========================================
+
+async function loadPracticeBookmarks() {
+
+    const studentId =
+        await getPracticeStudentId();
+
+    if (!studentId) return;
+
+    try {
+
+        const response = await fetch(
+            `/api/bookmark/favorites/${studentId}`
+        );
+
+        const data =
+            await response.json();
+
+        if (
+            data.success &&
+            Array.isArray(data.favorites)
+        ) {
+
+            practiceBookmarks.clear();
+
+            data.favorites.forEach(bookmark => {
+
+                if (
+                    bookmark.id &&
+                    bookmark.bookmark_id
+                ) {
+
+                    practiceBookmarks.set(
+                        bookmark.id,
+                        bookmark.bookmark_id
+                    );
+
+                }
+
+            });
+
+        }
+
+    } catch (error) {
+
+        console.error(
+            "Load bookmarks error:",
+            error
+        );
+
+    }
+
+    updatePracticeBookmarkButton();
+}
+
+
+// ==========================================
+// UPDATE BUTTON
+// ==========================================
+
+function updatePracticeBookmarkButton() {
+
+    const button =
+        document.getElementById(
+            "practiceBookmarkButton"
+        );
+
+    if (!button) return;
+
+    const question =
+        practiceQuestions[
+            currentPracticeIndex
+        ];
+
+    if (!question || !question.id) {
+
+        button.textContent =
+            "☆ Bookmark";
+
+        return;
+    }
+
+    if (
+        practiceBookmarks.has(
+            question.id
+        )
+    ) {
+
+        button.textContent =
+            "★ Bookmarked";
+
+    } else {
+
+        button.textContent =
+            "☆ Bookmark";
+    }
+}
+
+
+// ==========================================
+// TOGGLE BOOKMARK
+// ==========================================
+
+async function togglePracticeBookmark() {
+
+    const question =
+        practiceQuestions[
+            currentPracticeIndex
+        ];
+
+    if (!question || !question.id) {
+
+        alert(
+            "Unable to bookmark this MCQ."
+        );
+
+        return;
+    }
+
+    const studentId =
+        await getPracticeStudentId();
+
+    if (!studentId) {
+
+        alert(
+            "Student information not found."
+        );
+
+        return;
+    }
+
+    const button =
+        document.getElementById(
+            "practiceBookmarkButton"
+        );
+
+    button.disabled = true;
+
+    try {
+
+        // ==============================
+        // REMOVE BOOKMARK
+        // ==============================
+
+        if (
+            practiceBookmarks.has(
+                question.id
+            )
+        ) {
+
+            const bookmarkId =
+                practiceBookmarks.get(
+                    question.id
+                );
+
+            const response =
+                await fetch(
+                    `/api/bookmark/remove/${bookmarkId}`,
+                    {
+                        method: "DELETE"
+                    }
+                );
+
+            const data =
+                await response.json();
+
+            if (!data.success) {
+
+                alert(
+                    data.message ||
+                    "Unable to remove bookmark."
+                );
+
+                return;
+            }
+
+            practiceBookmarks.delete(
+                question.id
+            );
+
+        }
+
+        // ==============================
+        // ADD BOOKMARK
+        // ==============================
+
+        else {
+
+            const response =
+                await fetch(
+                    "/api/bookmark/add",
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body: JSON.stringify({
+                            student_id:
+                                studentId,
+
+                            mcq_id:
+                                question.id
+                        })
+                    }
+                );
+
+            const data =
+                await response.json();
+
+            if (!data.success) {
+
+                alert(
+                    data.message ||
+                    "Unable to bookmark MCQ."
+                );
+
+                return;
+            }
+
+            if (
+                data.bookmark &&
+                data.bookmark.id
+            ) {
+
+                practiceBookmarks.set(
+                    question.id,
+                    data.bookmark.id
+                );
+
+            }
+
+        }
+
+        updatePracticeBookmarkButton();
+
+    } catch (error) {
+
+        console.error(
+            "Bookmark error:",
+            error
+        );
+
+        alert(
+            "Something went wrong while updating bookmark."
+        );
+
+    } finally {
+
+        button.disabled = false;
+
+        updatePracticeBookmarkButton();
+    }
+}
+  
+  
 // ==========================================
 // SELECT MCQ OPTION
 // ==========================================
