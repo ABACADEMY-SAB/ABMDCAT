@@ -3912,9 +3912,9 @@ async function loadDashboard() {
         // Load statistics
 
         const response =
-            await fetch(
-                `/api/student/statistics?id=${student.id}`
-            );
+    await fetch(
+        `/api/result/statistics/${student.id}`
+    );
 
         const data =
             await response.json();
