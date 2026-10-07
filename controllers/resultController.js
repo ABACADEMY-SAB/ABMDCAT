@@ -617,7 +617,6 @@ exports.dashboardStatistics = (req, res) => {
 
     const { studentId } = req.params;
 
-
     Result.statistics(
         studentId,
         (err, result) => {
@@ -643,10 +642,8 @@ exports.dashboardStatistics = (req, res) => {
 
             }
 
-
             const stats =
                 result.rows[0];
-
 
             return res.json({
 
@@ -654,21 +651,37 @@ exports.dashboardStatistics = (req, res) => {
 
                 statistics: {
 
+                    // Online tests attempted
                     tests:
                         Number(
                             stats.tests || 0
                         ),
 
+                    // Total practice MCQs attempted
+                    mcqsPracticed:
+                        Number(
+                            stats.mcqs_practiced || 0
+                        ),
+
+                    // Wrong questions
+                    wrongQuestions:
+                        Number(
+                            stats.wrong_questions || 0
+                        ),
+
+                    // Average online test score
                     average:
                         Number(
                             stats.average || 0
                         ),
 
+                    // Highest online test score
                     highest:
                         Number(
                             stats.highest || 0
                         ),
 
+                    // Lowest online test score
                     lowest:
                         Number(
                             stats.lowest || 0
