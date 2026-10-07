@@ -99,20 +99,53 @@ class Result {
         );
     }
 
-    // Student Statistics
-    static statistics(studentId, callback) {
-        db.query(
-            `SELECT
-                COUNT(*) AS tests,
-                AVG(percentage) AS average,
-                MAX(percentage) AS highest,
-                MIN(percentage) AS lowest
-             FROM results
-             WHERE student_id = $1`,
-            [studentId],
-            callback
-        );
-    }
+// Student Statistics
+static statistics(studentId, callback) {
+    db.query(
+        `SELECT
+            COUNT(*) FILTER (
+                WHERE result_type = 'test'
+            ) AS tests,
+
+            COALESCE(
+                SUM(total_questions) FILTER (
+                    WHERE result_type = 'practice'
+                ),
+                0
+            ) AS mcqs_practiced,
+
+            COALESCE(
+                SUM(wrong_answers),
+                0
+            ) AS wrong_questions,
+
+            COALESCE(
+                AVG(percentage) FILTER (
+                    WHERE result_type = 'test'
+                ),
+                0
+            ) AS average,
+
+            COALESCE(
+                MAX(percentage) FILTER (
+                    WHERE result_type = 'test'
+                ),
+                0
+            ) AS highest,
+
+            COALESCE(
+                MIN(percentage) FILTER (
+                    WHERE result_type = 'test'
+                ),
+                0
+            ) AS lowest
+
+         FROM results
+         WHERE student_id = $1`,
+        [studentId],
+        callback
+    );
+}
 
 }
 
