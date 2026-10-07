@@ -3929,16 +3929,27 @@ async function loadDashboard() {
 
 
         // Tests Attempted
+      
+       const testsElement =
+          document.getElementById("testsAttempted");
 
-        const testsElement =
-            document.getElementById("testsAttempted");
-
-        if (testsElement) {
-            testsElement.textContent =
-                data.testsAttempted || 0;
-        }
+if (testsElement) {
+    testsElement.textContent =
+        data.statistics?.tests || 0;
+}
 
 
+        // MCQs Practiced
+      
+       const mcqsElement =
+           document.getElementById("mcqsPracticed");
+
+       if (mcqsElement) {
+           mcqsElement.textContent =
+                 data.statistics?.mcqsPracticed || 0;
+}
+
+      
         // Average Score
 
         const averageElement =
@@ -3946,30 +3957,63 @@ async function loadDashboard() {
 
         if (averageElement) {
             averageElement.textContent =
-                `${data.averageScore || 0}%`;
+                `${data.statistics?.average || 0}%`;
         }
 
 
         // Bookmarks
 
-        const bookmarkElement =
-            document.getElementById("bookmarkCount");
+const bookmarkElement =
+    document.getElementById("bookmarkCount");
 
-        if (bookmarkElement) {
+if (bookmarkElement) {
+
+    try {
+
+        const bookmarkResponse =
+            await fetch(
+                `/api/bookmark/${student.id}`
+            );
+
+        const bookmarkData =
+            await bookmarkResponse.json();
+
+        if (
+            bookmarkData.success &&
+            Array.isArray(bookmarkData.bookmarks)
+        ) {
+
             bookmarkElement.textContent =
-                data.bookmarks || 0;
+                bookmarkData.bookmarks.length;
+
+        } else {
+
+            bookmarkElement.textContent = 0;
+
         }
+
+    } catch (error) {
+
+        console.error(
+            "Bookmark count error:",
+            error
+        );
+
+        bookmarkElement.textContent = 0;
+
+    }
+
+}
 
 
         // Wrong Questions
+const wrongElement =
+    document.getElementById("wrongCount");
 
-        const wrongElement =
-            document.getElementById("wrongCount");
-
-        if (wrongElement) {
-            wrongElement.textContent =
-                data.wrongQuestions || 0;
-        }
+if (wrongElement) {
+    wrongElement.textContent =
+        data.statistics?.wrongQuestions || 0;
+}
 
 
     } catch (error) {
