@@ -32,35 +32,39 @@ class Result {
         );
     }
 
-    // Save Result
-    static create(data, callback) {
-        db.query(
-            `INSERT INTO results
-            (
-                student_id,
-                subject,
-                chapter,
-                topic,
-                total_questions,
-                correct_answers,
-                wrong_answers,
-                percentage
-            )
-            VALUES ($1,$2,$3,$4,$5,$6,$7,$8)
-            RETURNING *`,
-            [
-                data.student_id,
-                data.subject,
-                data.chapter,
-                data.topic,
-                data.total_questions,
-                data.correct_answers,
-                data.wrong_answers,
-                data.percentage
-            ],
-            callback
-        );
-    }
+// Save Result
+static create(data, callback) {
+    db.query(
+        `INSERT INTO results
+        (
+            student_id,
+            test_id,
+            subject,
+            chapter,
+            topic,
+            total_questions,
+            correct_answers,
+            wrong_answers,
+            percentage,
+            result_type
+        )
+        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)
+        RETURNING *`,
+        [
+            data.student_id,
+            data.test_id || null,
+            data.subject || null,
+            data.chapter || null,
+            data.topic || null,
+            data.total_questions,
+            data.correct_answers,
+            data.wrong_answers,
+            data.percentage,
+            data.result_type
+        ],
+        callback
+    );
+}
 
     // Delete Result
     static delete(id, callback) {
