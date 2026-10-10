@@ -226,16 +226,20 @@ exports.savePracticeResult = (req, res) => {
 
 
     Result.create(
-        {
-            student_id,
-            subject,
-            chapter,
-            topic,
-            total_questions,
-            correct_answers,
-            wrong_answers,
-            percentage
-        },
+        
+{
+    student_id,
+    test_id: null,
+    subject,
+    chapter,
+    topic,
+    total_questions,
+    correct_answers,
+    wrong_answers,
+    percentage,
+    result_type: "practice"
+},
+
         (err, result) => {
 
             if (err) {
