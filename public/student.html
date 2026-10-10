@@ -3216,65 +3216,85 @@ function previousMcq() {
 
 }
 
-// ==========================================
-// FINISH PRACTICE
-// ==========================================
 
-function finishPractice() {
+ // ==========================================
+ // FINISH PRACTICE
+ // ==========================================
+
+async function finishPractice() {
 
     let correct = 0;
 
-    practiceQuestions.forEach(
-        (question, index) => {
+    practiceQuestions.forEach((question, index) => {
 
-            if (
-                practiceAnswers[index] &&
-                practiceAnswers[index]
-                    .toUpperCase() ===
-                question.answer
-                    .toString()
-                    .toUpperCase()
-            ) {
-
-                correct++;
-
-            }
-
+        if (
+            practiceAnswers[index] &&
+            practiceAnswers[index].toUpperCase() ===
+            question.answer.toString().toUpperCase()
+        ) {
+            correct++;
         }
-    );
 
+    });
 
-    // Hide MCQ test
-    document.getElementById(
-        "mcqTest"
-    ).style.display = "none";
-
-
-    // Hide review
-    document.getElementById(
-        "mcqReview"
-    ).style.display = "none";
-
+    const total = practiceQuestions.length;
+    const wrong = total - correct;
+    const percentage = total > 0
+        ? Number(((correct / total) * 100).toFixed(2))
+        : 0;
 
     // Show result
-    document.getElementById(
-        "mcqResult"
-    ).style.display = "block";
+    document.getElementById("mcqTest").style.display = "none";
+    document.getElementById("mcqReview").style.display = "none";
+    document.getElementById("mcqResult").style.display = "block";
 
+    document.getElementById("practiceTotal").textContent = total;
+    document.getElementById("practiceCorrect").textContent = correct;
 
-    // Show total questions
-    document.getElementById(
-        "practiceTotal"
-    ).textContent =
-        practiceQuestions.length;
+    // Save practice result
+    try {
 
+        const student = JSON.parse(
+            localStorage.getItem("student")
+        );
 
-    // Show correct answers
-    document.getElementById(
-        "practiceCorrect"
-    ).textContent =
-        correct;
+        if (!student || !student.id) {
+            console.error("Student ID not found. Result was not saved.");
+            return;
+        }
 
+        const response = await fetch("/api/result/practice", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                student_id: student.id,
+                subject: null,
+                chapter: null,
+                topic: null,
+                total_questions: total,
+                correct_answers: correct,
+                wrong_answers: wrong,
+                percentage: percentage
+            })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+            console.error("Could not save practice result:", data);
+            return;
+        }
+
+        // Refresh dashboard statistics if the function exists
+        if (typeof loadDashboard === "function") {
+            loadDashboard();
+        }
+
+    } catch (error) {
+        console.error("Error saving practice result:", error);
+    }
 }
 
 
