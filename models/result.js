@@ -123,26 +123,20 @@ static statistics(studentId, callback) {
                 0
             ) AS wrong_questions,
 
-            COALESCE(
-                AVG(percentage) FILTER (
-                    WHERE result_type = 'test'
-                ),
-                0
-            ) AS average,
+   COALESCE(
+    AVG(percentage),
+    0
+) AS average,
 
-            COALESCE(
-                MAX(percentage) FILTER (
-                    WHERE result_type = 'test'
-                ),
-                0
-            ) AS highest,
+COALESCE(
+    MAX(percentage),
+    0
+) AS highest,
 
-            COALESCE(
-                MIN(percentage) FILTER (
-                    WHERE result_type = 'test'
-                ),
-                0
-            ) AS lowest
+COALESCE(
+    MIN(percentage),
+    0
+) AS lowest
 
          FROM results
          WHERE student_id = $1`,
