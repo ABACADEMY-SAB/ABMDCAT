@@ -125,7 +125,7 @@ static create(data, callback) {
 
 
     // Count Tests
-    static count(callback) {
+        static count(callback) {
         db.query(
             `SELECT COUNT(*) AS total
              FROM tests`,
@@ -133,6 +133,49 @@ static create(data, callback) {
         );
     }
 
+    // Create table for questions written specifically for a test
+    static initializeManualQuestionsTable() {
+        return db.query(`
+            CREATE TABLE IF NOT EXISTS test_manual_questions (
+                id SERIAL PRIMARY KEY,
+                test_id INTEGER NOT NULL
+                    REFERENCES tests(id) ON DELETE CASCADE,
+                question_order INTEGER NOT NULL,
+                subject TEXT,
+                chapter TEXT,
+                topic TEXT,
+                question TEXT NOT NULL,
+                optiona TEXT NOT NULL,
+                optionb TEXT NOT NULL,
+                optionc TEXT NOT NULL,
+                optiond TEXT NOT NULL,
+                answer TEXT NOT NULL,
+                explanation TEXT
+            )
+        `);
+    }
+
+}
+
+// Automatically create test-only manual questions table
+static initializeManualQuestionsTable() {
+    return db.query(`
+        CREATE TABLE IF NOT EXISTS test_manual_questions (
+            id SERIAL PRIMARY KEY,
+            test_id INTEGER NOT NULL REFERENCES tests(id) ON DELETE CASCADE,
+            question_order INTEGER NOT NULL,
+            subject TEXT,
+            chapter TEXT,
+            topic TEXT,
+            question TEXT NOT NULL,
+            optiona TEXT NOT NULL,
+            optionb TEXT NOT NULL,
+            optionc TEXT NOT NULL,
+            optiond TEXT NOT NULL,
+            answer TEXT NOT NULL,
+            explanation TEXT
+        )
+    `);
 }
 
 module.exports = Test;
