@@ -7,6 +7,17 @@ const path = require("path");
 // Database connection
 require("./config/database");
 
+const Test = require("./models/test");
+
+// Create the manual questions table automatically
+Test.initializeManualQuestionsTable()
+    .then(() => {
+        console.log("Manual test questions table is ready.");
+    })
+    .catch((err) => {
+        console.error("Failed to create manual test questions table:", err);
+    });
+
 const app = express();
 
 
