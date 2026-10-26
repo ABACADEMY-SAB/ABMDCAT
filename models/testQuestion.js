@@ -6,6 +6,7 @@ const db = require("../config/database");
 
 class TestQuestion {
 
+
     // =====================================
     // Get all questions of a test
     // =====================================
@@ -13,31 +14,65 @@ class TestQuestion {
     static getByTestId(testId, callback) {
 
         db.query(
-            `SELECT
-                tq.id,
-                tq.test_id,
-                tq.mcq_id,
-                tq.question_order,
+            `SELECT *
+             FROM (
+                SELECT
+                    tq.id AS test_question_id,
+                    tq.test_id,
+                    tq.mcq_id,
+                    NULL::INTEGER AS manual_question_id,
+                    tq.question_order,
+                    m.subject,
+                    m.chapter,
+                    m.topic,
+                    m.question,
+                    m.optiona,
+                    m.optionb,
+                    m.optionc,
+                    m.optiond,
+                    m.answer,
+                    m.explanation,
+                    'bank' AS question_source
+                FROM test_questions tq
+                INNER JOIN mcqs m
+                    ON m.id = tq.mcq_id
+                WHERE tq.test_id = $1
 
-                m.subject,
-                m.chapter,
-                m.topic,
-                m.question,
-                m.optiona,
-                m.optionb,
-                m.optionc,
-                m.optiond,
-                m.answer,
-                m.explanation
+                UNION ALL
 
-             FROM test_questions tq
-
-             INNER JOIN mcqs m
-                ON m.id = tq.mcq_id
-
-             WHERE tq.test_id = $1
-
-             ORDER BY tq.question_order ASC`,
+                SELECT
+                    tmq.id AS test_question_id,
+                    tmq.test_id,
+                    NULL::INTEGER AS mcq_id,
+                    tmq.id AS manual_question_id,
+                    tmq.question_order,
+                    tmq.subject,
+                    tmq.chapter,
+                    tmq.topic,
+                    tmq.question,
+                    tmq.optiona,
+                    tmq.optionb,
+                    tmq.optionc,
+                    tmq.optiond,
+                    tmq.answer,
+                    tmq.explanation,
+                    'manual' AS question_source
+                FROM test_manual_questions tmq
+                WHERE tmq.test_id = $1
+             ) AS questions
+             ORDER BY
+                CASE LOWER(TRIM(COALESCE(subject, '')))
+                    WHEN 'biology' THEN 1
+                    WHEN 'bio' THEN 1
+                    WHEN 'chemistry' THEN 2
+                    WHEN 'chem' THEN 2
+                    WHEN 'physics' THEN 3
+                    WHEN 'phy' THEN 3
+                    WHEN 'english' THEN 4
+                    WHEN 'eng' THEN 4
+                    ELSE 5
+                END,
+                RANDOM()`,
             [testId],
             callback
         );
