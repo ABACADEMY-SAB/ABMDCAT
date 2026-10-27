@@ -6219,6 +6219,58 @@ async function addSelectedBankMcqs() {
     }
 }
 
+
+/* =====================================
+   LOAD QUESTIONS ASSIGNED TO TEST
+===================================== */
+
+async function loadAssignedTestQuestions() {
+
+    const testId = document.getElementById("manageTestId").value;
+    const container = document.getElementById("assignedTestQuestions");
+
+    container.innerHTML = "<p>Loading questions...</p>";
+
+    try {
+        const response = await fetch(
+            `/api/test-question/test/${testId}`
+        );
+
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+            throw new Error(data.message || "Unable to load assigned questions");
+        }
+
+        const questions = data.questions || [];
+
+        if (!questions.length) {
+            container.innerHTML = "<p>No questions added yet.</p>";
+            return;
+        }
+
+        container.innerHTML = questions.map(q => `
+            <div style="padding:10px; border-bottom:1px solid #ddd;">
+                <strong>${escapeHtml(q.subject || "")}</strong>
+                — ${escapeHtml(q.chapter || "")}
+                <p>${escapeHtml(q.question || "")}</p>
+                <small>Source: ${escapeHtml(q.question_source || "bank")}</small>
+                <button
+                    type="button"
+                    class="button danger"
+                    onclick="removeAssignedTestQuestion(${Number(q.test_question_id)}, '${q.question_source || "bank"}')">
+                    Remove
+                </button>
+            </div>
+        `).join("");
+
+    } catch (error) {
+        console.error(error);
+        container.innerHTML = "<p>Unable to load assigned questions.</p>";
+        showMessage(error.message);
+    }
+}
+
     
 /* =====================================
    DISPLAY MCQs
