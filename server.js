@@ -148,6 +148,13 @@ app.use(
 );
 
 
+// Manual Test Questions
+app.use(
+    "/api/test-manual-question",
+    require("./routes/testManualQuestion")
+);
+
+
 // Bookmarks
 app.use(
     "/api/bookmark",
