@@ -6304,7 +6304,85 @@ async function removeAssignedTestQuestion(questionId, source) {
         showMessage(error.message);
     }
 }
-   
+
+
+/* =====================================
+   SAVE MANUAL QUESTION
+===================================== */
+
+async function saveManualQuestion() {
+
+    const testId = document.getElementById("manageTestId").value;
+
+    const body = {
+        subject: document.getElementById("manualSubject").value,
+        chapter: document.getElementById("manualChapter").value.trim(),
+        topic: document.getElementById("manualTopic").value.trim(),
+        question: document.getElementById("manualQuestion").value.trim(),
+        optiona: document.getElementById("manualOptionA").value.trim(),
+        optionb: document.getElementById("manualOptionB").value.trim(),
+        optionc: document.getElementById("manualOptionC").value.trim(),
+        optiond: document.getElementById("manualOptionD").value.trim(),
+        answer: document.getElementById("manualAnswer").value,
+        explanation: document.getElementById("manualExplanation").value.trim()
+    };
+
+    if (!testId) {
+        showMessage("Please select a test first");
+        return;
+    }
+
+    if (
+        !body.question ||
+        !body.optiona ||
+        !body.optionb ||
+        !body.optionc ||
+        !body.optiond
+    ) {
+        showMessage("Enter the question and all four options");
+        return;
+    }
+
+    try {
+        const response = await fetch(
+            `/api/test-manual-question/test/${testId}`,
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(body)
+            }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+            throw new Error(
+                data.message || "Unable to save manual question"
+            );
+        }
+
+        document.getElementById("manualChapter").value = "";
+        document.getElementById("manualTopic").value = "";
+        document.getElementById("manualQuestion").value = "";
+        document.getElementById("manualOptionA").value = "";
+        document.getElementById("manualOptionB").value = "";
+        document.getElementById("manualOptionC").value = "";
+        document.getElementById("manualOptionD").value = "";
+        document.getElementById("manualAnswer").value = "A";
+        document.getElementById("manualExplanation").value = "";
+
+        showMessage("Manual question saved to this test");
+
+        await loadAssignedTestQuestions();
+
+    } catch (error) {
+        console.error(error);
+        showMessage(error.message);
+    }
+}
+    
     
 /* =====================================
    DISPLAY MCQs
