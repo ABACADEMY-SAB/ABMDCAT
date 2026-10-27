@@ -9648,6 +9648,25 @@ async function initialize() {
 
 initialize();
 
+/* =====================================
+   TEST QUESTION MANAGER CONTROLS
+===================================== */
+
+function closeTestQuestionModal() {
+    document.getElementById("testQuestionModal")
+        .classList.remove("active");
+}
+
+document.getElementById("bankSubjectFilter")
+    .addEventListener("change", loadBankMcqsForTest);
+
+document.getElementById("bankChapterFilter")
+    .addEventListener("input", loadBankMcqsForTest);
+
+document.getElementById("bankSearchFilter")
+    .addEventListener("input", loadBankMcqsForTest);
+
+    
 </script>
 
 </body>
