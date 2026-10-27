@@ -6168,6 +6168,59 @@ async function loadBankMcqsForTest() {
 
 
 /* =====================================
+   ADD SELECTED BANK MCQs TO TEST
+===================================== */
+
+async function addSelectedBankMcqs() {
+
+    const testId = document.getElementById("manageTestId").value;
+
+    const selected = Array.from(
+        document.querySelectorAll(".test-bank-mcq:checked")
+    );
+
+    if (!selected.length) {
+        showMessage("Please select at least one MCQ");
+        return;
+    }
+
+    try {
+        for (const checkbox of selected) {
+
+            const response = await fetch(
+                `/api/test-question/test/${testId}`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        mcq_id: Number(checkbox.value)
+                    })
+                }
+            );
+
+            const data = await response.json();
+
+            if (!response.ok || !data.success) {
+                throw new Error(
+                    data.message || "Unable to add a selected MCQ"
+                );
+            }
+        }
+
+        showMessage("Selected MCQs added to the test");
+
+        await loadAssignedTestQuestions();
+
+    } catch (error) {
+        console.error(error);
+        showMessage(error.message);
+    }
+}
+
+    
+/* =====================================
    DISPLAY MCQs
 ===================================== */
 
