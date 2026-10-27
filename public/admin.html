@@ -6271,6 +6271,40 @@ async function loadAssignedTestQuestions() {
     }
 }
 
+ 
+/* =====================================
+   REMOVE QUESTION FROM TEST
+===================================== */
+
+async function removeAssignedTestQuestion(questionId, source) {
+
+    const testId = document.getElementById("manageTestId").value;
+
+    const endpoint = source === "manual"
+        ? `/api/test-manual-question/${questionId}`
+        : `/api/test-question/${questionId}`;
+
+    try {
+        const response = await fetch(endpoint, {
+            method: "DELETE"
+        });
+
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+            throw new Error(data.message || "Unable to remove question");
+        }
+
+        showMessage("Question removed from test");
+
+        await loadAssignedTestQuestions();
+
+    } catch (error) {
+        console.error(error);
+        showMessage(error.message);
+    }
+}
+   
     
 /* =====================================
    DISPLAY MCQs
