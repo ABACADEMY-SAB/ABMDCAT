@@ -6107,6 +6107,67 @@ async function loadMcqs() {
 
 
 /* =====================================
+   LOAD MCQ BANK FOR TEST
+===================================== */
+
+async function loadBankMcqsForTest() {
+
+    const list = document.getElementById("bankMcqList");
+
+    list.innerHTML = "<p>Loading MCQs...</p>";
+
+    try {
+        const response = await fetch("/api/mcq");
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+            throw new Error(data.message || "Unable to load MCQs");
+        }
+
+        const subject = document.getElementById("bankSubjectFilter").value.trim().toLowerCase();
+        const chapter = document.getElementById("bankChapterFilter").value.trim().toLowerCase();
+        const search = document.getElementById("bankSearchFilter").value.trim().toLowerCase();
+
+        const mcqs = (data.mcqs || []).filter(mcq => {
+            const matchesSubject = !subject ||
+                String(mcq.subject || "").toLowerCase() === subject;
+
+            const matchesChapter = !chapter ||
+                String(mcq.chapter || "").toLowerCase().includes(chapter);
+
+            const matchesSearch = !search ||
+                String(mcq.question || "").toLowerCase().includes(search);
+
+            return matchesSubject && matchesChapter && matchesSearch;
+        });
+
+        if (!mcqs.length) {
+            list.innerHTML = "<p>No matching MCQs found.</p>";
+            return;
+        }
+
+        list.innerHTML = mcqs.map(mcq => `
+            <label style="display:block; padding:10px; border-bottom:1px solid #ddd;">
+                <input
+                    type="checkbox"
+                    class="test-bank-mcq"
+                    value="${Number(mcq.id)}">
+                <strong>${escapeHtml(mcq.subject || "")}</strong>
+                — ${escapeHtml(mcq.chapter || "")}
+                <br>
+                ${escapeHtml(mcq.question || "")}
+            </label>
+        `).join("");
+
+    } catch (error) {
+        console.error(error);
+        list.innerHTML = "<p>Unable to load MCQs.</p>";
+        showMessage(error.message);
+    }
+}
+
+
+/* =====================================
    DISPLAY MCQs
 ===================================== */
 
