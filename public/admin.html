@@ -4125,6 +4125,39 @@ function openAddTest() {
 }
 
 
+
+/* =====================================
+   OPEN TEST QUESTION MANAGER
+===================================== */
+
+async function openTestQuestionManager(testId) {
+
+    const test = allTests.find(
+        item => Number(item.id) === Number(testId)
+    );
+
+    if (!test) {
+        showMessage("Test not found");
+        return;
+    }
+
+    document.getElementById("manageTestId").value = testId;
+
+    document.getElementById("manageTestTitle").textContent =
+        "Test: " + test.title;
+
+    document.getElementById("bankSubjectFilter").value = "";
+    document.getElementById("bankChapterFilter").value = "";
+    document.getElementById("bankSearchFilter").value = "";
+
+    document.getElementById("testQuestionModal").classList.add("active");
+
+    await loadBankMcqsForTest();
+    await loadAssignedTestQuestions();
+}
+
+
+    
 /* =====================================
    CLOSE TEST MODAL
 ===================================== */
