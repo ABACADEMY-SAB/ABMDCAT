@@ -4032,6 +4032,7 @@ async function loadTests() {
 }
 
 
+
 /* =====================================
    RENDER TESTS
 ===================================== */
@@ -4039,13 +4040,9 @@ async function loadTests() {
 function renderTests(tests) {
 
     const table =
-        document.getElementById(
-            "testsTable"
-        );
-
+        document.getElementById("testsTable");
 
     if (!tests.length) {
-
         table.innerHTML = `
             <tr>
                 <td colspan="8">
@@ -4053,87 +4050,48 @@ function renderTests(tests) {
                 </td>
             </tr>
         `;
-
         return;
-
     }
 
+    table.innerHTML = tests.map(test => {
 
-    table.innerHTML =
-        tests.map(test => {
+        const startTime = test.start_time
+            ? new Date(test.start_time).toLocaleString()
+            : "Not scheduled";
 
-            const startTime =
-                test.start_time
-                    ? new Date(
-                        test.start_time
-                    ).toLocaleString()
-                    : "Not scheduled";
-
-
-            return `
-
+        return `
             <tr>
-
+                <td>${escapeHtml(test.id)}</td>
+                <td>${escapeHtml(test.title)}</td>
+                <td>${escapeHtml(test.subject)}</td>
+                <td>${escapeHtml(test.chapter || "-")}</td>
+                <td>${escapeHtml(test.total_questions)}</td>
+                <td>${escapeHtml(test.duration_minutes)} min</td>
+                <td>${escapeHtml(startTime)}</td>
                 <td>
-                    ${escapeHtml(test.id)}
-                </td>
-
-                <td>
-                    ${escapeHtml(test.title)}
-                </td>
-
-                <td>
-                    ${escapeHtml(test.subject)}
-                </td>
-
-                <td>
-                    ${escapeHtml(
-                        test.chapter || "-"
-                    )}
-                </td>
-
-                <td>
-                    ${escapeHtml(
-                        test.total_questions
-                    )}
-                </td>
-
-                <td>
-                    ${escapeHtml(
-                        test.duration_minutes
-                    )} min
-                </td>
-
-                <td>
-                    ${escapeHtml(
-                        startTime
-                    )}
-                </td>
-
-                <td>
-
                     <button
-                    class="button primary"
-                    onclick="editTest(${test.id})">
-                    Edit
+                        class="button primary"
+                        onclick="openTestQuestionManager(${Number(test.id)})">
+                        Manage Questions
                     </button>
 
-
                     <button
-                    class="button danger"
-                    onclick="deleteTest(${test.id})">
-                    Delete
+                        class="button primary"
+                        onclick="editTest(${Number(test.id)})">
+                        Edit
                     </button>
 
+                    <button
+                        class="button danger"
+                        onclick="deleteTest(${Number(test.id)})">
+                        Delete
+                    </button>
                 </td>
-
             </tr>
-
-            `;
-
-        }).join("");
-
+        `;
+    }).join("");
 }
+
 
 
 /* =====================================
