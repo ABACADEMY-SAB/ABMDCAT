@@ -2124,6 +2124,80 @@ async function loadAvailableTests() {
 }
   
 
+async function startOnlineTest(testId) {
+    const container = document.querySelector("#tests .module");
+
+    if (!container) return;
+
+    container.innerHTML = "<h3>Loading test...</h3>";
+
+    try {
+        const testResponse = await fetch(`/api/test/${testId}`);
+        const testData = await testResponse.json();
+
+        if (!testResponse.ok || !testData.success) {
+            throw new Error(testData.message || "Could not load test.");
+        }
+
+        const test = testData.test;
+
+        if ((test.status || "").toLowerCase() !== "published") {
+            throw new Error("This test is not published.");
+        }
+
+        const questionResponse = await fetch(
+            `/api/test-question/test/${testId}`
+        );
+        const questionData = await questionResponse.json();
+
+        if (!questionResponse.ok || !questionData.success) {
+            throw new Error(
+                questionData.message || "Could not load questions."
+            );
+        }
+
+        const questions = questionData.questions || [];
+
+        if (questions.length === 0) {
+            throw new Error("No questions have been added to this test.");
+        }
+
+        window.currentOnlineTest = test;
+        window.currentOnlineQuestions = questions;
+
+        container.innerHTML = `
+            <h3></h3>
+            <p></p>
+            <p></p>
+            <button type="button" id="backToTests">Back to Tests</button>
+        `;
+
+        container.querySelector("h3").textContent = test.title;
+        container.querySelectorAll("p")[0].textContent =
+            `Duration: ${test.duration_minutes} minutes`;
+        container.querySelectorAll("p")[1].textContent =
+            `Questions loaded: ${questions.length}`;
+
+        document.getElementById("backToTests").onclick =
+            loadAvailableTests;
+
+    } catch (error) {
+        console.error("Start test error:", error);
+
+        container.innerHTML = `
+            <h3>Unable to open test</h3>
+            <p></p>
+            <button type="button" id="backToTests">Back to Tests</button>
+        `;
+
+        container.querySelector("p").textContent = error.message;
+
+        document.getElementById("backToTests").onclick =
+            loadAvailableTests;
+    }
+}
+
+  
 // ==========================================
 // LOGOUT
 // ==========================================
