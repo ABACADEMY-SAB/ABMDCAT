@@ -2044,6 +2044,84 @@ function showSection(sectionId, button) {
         loadAvailableTests();
     }
 }
+
+
+async function loadAvailableTests() {
+    const container = document.querySelector("#tests .module");
+
+    if (!container) return;
+
+    container.innerHTML = `
+        <h3>Online Tests</h3>
+        <p>Loading available tests...</p>
+    `;
+
+    try {
+        const response = await fetch("/api/test");
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+            throw new Error(data.message || "Could not load tests.");
+        }
+
+        const tests = data.tests || [];
+
+        if (tests.length === 0) {
+            container.innerHTML = `
+                <h3>Online Tests</h3>
+                <p>No tests are available yet.</p>
+            `;
+            return;
+        }
+
+        container.innerHTML = `
+            <h3>Online Tests</h3>
+            <div id="availableTestsList"></div>
+        `;
+
+        const list = document.getElementById("availableTestsList");
+
+        tests.forEach(test => {
+            const card = document.createElement("div");
+            card.className = "module";
+            card.style.marginTop = "12px";
+
+            const title = document.createElement("h4");
+            title.textContent = test.title || "Untitled Test";
+
+            const details = document.createElement("p");
+            details.textContent =
+                `Questions: ${test.total_questions || 0} | ` +
+                `Duration: ${test.duration_minutes || 0} minutes`;
+
+            const status = document.createElement("p");
+            status.textContent = `Status: ${test.status || "unknown"}`;
+
+            card.append(title, details, status);
+
+            if ((test.status || "").toLowerCase() === "published") {
+                const startButton = document.createElement("button");
+                startButton.type = "button";
+                startButton.textContent = "Start Test";
+                startButton.onclick = () => startOnlineTest(test.id);
+                card.appendChild(startButton);
+            }
+
+            list.appendChild(card);
+        });
+
+    } catch (error) {
+        console.error("Load tests error:", error);
+
+        container.innerHTML = `
+            <h3>Online Tests</h3>
+            <p>Unable to load tests. Please try again later.</p>
+            <button type="button" onclick="loadAvailableTests()">
+                Retry
+            </button>
+        `;
+    }
+}
   
 
 // ==========================================
