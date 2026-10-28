@@ -11,36 +11,34 @@ const TestQuestion =
 // =====================================
 
 exports.getTestQuestions = (req, res) => {
-
     const { testId } = req.params;
 
-    TestQuestion.getByTestId(
-        testId,
-        (err, result) => {
+    TestQuestion.getByTestId(testId, (err, result) => {
+        if (err) {
+            console.error("Get test questions error:", err);
 
-            if (err) {
-
-                console.error(
-                    "Get test questions error:",
-                    err
-                );
-
-                return res.status(500).json({
-                    success: false,
-                    message: "Database error",
-                    error: err.message
-                });
-
-            }
-
-            return res.json({
-                success: true,
-                questions: result.rows
+            return res.status(500).json({
+                success: false,
+                message: "Could not load test questions"
             });
-
         }
-    );
 
+        // Never send answers or explanations before submission.
+        const questions = result.rows.map(question => {
+            const {
+                answer,
+                explanation,
+                ...safeQuestion
+            } = question;
+
+            return safeQuestion;
+        });
+
+        return res.json({
+            success: true,
+            questions
+        });
+    });
 };
 
 
