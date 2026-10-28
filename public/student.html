@@ -2034,12 +2034,17 @@ function showSection(sectionId, button) {
         loadPracticeSubjects();
     }
 
-  if (sectionId === "bookmarks") {
-    loadBookmarksSection();
-  }
-  
-}
+    // Load bookmarks when Bookmarks is opened
+    if (sectionId === "bookmarks") {
+        loadBookmarksSection();
+    }
 
+    // Load available online tests when Tests is opened
+    if (sectionId === "tests") {
+        loadAvailableTests();
+    }
+}
+  
 
 // ==========================================
 // LOGOUT
