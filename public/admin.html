@@ -2917,6 +2917,24 @@ id="testStartTime">
 
 </div>
 
+    
+<div class="form-group">
+
+<label>Test Status</label>
+
+<select
+class="input"
+id="testStatus"
+required>
+
+<option value="draft">Draft</option>
+
+<option value="published">Published</option>
+
+</select>
+
+</div>
+    
 
 <button
 type="submit"
@@ -4253,6 +4271,12 @@ function editTest(id) {
     ).value =
         test.duration_minutes || "";
 
+    
+    document.getElementById(
+    "testStatus"
+    ).value =
+    (test.status || "draft").toLowerCase();
+    
 
     if (test.start_time) {
 
@@ -4365,11 +4389,17 @@ document
                         ).value
                     ),
 
-                start_time:
-                    document.getElementById(
-                        "testStartTime"
-                    ).value ||
-                    null
+                 start_time:
+    document.getElementById(
+        "testStartTime"
+    ).value ||
+    null,
+
+status:
+    document.getElementById(
+        "testStatus"
+    ).value
+        
 
             };
 
