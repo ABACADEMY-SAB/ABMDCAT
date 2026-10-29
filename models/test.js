@@ -92,20 +92,20 @@ static create(data, callback) {
                 duration_minutes = $7,
                 start_time = $8,
                 end_time = $9,
-                status = $10
+                status = COALESCE($10, status)
              WHERE id = $11
              RETURNING *`,
             [
                 data.title,
-                data.description,
+                data.description ?? null,
                 data.subject,
-                data.chapter,
-                data.topic,
-                data.total_questions,
-                data.duration_minutes,
-                data.start_time,
-                data.end_time,
-                data.status,
+                data.chapter ?? null,
+                data.topic ?? null,
+                Number(data.total_questions),
+                Number(data.duration_minutes),
+                data.start_time ?? null,
+                data.end_time ?? null,
+                data.status ?? null,
                 id
             ],
             callback
