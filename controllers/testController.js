@@ -94,7 +94,7 @@ exports.createTest = (req, res) => {
         topic,
         total_questions,
         duration_minutes,
-        start_time
+        start_time,
         status
     } = req.body;
 
@@ -124,7 +124,7 @@ exports.createTest = (req, res) => {
             topic,
             total_questions,
             duration_minutes,
-            start_time
+            start_time,
             status
         },
         (err, result) => {
@@ -192,7 +192,7 @@ exports.updateTest = (req, res) => {
             topic,
             total_questions,
             duration_minutes,
-            start_time
+            start_time,
             status
         },
         (err, result) => {
