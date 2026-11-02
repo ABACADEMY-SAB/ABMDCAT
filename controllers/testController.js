@@ -95,6 +95,7 @@ exports.createTest = (req, res) => {
         total_questions,
         duration_minutes,
         start_time
+        status
     } = req.body;
 
 
@@ -124,6 +125,7 @@ exports.createTest = (req, res) => {
             total_questions,
             duration_minutes,
             start_time
+            status
         },
         (err, result) => {
 
@@ -168,15 +170,16 @@ exports.updateTest = (req, res) => {
     const { id } = req.params;
 
     const {
-        title,
-        description,
-        subject,
-        chapter,
-        topic,
-        total_questions,
-        duration_minutes,
-        start_time
-    } = req.body;
+    title,
+    description,
+    subject,
+    chapter,
+    topic,
+    total_questions,
+    duration_minutes,
+    start_time,
+    status
+} = req.body;
 
 
     Test.update(
@@ -190,6 +193,7 @@ exports.updateTest = (req, res) => {
             total_questions,
             duration_minutes,
             start_time
+            status
         },
         (err, result) => {
 
