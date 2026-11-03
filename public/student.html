@@ -2165,33 +2165,122 @@ async function startOnlineTest(testId) {
 
         window.currentOnlineTest = test;
         window.currentOnlineQuestions = questions;
+        window.currentOnlineAnswers = {};
+
+        let currentIndex = 0;
 
         container.innerHTML = `
-            <h3></h3>
-            <p></p>
-            <p></p>
-            <button type="button" id="backToTests">Back to Tests</button>
+            <div class="module">
+                <h3 id="onlineTestTitle"></h3>
+                <p id="onlineTestProgress"></p>
+                <h4 id="onlineQuestionText"></h4>
+                <div id="onlineOptions"></div>
+                <div style="display:flex; gap:10px; margin-top:20px;">
+                    <button type="button" class="button secondary"
+                        id="previousQuestion">
+                        Previous
+                    </button>
+                    <button type="button" class="button primary"
+                        id="nextQuestion">
+                        Next
+                    </button>
+                </div>
+                <button type="button" class="button secondary"
+                    id="backToTests" style="margin-top:15px;">
+                    Back to Tests
+                </button>
+            </div>
         `;
 
-        container.querySelector("h3").textContent = test.title;
-        container.querySelectorAll("p")[0].textContent =
-            `Duration: ${test.duration_minutes} minutes`;
-        container.querySelectorAll("p")[1].textContent =
-            `Questions loaded: ${questions.length}`;
+        document.getElementById("onlineTestTitle").textContent =
+            test.title;
+
+        function renderQuestion() {
+            const question = questions[currentIndex];
+
+            document.getElementById("onlineTestProgress").textContent =
+                `Question ${currentIndex + 1} of ${questions.length}`;
+
+            document.getElementById("onlineQuestionText").textContent =
+                question.question || "";
+
+            const optionsContainer =
+                document.getElementById("onlineOptions");
+
+            optionsContainer.innerHTML = "";
+
+            ["a", "b", "c", "d"].forEach(letter => {
+                const optionKey = `option${letter}`;
+
+                const label = document.createElement("label");
+                label.style.display = "block";
+                label.style.padding = "12px";
+                label.style.margin = "8px 0";
+                label.style.background = "#ffffff";
+                label.style.border = "1px solid #dbeafe";
+                label.style.borderRadius = "8px";
+
+                const radio = document.createElement("input");
+                radio.type = "radio";
+                radio.name = "onlineAnswer";
+                radio.value = letter;
+                radio.checked =
+                    window.currentOnlineAnswers[currentIndex] === letter;
+
+                radio.addEventListener("change", () => {
+                    window.currentOnlineAnswers[currentIndex] = letter;
+                });
+
+                label.appendChild(radio);
+                label.appendChild(
+                    document.createTextNode(
+                        ` ${letter.toUpperCase()}. ${question[optionKey] || ""}`
+                    )
+                );
+
+                optionsContainer.appendChild(label);
+            });
+
+            document.getElementById("previousQuestion").disabled =
+                currentIndex === 0;
+
+            document.getElementById("nextQuestion").disabled =
+                currentIndex === questions.length - 1;
+        }
+
+        document.getElementById("previousQuestion").onclick = () => {
+            if (currentIndex > 0) {
+                currentIndex--;
+                renderQuestion();
+            }
+        };
+
+        document.getElementById("nextQuestion").onclick = () => {
+            if (currentIndex < questions.length - 1) {
+                currentIndex++;
+                renderQuestion();
+            }
+        };
 
         document.getElementById("backToTests").onclick =
             loadAvailableTests;
+
+        renderQuestion();
 
     } catch (error) {
         console.error("Start test error:", error);
 
         container.innerHTML = `
             <h3>Unable to open test</h3>
-            <p></p>
-            <button type="button" id="backToTests">Back to Tests</button>
+            <p id="testErrorMessage"></p>
+            <button type="button" class="button secondary"
+                id="backToTests">
+                Back to Tests
+            </button>
         `;
 
-        container.querySelector("p").textContent = error.message;
+        document.getElementById("testErrorMessage").textContent =
+            error.message;
 
         document.getElementById("backToTests").onclick =
             loadAvailableTests;
