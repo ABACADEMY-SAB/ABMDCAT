@@ -2103,6 +2103,7 @@ async function loadAvailableTests() {
                 const startButton = document.createElement("button");
                 startButton.type = "button";
                 startButton.textContent = "Start Test";
+                startButton.className = "button primary";
                 startButton.onclick = () => startOnlineTest(test.id);
                 card.appendChild(startButton);
             }
