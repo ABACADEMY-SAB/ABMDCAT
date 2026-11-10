@@ -316,8 +316,24 @@
           );
 
 
-        const data =
-          await response.json();
+        const responseText = await response.text();
+
+let data;
+
+try {
+  data = JSON.parse(responseText);
+} catch (error) {
+  console.error("Server response:", responseText);
+
+  message.textContent =
+    "Server error (HTTP " + response.status + "). Check console.";
+
+  button.disabled = false;
+  button.textContent =
+    loginType === "student" ? "STUDENT LOGIN" : "ADMIN LOGIN";
+
+  return;
+}
 
 
         if (data.success) {
