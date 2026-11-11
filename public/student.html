@@ -2125,6 +2125,7 @@ async function loadAvailableTests() {
 }
   
 
+
 async function startOnlineTest(testId) {
     const container = document.querySelector("#tests .module");
 
@@ -2168,6 +2169,7 @@ async function startOnlineTest(testId) {
         window.currentOnlineAnswers = {};
 
         let currentIndex = 0;
+        let submitting = false;
 
         container.innerHTML = `
             <div class="module">
@@ -2175,16 +2177,24 @@ async function startOnlineTest(testId) {
                 <p id="onlineTestProgress"></p>
                 <h4 id="onlineQuestionText"></h4>
                 <div id="onlineOptions"></div>
+
                 <div style="display:flex; gap:10px; margin-top:20px;">
                     <button type="button" class="button secondary"
                         id="previousQuestion">
                         Previous
                     </button>
+
                     <button type="button" class="button primary"
                         id="nextQuestion">
                         Next
                     </button>
+
+                    <button type="button" class="button primary"
+                        id="submitOnlineTest" style="display:none;">
+                        Submit Test
+                    </button>
                 </div>
+
                 <button type="button" class="button secondary"
                     id="backToTests" style="margin-top:15px;">
                     Back to Tests
@@ -2224,6 +2234,7 @@ async function startOnlineTest(testId) {
                 radio.type = "radio";
                 radio.name = "onlineAnswer";
                 radio.value = letter;
+
                 radio.checked =
                     window.currentOnlineAnswers[currentIndex] === letter;
 
@@ -2241,11 +2252,17 @@ async function startOnlineTest(testId) {
                 optionsContainer.appendChild(label);
             });
 
+            const isLastQuestion =
+                currentIndex === questions.length - 1;
+
             document.getElementById("previousQuestion").disabled =
                 currentIndex === 0;
 
-            document.getElementById("nextQuestion").disabled =
-                currentIndex === questions.length - 1;
+            document.getElementById("nextQuestion").style.display =
+                isLastQuestion ? "none" : "inline-block";
+
+            document.getElementById("submitOnlineTest").style.display =
+                isLastQuestion ? "inline-block" : "none";
         }
 
         document.getElementById("previousQuestion").onclick = () => {
@@ -2259,6 +2276,103 @@ async function startOnlineTest(testId) {
             if (currentIndex < questions.length - 1) {
                 currentIndex++;
                 renderQuestion();
+            }
+        };
+
+        document.getElementById("submitOnlineTest").onclick = async () => {
+            if (submitting) return;
+
+            const student = JSON.parse(
+                localStorage.getItem("student") || "null"
+            );
+
+            if (!student || !student.id) {
+                alert("Student login information not found. Please log in again.");
+                return;
+            }
+
+            const confirmed = confirm(
+                "Are you sure you want to submit this test?"
+            );
+
+            if (!confirmed) return;
+
+            submitting = true;
+
+            const submitButton =
+                document.getElementById("submitOnlineTest");
+
+            submitButton.disabled = true;
+            submitButton.textContent = "Submitting...";
+
+            const answers = questions.map((question, index) => ({
+                test_question_id: Number(question.test_question_id),
+                question_source: question.question_source,
+                selected_answer:
+                    window.currentOnlineAnswers[index] || null
+            }));
+
+            try {
+                const response = await fetch(
+                    `/api/test/submit/${testId}`,
+                    {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            student_id: student.id,
+                            answers: answers
+                        })
+                    }
+                );
+
+                const data = await response.json();
+
+                if (!response.ok || !data.success) {
+                    throw new Error(
+                        data.message || "Test submission failed."
+                    );
+                }
+
+                container.innerHTML = `
+                    <div class="module">
+                        <h3>Test Submitted Successfully!</h3>
+                        <h4 id="submittedTestTitle"></h4>
+                        <p>Total Questions: ${data.totalQuestions}</p>
+                        <p>Correct Answers: ${data.correctAnswers}</p>
+                        <p>Wrong Answers: ${data.wrongAnswers}</p>
+                        <h3>Score: ${data.percentage}%</h3>
+
+                        <button type="button" class="button primary"
+                            id="reviewSubmittedTest">
+                            Review Test
+                        </button>
+
+                        <button type="button" class="button secondary"
+                            id="backToTests" style="margin-top:10px;">
+                            Back to Tests
+                        </button>
+                    </div>
+                `;
+
+                document.getElementById("submittedTestTitle").textContent =
+                    test.title;
+
+                document.getElementById("reviewSubmittedTest").onclick = () => {
+                    loadTestReview(data.resultId);
+                };
+
+                document.getElementById("backToTests").onclick =
+                    loadAvailableTests;
+
+            } catch (error) {
+                console.error("Test submission error:", error);
+                alert(error.message);
+
+                submitting = false;
+                submitButton.disabled = false;
+                submitButton.textContent = "Submit Test";
             }
         };
 
