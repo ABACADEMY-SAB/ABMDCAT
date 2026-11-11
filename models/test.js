@@ -154,6 +154,31 @@ static create(data, callback) {
         `);
     }
 
+    
+    // Create table for submitted test answers
+    static initializeTestAttemptAnswersTable() {
+        return db.query(`
+            CREATE TABLE IF NOT EXISTS test_attempt_answers (
+                id SERIAL PRIMARY KEY,
+                result_id INTEGER NOT NULL
+                    REFERENCES results(id) ON DELETE CASCADE,
+                test_id INTEGER NOT NULL,
+                question_order INTEGER NOT NULL,
+                question_source TEXT,
+                source_question_id INTEGER,
+                question TEXT NOT NULL,
+                optiona TEXT,
+                optionb TEXT,
+                optionc TEXT,
+                optiond TEXT,
+                correct_answer TEXT NOT NULL,
+                selected_answer TEXT,
+                explanation TEXT,
+                UNIQUE (result_id, question_order)
+            )
+        `);
+    }
+
 }
 
 
