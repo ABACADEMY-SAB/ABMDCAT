@@ -13,9 +13,14 @@ const Test = require("./models/test");
 Test.initializeManualQuestionsTable()
     .then(() => {
         console.log("Manual test questions table is ready.");
+
+        return Test.initializeTestAttemptAnswersTable();
+    })
+    .then(() => {
+        console.log("Test attempt answers table is ready.");
     })
     .catch((err) => {
-        console.error("Failed to create manual test questions table:", err);
+        console.error("Test tables initialization failed:", err);
     });
 
 const app = express();
