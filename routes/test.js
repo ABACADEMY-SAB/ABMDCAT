@@ -101,6 +101,16 @@ router.get(
 
 
 // =====================================
+// Review Submitted Test
+// =====================================
+
+router.get(
+    "/review/:resultId/:studentId",
+    testController.getTestReview
+);
+
+
+// =====================================
 // Get Test By ID
 // IMPORTANT: Keep this LAST
 // =====================================
