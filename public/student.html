@@ -2401,6 +2401,137 @@ async function startOnlineTest(testId) {
     }
 }
 
+
+async function loadTestReview(resultId) {
+    const container = document.querySelector("#tests .module");
+
+    if (!container) return;
+
+    container.innerHTML = "<h3>Loading test review...</h3>";
+
+    try {
+        const student = JSON.parse(
+            localStorage.getItem("student") || "null"
+        );
+
+        if (!student || !student.id) {
+            throw new Error("Student login information not found.");
+        }
+
+        const response = await fetch(
+            `/api/test/review/${resultId}/${student.id}`
+        );
+
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+            throw new Error(
+                data.message || "Unable to load test review."
+            );
+        }
+
+        const questions = data.questions || [];
+
+        container.innerHTML = `
+            <div class="module">
+                <h3>Test Review</h3>
+                <div id="reviewQuestions"></div>
+
+                <button type="button" class="button secondary"
+                    id="reviewBackToTests">
+                    Back to Tests
+                </button>
+            </div>
+        `;
+
+        const reviewContainer =
+            document.getElementById("reviewQuestions");
+
+        questions.forEach((question, index) => {
+            const card = document.createElement("div");
+
+            card.style.padding = "15px";
+            card.style.margin = "15px 0";
+            card.style.border = "1px solid #dbeafe";
+            card.style.borderRadius = "8px";
+
+            const title = document.createElement("h4");
+            title.textContent =
+                `Question ${index + 1}: ${question.question}`;
+
+            card.appendChild(title);
+
+            ["a", "b", "c", "d"].forEach(letter => {
+                const key = `option${letter}`;
+
+                const option = document.createElement("p");
+                option.textContent =
+                    `${letter.toUpperCase()}. ${question[key] || ""}`;
+
+                card.appendChild(option);
+            });
+
+            const selected = document.createElement("p");
+            selected.textContent =
+                `Your Answer: ${question.selected_answer
+                    ? question.selected_answer.toUpperCase()
+                    : "Not answered"}`;
+
+            card.appendChild(selected);
+
+            const correct = document.createElement("p");
+            correct.textContent =
+                `Correct Answer: ${question.correct_answer.toUpperCase()}`;
+
+            card.appendChild(correct);
+
+            const isCorrect =
+                question.selected_answer &&
+                question.selected_answer.toLowerCase() ===
+                question.correct_answer.toLowerCase();
+
+            const status = document.createElement("p");
+            status.textContent = isCorrect
+                ? "Correct"
+                : "Incorrect";
+
+            status.style.fontWeight = "bold";
+            status.style.color = isCorrect ? "green" : "red";
+
+            card.appendChild(status);
+
+            const explanation = document.createElement("p");
+            explanation.textContent =
+                `Explanation: ${question.explanation || "No explanation available."}`;
+
+            card.appendChild(explanation);
+
+            reviewContainer.appendChild(card);
+        });
+
+        document.getElementById("reviewBackToTests").onclick =
+            loadAvailableTests;
+
+    } catch (error) {
+        console.error("Test review error:", error);
+
+        container.innerHTML = `
+            <h3>Unable to load test review</h3>
+            <p id="reviewErrorMessage"></p>
+            <button type="button" class="button secondary"
+                id="reviewBackToTests">
+                Back to Tests
+            </button>
+        `;
+
+        document.getElementById("reviewErrorMessage").textContent =
+            error.message;
+
+        document.getElementById("reviewBackToTests").onclick =
+            loadAvailableTests;
+    }
+}
+
   
 // ==========================================
 // LOGOUT
