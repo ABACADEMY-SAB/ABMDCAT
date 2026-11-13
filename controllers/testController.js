@@ -544,41 +544,46 @@ exports.submitTest = async (req, res) => {
 
         let correct = 0;
 
-        const snapshots = questions.map((question, index) => {
-            const key =
-                `${question.question_source}:${question.test_question_id}`;
+        const questionMap = new Map(
+    questions.map(question => [
+        `${question.question_source}:${question.test_question_id}`,
+        question
+    ])
+);
 
-            if (!answerMap.has(key)) {
-                throw new Error("A test question is missing");
-            }
+const snapshots = submittedAnswers.map((item, index) => {
+    const key =
+        `${item.question_source}:${item.test_question_id}`;
 
-            const selected = answerMap.get(key);
-            const selectedAnswer =
-                selected == null || selected === ""
-                    ? null
-                    : String(selected).trim().toLowerCase();
+    const question = questionMap.get(key);
 
-            const correctAnswer =
-                String(question.correct_answer).trim().toLowerCase();
+    if (!question) {
+        throw new Error("A test question is missing");
+    }
 
-            const isCorrect =
-                selectedAnswer !== null &&
-                selectedAnswer === correctAnswer;
+    const selected = answerMap.get(key);
 
-            if (isCorrect) correct++;
+    const selectedAnswer =
+        selected == null || selected === ""
+            ? null
+            : String(selected).trim().toLowerCase();
 
-            return {
-                question,
-                selectedAnswer,
-                questionOrder: index + 1
-            };
-        });
+    const correctAnswer =
+        String(question.correct_answer).trim().toLowerCase();
 
-        const total = questions.length;
-        const wrong = total - correct;
-        const percentage = Number(
-            ((correct / total) * 100).toFixed(2)
-        );
+    if (
+        selectedAnswer !== null &&
+        selectedAnswer === correctAnswer
+    ) {
+        correct++;
+    }
+
+    return {
+        question,
+        selectedAnswer,
+        questionOrder: index + 1
+    };
+});
 
         // Save the result summary
         const resultInsert = await client.query(
