@@ -2434,11 +2434,16 @@ async function loadTestReview(resultId) {
 
         container.innerHTML = `
             <div class="module">
-                <h3>Test Review</h3>
+                <h3 style="color:#0284c7;">
+                    Test Review
+                </h3>
+
                 <div id="reviewQuestions"></div>
 
-                <button type="button" class="button secondary"
-                    id="reviewBackToTests">
+                <button type="button"
+                    class="button secondary"
+                    id="reviewBackToTests"
+                    style="margin-top:20px;">
                     Back to Tests
                 </button>
             </div>
@@ -2448,61 +2453,137 @@ async function loadTestReview(resultId) {
             document.getElementById("reviewQuestions");
 
         questions.forEach((question, index) => {
+
             const card = document.createElement("div");
 
-            card.style.padding = "15px";
-            card.style.margin = "15px 0";
-            card.style.border = "1px solid #dbeafe";
-            card.style.borderRadius = "8px";
+            card.style.padding = "18px";
+            card.style.margin = "18px 0";
+            card.style.background = "#ffffff";
+            card.style.border = "1px solid #bfdbfe";
+            card.style.borderRadius = "12px";
+            card.style.boxShadow =
+                "0 3px 10px rgba(0,0,0,0.05)";
 
+            // Question
             const title = document.createElement("h4");
+
             title.textContent =
                 `Question ${index + 1}: ${question.question}`;
 
+            title.style.fontSize = "19px";
+            title.style.fontWeight = "700";
+            title.style.lineHeight = "1.5";
+            title.style.color = "#172554";
+            title.style.marginBottom = "20px";
+
             card.appendChild(title);
 
+            const selectedAnswer =
+                String(question.selected_answer || "")
+                    .trim().toLowerCase();
+
+            const correctAnswer =
+                String(question.correct_answer || "")
+                    .trim().toLowerCase();
+
+            const isCorrect =
+                selectedAnswer !== "" &&
+                selectedAnswer === correctAnswer;
+
+            // Options
             ["a", "b", "c", "d"].forEach(letter => {
+
                 const key = `option${letter}`;
 
-                const option = document.createElement("p");
+                const option = document.createElement("div");
+
+                option.style.padding = "13px";
+                option.style.margin = "10px 0";
+                option.style.borderRadius = "9px";
+                option.style.fontSize = "17px";
+                option.style.fontWeight = "500";
+                option.style.lineHeight = "1.5";
+                option.style.border = "1px solid #dbeafe";
+
                 option.textContent =
                     `${letter.toUpperCase()}. ${question[key] || ""}`;
+
+                if (letter === correctAnswer) {
+
+                    option.style.background = "#dcfce7";
+                    option.style.border = "2px solid #16a34a";
+                    option.style.color = "#166534";
+                    option.style.fontWeight = "700";
+
+                    option.textContent += " ✓ Correct Answer";
+
+                } else if (letter === selectedAnswer) {
+
+                    option.style.background = "#fee2e2";
+                    option.style.border = "2px solid #dc2626";
+                    option.style.color = "#991b1b";
+                    option.style.fontWeight = "700";
+
+                    option.textContent += " ✗ Your Answer";
+
+                } else {
+
+                    option.style.background = "#f0f9ff";
+                    option.style.color = "#334155";
+                }
 
                 card.appendChild(option);
             });
 
-            const selected = document.createElement("p");
-            selected.textContent =
-                `Your Answer: ${question.selected_answer
-                    ? question.selected_answer.toUpperCase()
-                    : "Not answered"}`;
+            // Result status
+            const status = document.createElement("div");
 
-            card.appendChild(selected);
+            status.style.padding = "11px";
+            status.style.marginTop = "16px";
+            status.style.borderRadius = "8px";
+            status.style.fontWeight = "700";
+            status.style.fontSize = "16px";
 
-            const correct = document.createElement("p");
-            correct.textContent =
-                `Correct Answer: ${question.correct_answer.toUpperCase()}`;
-
-            card.appendChild(correct);
-
-            const isCorrect =
-                question.selected_answer &&
-                question.selected_answer.toLowerCase() ===
-                question.correct_answer.toLowerCase();
-
-            const status = document.createElement("p");
-            status.textContent = isCorrect
-                ? "Correct"
-                : "Incorrect";
-
-            status.style.fontWeight = "bold";
-            status.style.color = isCorrect ? "green" : "red";
+            if (isCorrect) {
+                status.textContent = "✓ Correct Answer";
+                status.style.background = "#dcfce7";
+                status.style.color = "#166534";
+            } else {
+                status.textContent = "✗ Incorrect Answer";
+                status.style.background = "#fee2e2";
+                status.style.color = "#991b1b";
+            }
 
             card.appendChild(status);
 
-            const explanation = document.createElement("p");
-            explanation.textContent =
-                `Explanation: ${question.explanation || "No explanation available."}`;
+            // Explanation
+            const explanation = document.createElement("div");
+
+            explanation.style.padding = "14px";
+            explanation.style.marginTop = "14px";
+            explanation.style.background = "#dbeafe";
+            explanation.style.border = "1px solid #93c5fd";
+            explanation.style.borderRadius = "9px";
+            explanation.style.color = "#1e40af";
+            explanation.style.fontSize = "16px";
+            explanation.style.lineHeight = "1.6";
+
+            const explanationTitle =
+                document.createElement("strong");
+
+            explanationTitle.textContent = "Explanation";
+
+            explanation.appendChild(explanationTitle);
+
+            const explanationText =
+                document.createElement("p");
+
+            explanationText.textContent =
+                question.explanation || "No explanation available.";
+
+            explanationText.style.margin = "6px 0 0";
+
+            explanation.appendChild(explanationText);
 
             card.appendChild(explanation);
 
@@ -2518,7 +2599,8 @@ async function loadTestReview(resultId) {
         container.innerHTML = `
             <h3>Unable to load test review</h3>
             <p id="reviewErrorMessage"></p>
-            <button type="button" class="button secondary"
+            <button type="button"
+                class="button secondary"
                 id="reviewBackToTests">
                 Back to Tests
             </button>
