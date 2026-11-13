@@ -585,6 +585,13 @@ const snapshots = submittedAnswers.map((item, index) => {
     };
 });
 
+ const total = questions.length;
+const wrong = total - correct;
+
+const percentage = Number(
+    ((correct / total) * 100).toFixed(2)
+);
+        
         // Save the result summary
         const resultInsert = await client.query(
             `INSERT INTO results
