@@ -712,3 +712,75 @@ exports.leaderboard = (req, res) => {
     });
 
 };
+
+
+// =====================================
+// Review Submitted Test
+// =====================================
+
+exports.getTestReview = async (req, res) => {
+    const resultId = Number(req.params.resultId);
+    const studentId = Number(req.params.studentId);
+
+    if (
+        !Number.isInteger(resultId) || resultId <= 0 ||
+        !Number.isInteger(studentId) || studentId <= 0
+    ) {
+        return res.status(400).json({
+            success: false,
+            message: "Invalid result or student ID"
+        });
+    }
+
+    try {
+        // Confirm that this result belongs to this student
+        const result = await db.query(
+            `SELECT *
+             FROM results
+             WHERE id = $1
+             AND student_id = $2
+             AND result_type = 'test'`,
+            [resultId, studentId]
+        );
+
+        if (result.rows.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: "Test result not found"
+            });
+        }
+
+        // Get saved questions and answers
+        const answers = await db.query(
+            `SELECT
+                question_order,
+                question_source,
+                question,
+                optiona,
+                optionb,
+                optionc,
+                optiond,
+                correct_answer,
+                selected_answer,
+                explanation
+             FROM test_attempt_answers
+             WHERE result_id = $1
+             ORDER BY question_order ASC`,
+            [resultId]
+        );
+
+        return res.json({
+            success: true,
+            result: result.rows[0],
+            questions: answers.rows
+        });
+
+    } catch (error) {
+        console.error("Test review error:", error);
+
+        return res.status(500).json({
+            success: false,
+            message: "Unable to load test review"
+        });
+    }
+};
