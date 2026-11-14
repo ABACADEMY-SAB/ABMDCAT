@@ -692,20 +692,60 @@ const percentage = Number(
 };
 
 
+
 // =====================================
 // Test History
 // =====================================
 
-exports.testHistory = (req, res) => {
+exports.testHistory = async (req, res) => {
 
-    res.json({
+    const studentId = Number(req.params.studentId);
 
-        success: true,
+    if (
+        !Number.isInteger(studentId) ||
+        studentId <= 0
+    ) {
+        return res.status(400).json({
+            success: false,
+            message: "Invalid student ID"
+        });
+    }
 
-        history: []
+    try {
 
-    });
+        const result = await db.query(
+            `SELECT
+                r.id AS result_id,
+                r.test_id,
+                t.title AS test_title,
+                r.total_questions,
+                r.correct_answers,
+                r.wrong_answers,
+                r.percentage
+             FROM results r
+             LEFT JOIN tests t
+                ON t.id = r.test_id
+             WHERE r.student_id = $1
+             AND r.result_type = 'test'
+             ORDER BY r.id DESC`,
+            [studentId]
+        );
 
+        return res.json({
+            success: true,
+            history: result.rows
+        });
+
+    } catch (error) {
+
+        console.error("Test history error:", error);
+
+        return res.status(500).json({
+            success: false,
+            message: "Unable to load test history"
+        });
+
+    }
 };
 
 
