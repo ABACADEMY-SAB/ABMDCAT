@@ -1738,8 +1738,37 @@
 
     </section>
 
+    
+
+<!-- =========================
+     TEST HISTORY
+========================= -->
+
+<section
+  id="test-history"
+  class="section"
+>
+
+  <h2 class="page-title">
+    Test History
+  </h2>
+
+  <p class="page-description">
+    View your previously attempted online tests.
+  </p>
+
+  <div class="module" id="testHistoryContainer">
+
+    <p>
+      Your test history will appear here.
+    </p>
+
+  </div>
+
+</section>
 
 
+    
     <!-- =========================
          RESULTS
     ========================= -->
@@ -2051,6 +2080,11 @@ function showSection(sectionId, button) {
     // Load available online tests when Tests is opened
     if (sectionId === "tests") {
         loadAvailableTests();
+    }
+
+    // Load test history when Test History is opened
+if (sectionId === "test-history") {
+    loadTestHistory();
     }
 }
 
@@ -2411,6 +2445,109 @@ async function startOnlineTest(testId) {
 }
 
 
+// ==========================================
+// LOAD TEST HISTORY
+// ==========================================
+
+async function loadTestHistory() {
+
+    const container = document.getElementById(
+        "testHistoryContainer"
+    );
+
+    const student = JSON.parse(
+        localStorage.getItem("student") || "{}"
+    );
+
+    if (!student.id) {
+        container.innerHTML = "<p>Student information not found. Please log in again.</p>";
+        return;
+    }
+
+    container.innerHTML = "<p>Loading test history...</p>";
+
+    try {
+
+        const response = await fetch(
+            `/api/test/history/${student.id}`
+        );
+
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+            throw new Error(
+                data.message || "Unable to load test history"
+            );
+        }
+
+        if (!data.history || data.history.length === 0) {
+            container.innerHTML = `
+                <p>You have not attempted any online tests yet.</p>
+            `;
+            return;
+        }
+
+        container.innerHTML = data.history.map(test => {
+
+            const title = String(
+                test.test_title || "Online Test"
+            ).replace(/[&<>"']/g, char => ({
+                "&": "&amp;",
+                "<": "&lt;",
+                ">": "&gt;",
+                '"': "&quot;",
+                "'": "&#39;"
+            })[char]);
+
+            return `
+                <div class="module" style="margin-bottom:15px;">
+
+                    <h3>${title}</h3>
+
+                    <p>
+                        Total Questions:
+                        ${test.total_questions}
+                    </p>
+
+                    <p>
+                        Correct Answers:
+                        ${test.correct_answers}
+                    </p>
+
+                    <p>
+                        Wrong Answers:
+                        ${test.wrong_answers}
+                    </p>
+
+                    <p>
+                        Percentage:
+                        ${test.percentage}%
+                    </p>
+
+                    <button
+                        class="nav-button"
+                        onclick="loadTestReview(${Number(test.result_id)})"
+                    >
+                        Review Test
+                    </button>
+
+                </div>
+            `;
+
+        }).join("");
+
+    } catch (error) {
+
+        console.error("Test history error:", error);
+
+        container.innerHTML = `
+            <p>Unable to load test history. Please try again.</p>
+        `;
+
+    }
+}
+
+  
 async function loadTestReview(resultId) {
     const container = document.querySelector("#tests .module");
 
