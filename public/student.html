@@ -2460,7 +2460,8 @@ async function loadTestHistory() {
     );
 
     if (!student.id) {
-        container.innerHTML = "<p>Student information not found. Please log in again.</p>";
+        container.innerHTML =
+            "<p>Student information not found. Please log in again.</p>";
         return;
     }
 
@@ -2482,7 +2483,17 @@ async function loadTestHistory() {
 
         if (!data.history || data.history.length === 0) {
             container.innerHTML = `
-                <p>You have not attempted any online tests yet.</p>
+                <div style="
+                    padding:25px;
+                    text-align:center;
+                    background:white;
+                    border-radius:12px;
+                ">
+                    <h3 style="color:#0284c7;">
+                        No Test History
+                    </h3>
+                    <p>You have not attempted any online tests yet.</p>
+                </div>
             `;
             return;
         }
@@ -2499,36 +2510,73 @@ async function loadTestHistory() {
                 "'": "&#39;"
             })[char]);
 
+            const resultId = Number(test.result_id);
+
             return `
-                <div class="module" style="margin-bottom:15px;">
+                <div style="
+                    background:#ffffff;
+                    border:1px solid #bae6fd;
+                    border-left:5px solid #0ea5e9;
+                    border-radius:12px;
+                    padding:20px;
+                    margin-bottom:16px;
+                    box-shadow:0 4px 12px rgba(2,132,199,0.08);
+                ">
 
-                    <h3>${title}</h3>
+                    <h3 style="
+                        color:#0369a1;
+                        font-size:18px;
+                        margin-bottom:15px;
+                    ">
+                        ${title}
+                    </h3>
 
-                    <p>
-                        Total Questions:
-                        ${test.total_questions}
-                    </p>
+                    <div style="
+                        background:#f0f9ff;
+                        padding:14px;
+                        border-radius:9px;
+                    ">
 
-                    <p>
-                        Correct Answers:
-                        ${test.correct_answers}
-                    </p>
+                        <p style="margin:7px 0;color:#475569;">
+                            Total Questions:
+                            <strong>${Number(test.total_questions) || 0}</strong>
+                        </p>
 
-                    <p>
-                        Wrong Answers:
-                        ${test.wrong_answers}
-                    </p>
+                        <p style="margin:7px 0;color:#15803d;">
+                            Correct Answers:
+                            <strong>${Number(test.correct_answers) || 0}</strong>
+                        </p>
 
-                    <p>
-                        Percentage:
-                        ${test.percentage}%
-                    </p>
+                        <p style="margin:7px 0;color:#dc2626;">
+                            Wrong Answers:
+                            <strong>${Number(test.wrong_answers) || 0}</strong>
+                        </p>
+
+                        <p style="margin:7px 0;color:#0369a1;">
+                            Percentage:
+                            <strong>${Number(test.percentage) || 0}%</strong>
+                        </p>
+
+                    </div>
 
                     <button
-                        class="nav-button"
-                        onclick="loadTestReview(${Number(test.result_id)})"
+                        type="button"
+                        onclick="loadTestReview(${resultId})"
+                        style="
+                            width:100%;
+                            margin-top:16px;
+                            padding:14px;
+                            background:#0284c7;
+                            color:white;
+                            border:none;
+                            border-radius:9px;
+                            font-size:16px;
+                            font-weight:700;
+                            cursor:pointer;
+                            box-shadow:0 3px 7px rgba(2,132,199,0.2);
+                        "
                     >
-                        Review Test
+                        Review Test →
                     </button>
 
                 </div>
@@ -2541,21 +2589,27 @@ async function loadTestHistory() {
         console.error("Test history error:", error);
 
         container.innerHTML = `
-            <p>Unable to load test history. Please try again.</p>
+            <p style="color:#dc2626;">
+                Unable to load test history. Please try again.
+            </p>
         `;
-
     }
 }
+                    
 
-  
 async function loadTestReview(resultId) {
-    const container = document.querySelector("#tests .module");
+
+    // Correct container: Test History
+    const container = document.getElementById(
+        "testHistoryContainer"
+    );
 
     if (!container) return;
 
     container.innerHTML = "<h3>Loading test review...</h3>";
 
     try {
+
         const student = JSON.parse(
             localStorage.getItem("student") || "null"
         );
@@ -2579,19 +2633,43 @@ async function loadTestReview(resultId) {
         const questions = data.questions || [];
 
         container.innerHTML = `
-            <div class="module">
-                <h3 style="color:#0284c7;">
+            <div style="
+                background:#ffffff;
+                padding:18px;
+                border-radius:12px;
+                box-shadow:0 3px 12px rgba(0,0,0,0.06);
+            ">
+
+                <h2 style="
+                    color:#0284c7;
+                    margin-bottom:8px;
+                ">
                     Test Review
-                </h3>
+                </h2>
+
+                <p style="color:#64748b;">
+                    Review your answers and explanations.
+                </p>
 
                 <div id="reviewQuestions"></div>
 
                 <button type="button"
-                    class="button secondary"
-                    id="reviewBackToTests"
-                    style="margin-top:20px;">
-                    Back to Tests
+                    id="reviewBackToHistory"
+                    style="
+                        width:100%;
+                        padding:14px;
+                        margin-top:20px;
+                        background:#0284c7;
+                        color:white;
+                        border:none;
+                        border-radius:9px;
+                        font-size:16px;
+                        font-weight:700;
+                        cursor:pointer;
+                    ">
+                    Back to Test History
                 </button>
+
             </div>
         `;
 
@@ -2602,57 +2680,58 @@ async function loadTestReview(resultId) {
 
             const card = document.createElement("div");
 
-            card.style.padding = "18px";
-            card.style.margin = "18px 0";
-            card.style.background = "#ffffff";
-            card.style.border = "1px solid #bfdbfe";
-            card.style.borderRadius = "12px";
-            card.style.boxShadow =
-                "0 3px 10px rgba(0,0,0,0.05)";
+            card.style.cssText = `
+                padding:18px;
+                margin:18px 0;
+                background:#f0f9ff;
+                border:1px solid #bae6fd;
+                border-radius:12px;
+            `;
 
-            // Question
             const title = document.createElement("h4");
 
             title.textContent =
                 `Question ${index + 1}: ${question.question}`;
 
-            title.style.fontSize = "19px";
-            title.style.fontWeight = "700";
-            title.style.lineHeight = "1.5";
-            title.style.color = "#172554";
-            title.style.marginBottom = "20px";
+            title.style.cssText = `
+                font-size:18px;
+                font-weight:700;
+                line-height:1.5;
+                color:#0c4a6e;
+                margin-bottom:18px;
+            `;
 
             card.appendChild(title);
 
-            const selectedAnswer =
-                String(question.selected_answer || "")
-                    .trim().toLowerCase();
+            const selectedAnswer = String(
+                question.selected_answer || ""
+            ).trim().toLowerCase();
 
-            const correctAnswer =
-                String(question.correct_answer || "")
-                    .trim().toLowerCase();
+            const correctAnswer = String(
+                question.correct_answer || ""
+            ).trim().toLowerCase();
 
             const isCorrect =
                 selectedAnswer !== "" &&
                 selectedAnswer === correctAnswer;
 
-            // Options
             ["a", "b", "c", "d"].forEach(letter => {
-
-                const key = `option${letter}`;
 
                 const option = document.createElement("div");
 
-                option.style.padding = "13px";
-                option.style.margin = "10px 0";
-                option.style.borderRadius = "9px";
-                option.style.fontSize = "17px";
-                option.style.fontWeight = "500";
-                option.style.lineHeight = "1.5";
-                option.style.border = "1px solid #dbeafe";
+                option.style.cssText = `
+                    padding:13px;
+                    margin:10px 0;
+                    border-radius:9px;
+                    font-size:16px;
+                    line-height:1.5;
+                    border:1px solid #bae6fd;
+                    background:#ffffff;
+                    color:#334155;
+                `;
 
                 option.textContent =
-                    `${letter.toUpperCase()}. ${question[key] || ""}`;
+                    `${letter.toUpperCase()}. ${question[`option${letter}`] || ""}`;
 
                 if (letter === correctAnswer) {
 
@@ -2671,30 +2750,35 @@ async function loadTestReview(resultId) {
                     option.style.fontWeight = "700";
 
                     option.textContent += " ✗ Your Answer";
-
-                } else {
-
-                    option.style.background = "#f0f9ff";
-                    option.style.color = "#334155";
                 }
 
                 card.appendChild(option);
             });
 
-            // Result status
+            // Answer status
             const status = document.createElement("div");
 
-            status.style.padding = "11px";
-            status.style.marginTop = "16px";
-            status.style.borderRadius = "8px";
-            status.style.fontWeight = "700";
-            status.style.fontSize = "16px";
+            status.style.cssText = `
+                padding:12px;
+                margin-top:15px;
+                border-radius:8px;
+                font-weight:700;
+            `;
 
-            if (isCorrect) {
+            if (!selectedAnswer) {
+
+                status.textContent = "Not Answered";
+                status.style.background = "#f1f5f9";
+                status.style.color = "#475569";
+
+            } else if (isCorrect) {
+
                 status.textContent = "✓ Correct Answer";
                 status.style.background = "#dcfce7";
                 status.style.color = "#166534";
+
             } else {
+
                 status.textContent = "✗ Incorrect Answer";
                 status.style.background = "#fee2e2";
                 status.style.color = "#991b1b";
@@ -2705,21 +2789,21 @@ async function loadTestReview(resultId) {
             // Explanation
             const explanation = document.createElement("div");
 
-            explanation.style.padding = "14px";
-            explanation.style.marginTop = "14px";
-            explanation.style.background = "#dbeafe";
-            explanation.style.border = "1px solid #93c5fd";
-            explanation.style.borderRadius = "9px";
-            explanation.style.color = "#1e40af";
-            explanation.style.fontSize = "16px";
-            explanation.style.lineHeight = "1.6";
+            explanation.style.cssText = `
+                padding:14px;
+                margin-top:14px;
+                background:#dbeafe;
+                border:1px solid #93c5fd;
+                border-radius:9px;
+                color:#1e40af;
+                font-size:15px;
+                line-height:1.6;
+            `;
 
             const explanationTitle =
                 document.createElement("strong");
 
             explanationTitle.textContent = "Explanation";
-
-            explanation.appendChild(explanationTitle);
 
             const explanationText =
                 document.createElement("p");
@@ -2729,6 +2813,7 @@ async function loadTestReview(resultId) {
 
             explanationText.style.margin = "6px 0 0";
 
+            explanation.appendChild(explanationTitle);
             explanation.appendChild(explanationText);
 
             card.appendChild(explanation);
@@ -2736,27 +2821,40 @@ async function loadTestReview(resultId) {
             reviewContainer.appendChild(card);
         });
 
-        document.getElementById("reviewBackToTests").onclick =
-            loadAvailableTests;
+        document.getElementById(
+            "reviewBackToHistory"
+        ).onclick = loadTestHistory;
 
     } catch (error) {
+
         console.error("Test review error:", error);
 
         container.innerHTML = `
-            <h3>Unable to load test review</h3>
+            <h3 style="color:#dc2626;">
+                Unable to load test review
+            </h3>
+
             <p id="reviewErrorMessage"></p>
-            <button type="button"
-                class="button secondary"
-                id="reviewBackToTests">
-                Back to Tests
+
+            <button id="reviewBackToHistory"
+                style="
+                    padding:12px;
+                    background:#0284c7;
+                    color:white;
+                    border:none;
+                    border-radius:8px;
+                ">
+                Back to Test History
             </button>
         `;
 
-        document.getElementById("reviewErrorMessage").textContent =
-            error.message;
+        document.getElementById(
+            "reviewErrorMessage"
+        ).textContent = error.message;
 
-        document.getElementById("reviewBackToTests").onclick =
-            loadAvailableTests;
+        document.getElementById(
+            "reviewBackToHistory"
+        ).onclick = loadTestHistory;
     }
 }
 
