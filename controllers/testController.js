@@ -753,16 +753,59 @@ exports.testHistory = async (req, res) => {
 // Leaderboard
 // =====================================
 
-exports.leaderboard = (req, res) => {
+exports.leaderboard = async (req, res) => {
 
-    res.json({
+    const testId = Number(req.params.id);
 
-        success: true,
+    if (!Number.isInteger(testId) || testId <= 0) {
+        return res.status(400).json({
+            success: false,
+            message: "Invalid test ID"
+        });
+    }
 
-        leaderboard: []
+    try {
 
-    });
+        const result = await db.query(
+            `SELECT
+                s.id AS student_id,
+                s.fullname AS student_name,
+                ROUND(AVG(r.percentage), 2) AS average_percentage,
+                COUNT(r.id) AS attempts
+             FROM results r
+             INNER JOIN students s
+                ON s.id = r.student_id
+             WHERE r.test_id = $1
+             AND r.result_type = 'test'
+             GROUP BY s.id, s.fullname
+             ORDER BY average_percentage DESC,
+                      student_name ASC`,
+            [testId]
+        );
 
+        const leaderboard = result.rows.map((student, index) => ({
+            rank: index + 1,
+            student_id: student.student_id,
+            student_name: student.student_name,
+            average_percentage: Number(student.average_percentage),
+            attempts: Number(student.attempts)
+        }));
+
+        return res.json({
+            success: true,
+            total_students: leaderboard.length,
+            leaderboard
+        });
+
+    } catch (error) {
+
+        console.error("Leaderboard error:", error);
+
+        return res.status(500).json({
+            success: false,
+            message: "Unable to load leaderboard"
+        });
+    }
 };
 
 
