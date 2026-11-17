@@ -1871,39 +1871,76 @@
 
 
 
-    <!-- =========================
-         RANKING
-    ========================= -->
+<!-- =========================
+     RANKING
+========================= -->
 
-    <section
-      id="ranking"
-      class="section"
-    >
+<section
+    id="ranking"
+    class="section"
+>
 
-      <h2 class="page-title">
+    <h2 class="page-title">
         Ranking
-      </h2>
+    </h2>
 
+    <p class="page-description">
+        See your performance and compare your ranking with other students.
+    </p>
 
-      <p class="page-description">
-        See your performance ranking.
-      </p>
+    <div class="module">
 
-
-      <div class="module">
-
-        <h3>
-          Student Ranking
+        <h3 style="color:#0284c7;">
+            Student Leaderboard
         </h3>
 
         <p>
-          Overall, daily, weekly and monthly rankings
-          will appear here.
+            Select an online test to view its leaderboard.
         </p>
 
-      </div>
+        <select
+            id="rankingTestSelect"
+            style="
+                width:100%;
+                padding:13px;
+                margin:12px 0;
+                border:1px solid #7dd3fc;
+                border-radius:9px;
+                background:#f0f9ff;
+                font-size:15px;
+            "
+        >
+            <option value="">
+                Loading available tests...
+            </option>
+        </select>
 
-    </section>
+        <button
+            type="button"
+            onclick="loadLeaderboard()"
+            style="
+                width:100%;
+                padding:13px;
+                background:#0284c7;
+                color:white;
+                border:none;
+                border-radius:9px;
+                font-size:16px;
+                font-weight:700;
+                cursor:pointer;
+            "
+        >
+            View Ranking
+        </button>
+
+    </div>
+
+    <div
+        id="leaderboardContainer"
+        style="margin-top:18px;"
+    ></div>
+
+</section>
 
 
 
@@ -2085,6 +2122,11 @@ function showSection(sectionId, button) {
     // Load test history when Test History is opened
 if (sectionId === "test-history") {
     loadTestHistory();
+    }
+
+   // Load ranking tests when Ranking is opened
+if (sectionId === "ranking") {
+    loadRankingTests();
     }
 }
 
@@ -2595,7 +2637,278 @@ async function loadTestHistory() {
         `;
     }
 }
-                    
+
+
+// ==========================================
+// LOAD TESTS FOR RANKING
+// ==========================================
+
+async function loadRankingTests() {
+
+    const select = document.getElementById(
+        "rankingTestSelect"
+    );
+
+    const container = document.getElementById(
+        "leaderboardContainer"
+    );
+
+    if (!select) return;
+
+    select.innerHTML = `
+        <option value="">Loading tests...</option>
+    `;
+
+    if (container) container.innerHTML = "";
+
+    try {
+
+        const response = await fetch("/api/test");
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+            throw new Error(data.message || "Unable to load tests.");
+        }
+
+        const tests = (data.tests || []).filter(test =>
+            (test.status || "").toLowerCase() === "published"
+        );
+
+        select.innerHTML = "";
+
+        if (tests.length === 0) {
+
+            select.innerHTML = `
+                <option value="">No published tests available</option>
+            `;
+
+            return;
+        }
+
+        select.innerHTML = `
+            <option value="">Select a test</option>
+        `;
+
+        tests.forEach(test => {
+
+            const option = document.createElement("option");
+
+            option.value = test.id;
+            option.textContent = test.title || "Untitled Test";
+
+            select.appendChild(option);
+
+        });
+
+    } catch (error) {
+
+        console.error("Ranking tests error:", error);
+
+        select.innerHTML = `
+            <option value="">Unable to load tests</option>
+        `;
+    }
+}
+
+
+// ==========================================
+// LOAD LEADERBOARD
+// ==========================================
+
+async function loadLeaderboard() {
+
+    const select = document.getElementById(
+        "rankingTestSelect"
+    );
+
+    const container = document.getElementById(
+        "leaderboardContainer"
+    );
+
+    if (!select || !container) return;
+
+    const testId = select.value;
+
+    if (!testId) {
+        container.innerHTML = `
+            <p style="color:#dc2626;">
+                Please select a test first.
+            </p>
+        `;
+        return;
+    }
+
+    container.innerHTML = `
+        <p style="color:#0284c7;">
+            Loading leaderboard...
+        </p>
+    `;
+
+    try {
+
+        const response = await fetch(
+            `/api/test/leaderboard/${testId}`
+        );
+
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+            throw new Error(
+                data.message || "Unable to load leaderboard."
+            );
+        }
+
+        const students = data.leaderboard || [];
+
+        if (students.length === 0) {
+
+            container.innerHTML = `
+                <div style="
+                    padding:20px;
+                    background:#f0f9ff;
+                    border-radius:12px;
+                    text-align:center;
+                ">
+                    <h3 style="color:#0284c7;">
+                        No Rankings Yet
+                    </h3>
+                    <p>No students have attempted this test yet.</p>
+                </div>
+            `;
+
+            return;
+        }
+
+        const currentStudent = JSON.parse(
+            localStorage.getItem("student") || "{}"
+        );
+
+        container.innerHTML = `
+            <div style="
+                background:white;
+                padding:16px;
+                border-radius:12px;
+                border:1px solid #bae6fd;
+                overflow-x:auto;
+            ">
+
+                <h3 style="color:#0284c7;">
+                    Leaderboard
+                </h3>
+
+                <p style="color:#64748b;">
+                    Total students ranked: ${data.total_students}
+                </p>
+
+                <table style="
+                    width:100%;
+                    border-collapse:collapse;
+                    margin-top:15px;
+                    min-width:400px;
+                ">
+
+                    <thead>
+                        <tr style="
+                            background:#e0f2fe;
+                            color:#075985;
+                        ">
+                            <th style="padding:12px;">Rank</th>
+                            <th style="padding:12px;text-align:left;">Student</th>
+                            <th style="padding:12px;">Average</th>
+                            <th style="padding:12px;">Attempts</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="leaderboardRows"></tbody>
+
+                </table>
+
+            </div>
+        `;
+
+        const rows = document.getElementById(
+            "leaderboardRows"
+        );
+
+        students.forEach(student => {
+
+            const row = document.createElement("tr");
+
+            const isCurrentStudent =
+                String(student.student_id) ===
+                String(currentStudent.id);
+
+            row.style.background = isCurrentStudent
+                ? "#dbeafe"
+                : "#ffffff";
+
+            row.style.borderBottom = "1px solid #e2e8f0";
+
+            const rankCell = document.createElement("td");
+            rankCell.style.cssText =
+                "padding:13px;text-align:center;font-weight:700;";
+
+            if (student.rank === 1) {
+                rankCell.textContent = "🥇 1st";
+            } else if (student.rank === 2) {
+                rankCell.textContent = "🥈 2nd";
+            } else if (student.rank === 3) {
+                rankCell.textContent = "🥉 3rd";
+            } else {
+                rankCell.textContent = student.rank;
+            }
+
+            const nameCell = document.createElement("td");
+
+            nameCell.style.cssText =
+                "padding:13px;color:#075985;font-weight:600;";
+
+            nameCell.textContent =
+                student.student_name || "Student";
+
+            if (isCurrentStudent) {
+                nameCell.textContent += " (You)";
+            }
+
+            const percentageCell = document.createElement("td");
+
+            percentageCell.style.cssText =
+                "padding:13px;text-align:center;font-weight:700;color:#0284c7;";
+
+            percentageCell.textContent =
+                `${student.average_percentage}%`;
+
+            const attemptsCell = document.createElement("td");
+
+            attemptsCell.style.cssText =
+                "padding:13px;text-align:center;";
+
+            attemptsCell.textContent = student.attempts;
+
+            row.append(
+                rankCell,
+                nameCell,
+                percentageCell,
+                attemptsCell
+            );
+
+            rows.appendChild(row);
+
+        });
+
+    } catch (error) {
+
+        console.error("Leaderboard error:", error);
+
+        container.innerHTML = `
+            <p style="color:#dc2626;">
+                Unable to load leaderboard.
+                Please try again.
+            </p>
+        `;
+    }
+}
+ 
 
 async function loadTestReview(resultId) {
 
