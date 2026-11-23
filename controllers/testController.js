@@ -770,7 +770,7 @@ exports.leaderboard = async (req, res) => {
             `SELECT
                 s.id AS student_id,
                 s.fullname AS student_name,
-                ROUND(AVG(r.percentage), 2) AS average_percentage,
+                ROUND(AVG(r.percentage)::numeric, 2) AS average_percentage,
                 COUNT(r.id) AS attempts
              FROM results r
              INNER JOIN students s
