@@ -179,6 +179,36 @@ static create(data, callback) {
         `);
     }
 
+
+    // Create table for official and practice test attempts
+static initializeTestAttemptsTable() {
+    return db.query(`
+        CREATE TABLE IF NOT EXISTS test_attempts (
+            id SERIAL PRIMARY KEY,
+            student_id INTEGER NOT NULL
+                REFERENCES students(id) ON DELETE CASCADE,
+            test_id INTEGER NOT NULL
+                REFERENCES tests(id) ON DELETE CASCADE,
+            attempt_type TEXT NOT NULL
+                CHECK (attempt_type IN ('official', 'practice')),
+            status TEXT NOT NULL DEFAULT 'in_progress'
+                CHECK (status IN ('in_progress', 'submitted', 'auto_submitted')),
+            started_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+            expires_at TIMESTAMPTZ NOT NULL,
+            submitted_at TIMESTAMPTZ,
+            answers JSONB NOT NULL DEFAULT '{}'::jsonb,
+            result_id INTEGER
+                REFERENCES results(id) ON DELETE SET NULL
+        )
+    `).then(() => {
+        return db.query(`
+            CREATE UNIQUE INDEX IF NOT EXISTS
+            unique_official_test_attempt
+            ON test_attempts (student_id, test_id)
+            WHERE attempt_type = 'official'
+        `);
+    });
+}
 }
 
 
