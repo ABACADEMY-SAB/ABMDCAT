@@ -16,8 +16,13 @@ Test.initializeManualQuestionsTable()
 
         return Test.initializeTestAttemptAnswersTable();
     })
-    .then(() => {
+         .then(() => {
         console.log("Test attempt answers table is ready.");
+
+        return Test.initializeTestAttemptsTable();
+    })
+    .then(() => {
+        console.log("Official and practice test attempts table is ready.");
     })
     .catch((err) => {
         console.error("Test tables initialization failed:", err);
