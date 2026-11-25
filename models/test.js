@@ -180,6 +180,16 @@ static create(data, callback) {
     }
 
 
+    // Add unattempted answers column to results
+static initializeUnattemptedAnswersColumn() {
+    return db.query(`
+        ALTER TABLE results
+        ADD COLUMN IF NOT EXISTS
+        unattempted_answers INTEGER NOT NULL DEFAULT 0
+    `);
+}
+
+    
     // Create table for official and practice test attempts
 static initializeTestAttemptsTable() {
     return db.query(`
