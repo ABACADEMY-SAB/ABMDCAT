@@ -197,10 +197,17 @@ static initializeTestAttemptsTable() {
             expires_at TIMESTAMPTZ NOT NULL,
             submitted_at TIMESTAMPTZ,
             answers JSONB NOT NULL DEFAULT '{}'::jsonb,
-            result_id INTEGER
+questions_snapshot JSONB NOT NULL DEFAULT '[]'::jsonb,
+result_id INTEGER
                 REFERENCES results(id) ON DELETE SET NULL
         )
-    `).then(() => {
+        `).then(() => {
+        return db.query(`
+            ALTER TABLE test_attempts
+            ADD COLUMN IF NOT EXISTS
+            questions_snapshot JSONB NOT NULL DEFAULT '[]'::jsonb
+        `);
+    }).then(() => {
         return db.query(`
             CREATE UNIQUE INDEX IF NOT EXISTS
             unique_official_test_attempt
