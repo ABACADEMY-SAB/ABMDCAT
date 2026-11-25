@@ -154,6 +154,7 @@ exports.createTest = (req, res) => {
         total_questions,
         duration_minutes,
         start_time,
+        end_time,
         status
     } = req.body;
 
@@ -184,6 +185,7 @@ exports.createTest = (req, res) => {
             total_questions,
             duration_minutes,
             start_time,
+            end_time,
             status
         },
         (err, result) => {
@@ -237,6 +239,7 @@ exports.updateTest = (req, res) => {
     total_questions,
     duration_minutes,
     start_time,
+    end_time,
     status
 } = req.body;
 
@@ -252,6 +255,7 @@ exports.updateTest = (req, res) => {
             total_questions,
             duration_minutes,
             start_time,
+            end_time,
             status
         },
         (err, result) => {
@@ -355,20 +359,23 @@ exports.startTest = async (req, res) => {
 
     try {
 
-        const { id } = req.params;
-        const { student_id } = req.body;
+        const testId = Number(req.params.id);
+        const studentId = Number(req.body.student_id);
 
-        if (!student_id || !Number.isInteger(Number(student_id))) {
+        if (
+            !Number.isInteger(testId) || testId <= 0 ||
+            !Number.isInteger(studentId) || studentId <= 0
+        ) {
             return res.status(400).json({
                 success: false,
-                message: "Valid student ID is required."
+                message: "Invalid test or student ID."
             });
         }
 
         // Get test details
         const testResult = await db.query(
             "SELECT * FROM tests WHERE id = $1",
-            [id]
+            [testId]
         );
 
         if (testResult.rows.length === 0) {
@@ -380,7 +387,7 @@ exports.startTest = async (req, res) => {
 
         const test = testResult.rows[0];
 
-        if (test.status !== "published") {
+        if (String(test.status).toLowerCase() !== "published") {
             return res.status(400).json({
                 success: false,
                 message: "This test is not available."
@@ -407,6 +414,30 @@ exports.startTest = async (req, res) => {
 
         const isOfficial = now <= endTime;
 
+        // Prepare safe attempt data for the student
+        const prepareAttemptResponse = (attempt) => {
+
+            const safeQuestions = (
+                attempt.questions_snapshot || []
+            ).map(question => {
+
+                const {
+                    correct_answer,
+                    answer,
+                    explanation,
+                    ...safeQuestion
+                } = question;
+
+                return safeQuestion;
+            });
+
+            return {
+                ...attempt,
+                questions_snapshot: safeQuestions
+            };
+
+        };
+
         // Find existing official attempt
         const officialResult = await db.query(
             `SELECT *
@@ -415,33 +446,62 @@ exports.startTest = async (req, res) => {
              AND test_id = $2
              AND attempt_type = 'official'
              LIMIT 1`,
-            [student_id, id]
+            [studentId, testId]
         );
 
-        const officialAttempt = officialResult.rows[0];
+        let officialAttempt = officialResult.rows[0];
 
         if (officialAttempt) {
 
-            if (officialAttempt.status === "submitted" ||
-                officialAttempt.status === "auto_submitted") {
+            // Automatically submit expired official attempt
+            if (
+                officialAttempt.status === "in_progress" &&
+                new Date(officialAttempt.expires_at) <= now
+            ) {
 
-                if (isOfficial) {
-                    return res.status(409).json({
-                        success: false,
-                        message: "You have already submitted this test."
-                    });
-                }
+                await finalizeTestAttempt(
+                    officialAttempt.id,
+                    "auto_submitted"
+                );
 
-            } else if (officialAttempt.status === "in_progress") {
+                const refreshed = await db.query(
+                    `SELECT *
+                     FROM test_attempts
+                     WHERE id = $1`,
+                    [officialAttempt.id]
+                );
 
-                // Resume the same official attempt,
-                // even if the official test period has ended.
+                officialAttempt = refreshed.rows[0];
+
+            }
+
+            // Resume unfinished official attempt
+            if (
+                officialAttempt.status === "in_progress"
+            ) {
+
                 return res.json({
                     success: true,
                     message: "Resuming your official attempt.",
-                    attempt: officialAttempt,
+                    attempt: prepareAttemptResponse(officialAttempt),
                     test,
                     attempt_type: "official"
+                });
+
+            }
+
+            // Already submitted during official period
+            if (
+                isOfficial &&
+                (
+                    officialAttempt.status === "submitted" ||
+                    officialAttempt.status === "auto_submitted"
+                )
+            ) {
+
+                return res.status(409).json({
+                    success: false,
+                    message: "You have already submitted this test."
                 });
 
             }
@@ -460,23 +520,27 @@ exports.startTest = async (req, res) => {
                  AND status = 'in_progress'
                  ORDER BY started_at DESC
                  LIMIT 1`,
-                [student_id, id]
+                [studentId, testId]
             );
 
             if (practiceResult.rows.length > 0) {
+
                 return res.json({
                     success: true,
                     message: "Resuming practice attempt.",
-                    attempt: practiceResult.rows[0],
+                    attempt: prepareAttemptResponse(
+                        practiceResult.rows[0]
+                    ),
                     test,
                     attempt_type: "practice"
                 });
+
             }
 
         }
 
         // Create a fixed question snapshot
-        const questions = await createQuestionsSnapshot(id);
+        const questions = await createQuestionsSnapshot(testId);
 
         if (!questions.length) {
             return res.status(400).json({
@@ -485,18 +549,21 @@ exports.startTest = async (req, res) => {
             });
         }
 
-        const attemptType = isOfficial ? "official" : "practice";
+        const attemptType = isOfficial
+            ? "official"
+            : "practice";
 
         const insertResult = await db.query(
             `INSERT INTO test_attempts
-             (
+            (
                 student_id,
                 test_id,
                 attempt_type,
                 expires_at,
                 questions_snapshot
-             )
-             VALUES (
+            )
+            VALUES
+            (
                 $1,
                 $2,
                 $3,
@@ -506,11 +573,11 @@ exports.startTest = async (req, res) => {
                     ELSE 'infinity'::timestamptz
                 END,
                 $5::jsonb
-             )
-             RETURNING *`,
+            )
+            RETURNING *`,
             [
-                student_id,
-                id,
+                studentId,
+                testId,
                 attemptType,
                 test.duration_minutes,
                 JSON.stringify(questions)
@@ -520,7 +587,9 @@ exports.startTest = async (req, res) => {
         return res.status(201).json({
             success: true,
             message: "Test attempt created successfully.",
-            attempt: insertResult.rows[0],
+            attempt: prepareAttemptResponse(
+                insertResult.rows[0]
+            ),
             test,
             attempt_type: attemptType
         });
@@ -529,7 +598,6 @@ exports.startTest = async (req, res) => {
 
         console.error("Start test error:", err);
 
-        // Handle duplicate official attempt
         if (err.code === "23505") {
             return res.status(409).json({
                 success: false,
@@ -555,18 +623,16 @@ exports.scheduleTest = (req, res) => {
 
     const { id } = req.params;
 
-    const { start_time } = req.body;
+    const { start_time, end_time } = req.body;
 
-
-    if (!start_time) {
+    if (!start_time || !end_time) {
 
         return res.status(400).json({
             success: false,
-            message: "Start time is required"
+            message: "Start time and end time are required"
         });
 
     }
-
 
     Test.update(
         id,
@@ -578,7 +644,8 @@ exports.scheduleTest = (req, res) => {
             topic: req.body.topic,
             total_questions: req.body.total_questions,
             duration_minutes: req.body.duration_minutes,
-            start_time
+            start_time,
+            end_time
         },
         (err, result) => {
 
@@ -624,188 +691,286 @@ exports.scheduleTest = (req, res) => {
 
 
 // =====================================
-// Submit Test
+// Save Test Attempt Answers
 // =====================================
 
-exports.submitTest = async (req, res) => {
-    const testId = Number(req.params.id);
-    const studentId = Number(req.body.student_id);
-    const submittedAnswers = req.body.answers;
+exports.saveAttemptAnswers = async (req, res) => {
 
-    if (
-        !Number.isInteger(testId) || testId <= 0 ||
-        !Number.isInteger(studentId) || studentId <= 0 ||
-        !Array.isArray(submittedAnswers)
-    ) {
-        return res.status(400).json({
-            success: false,
-            message: "Invalid test submission data"
+    try {
+
+        const attemptId = Number(req.params.attemptId);
+        const studentId = Number(req.body.student_id);
+        const answers = req.body.answers;
+
+        if (
+            !Number.isInteger(attemptId) || attemptId <= 0 ||
+            !Number.isInteger(studentId) || studentId <= 0 ||
+            !answers ||
+            typeof answers !== "object" ||
+            Array.isArray(answers)
+        ) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid answer data."
+            });
+        }
+
+        const attemptResult = await db.query(
+            `SELECT questions_snapshot
+             FROM test_attempts
+             WHERE id = $1
+             AND student_id = $2
+             AND status = 'in_progress'
+             AND (
+                attempt_type = 'practice'
+                OR expires_at > NOW()
+             )`,
+            [attemptId, studentId]
+        );
+
+        if (attemptResult.rows.length === 0) {
+            return res.status(409).json({
+                success: false,
+                message: "Attempt has expired or is no longer active."
+            });
+        }
+
+        const questions =
+            attemptResult.rows[0].questions_snapshot || [];
+
+        const validKeys = new Set(
+            questions.map(question =>
+                `${question.question_source}:${question.test_question_id}`
+            )
+        );
+
+        for (const key of Object.keys(answers)) {
+
+            if (!validKeys.has(key)) {
+                return res.status(400).json({
+                    success: false,
+                    message: "Invalid question in saved answers."
+                });
+            }
+
+            const answer = answers[key];
+
+            if (
+                answer !== null &&
+                typeof answer !== "string"
+            ) {
+                return res.status(400).json({
+                    success: false,
+                    message: "Invalid answer format."
+                });
+            }
+        }
+
+        const result = await db.query(
+            `UPDATE test_attempts
+             SET answers = $1::jsonb
+             WHERE id = $2
+             AND student_id = $3
+             AND status = 'in_progress'
+             AND (
+                attempt_type = 'practice'
+                OR expires_at > NOW()
+             )
+             RETURNING id`,
+            [
+                JSON.stringify(answers),
+                attemptId,
+                studentId
+            ]
+        );
+
+        if (result.rows.length === 0) {
+            return res.status(409).json({
+                success: false,
+                message: "Attempt has expired or is no longer active."
+            });
+        }
+
+        return res.json({
+            success: true,
+            message: "Answers saved successfully."
         });
+
+    } catch (error) {
+
+        console.error("Save attempt answers error:", error);
+
+        return res.status(500).json({
+            success: false,
+            message: "Unable to save answers."
+        });
+
+    }
+
+};
+
+
+// =====================================
+// Process Expired Official Attempts
+// =====================================
+
+exports.processExpiredAttempts = async () => {
+
+    try {
+
+        const result = await db.query(
+            `SELECT id
+             FROM test_attempts
+             WHERE attempt_type = 'official'
+             AND status = 'in_progress'
+             AND expires_at <= NOW()
+             ORDER BY expires_at ASC`
+        );
+
+        for (const attempt of result.rows) {
+
+            try {
+
+                await finalizeTestAttempt(
+                    attempt.id,
+                    "auto_submitted"
+                );
+
+                console.log(
+                    `Attempt ${attempt.id} auto-submitted.`
+                );
+
+            } catch (error) {
+
+                console.error(
+                    `Auto-submit failed for attempt ${attempt.id}:`,
+                    error
+                );
+
+            }
+
+        }
+
+    } catch (error) {
+
+        console.error(
+            "Expired attempts processing error:",
+            error
+        );
+
+    }
+
+};
+
+
+// =====================================
+// FINALIZE TEST ATTEMPT
+// Handles manual and automatic submission
+// =====================================
+
+async function finalizeTestAttempt(attemptId, finalStatus = "submitted") {
+
+    if (!["submitted", "auto_submitted"].includes(finalStatus)) {
+        throw new Error("Invalid final attempt status");
     }
 
     const client = await db.connect();
 
     try {
+
         await client.query("BEGIN");
 
-        // Check that the test exists and is published
+        // Lock attempt to prevent duplicate submissions
+        const attemptResult = await client.query(
+            `SELECT *
+             FROM test_attempts
+             WHERE id = $1
+             FOR UPDATE`,
+            [attemptId]
+        );
+
+        if (attemptResult.rows.length === 0) {
+            throw new Error("Test attempt not found");
+        }
+
+        const attempt = attemptResult.rows[0];
+
+        // Already submitted
+        if (attempt.status !== "in_progress") {
+
+            await client.query("COMMIT");
+
+            return {
+                alreadySubmitted: true,
+                resultId: attempt.result_id
+            };
+        }
+
+        const questions = attempt.questions_snapshot || [];
+        const answers = attempt.answers || {};
+
+        if (!questions.length) {
+            throw new Error("Attempt has no saved questions");
+        }
+
         const testResult = await client.query(
             `SELECT *
              FROM tests
-             WHERE id = $1
-             AND LOWER(status) = 'published'`,
-            [testId]
+             WHERE id = $1`,
+            [attempt.test_id]
         );
 
-        if (testResult.rows.length === 0) {
-            await client.query("ROLLBACK");
-            return res.status(404).json({
-                success: false,
-                message: "Published test not found"
-            });
+        if (!testResult.rows.length) {
+            throw new Error("Test not found");
         }
 
         const test = testResult.rows[0];
 
-        // Get the actual questions and answers from the database
-        const questionResult = await client.query(
-            `SELECT
-                tq.id AS test_question_id,
-                tq.mcq_id AS source_question_id,
-                'bank' AS question_source,
-                m.subject,
-                m.chapter,
-                m.topic,
-                m.question,
-                m.optiona,
-                m.optionb,
-                m.optionc,
-                m.optiond,
-                m.answer AS correct_answer,
-                m.explanation
-             FROM test_questions tq
-             INNER JOIN mcqs m ON m.id = tq.mcq_id
-             WHERE tq.test_id = $1
+        let correct = 0;
+        let attempted = 0;
 
-             UNION ALL
+        const snapshots = questions.map((question, index) => {
 
-             SELECT
-                tmq.id AS test_question_id,
-                tmq.id AS source_question_id,
-                'manual' AS question_source,
-                tmq.subject,
-                tmq.chapter,
-                tmq.topic,
-                tmq.question,
-                tmq.optiona,
-                tmq.optionb,
-                tmq.optionc,
-                tmq.optiond,
-                tmq.answer AS correct_answer,
-                tmq.explanation
-             FROM test_manual_questions tmq
-             WHERE tmq.test_id = $1`,
-            [testId]
-        );
-
-        const questions = questionResult.rows;
-
-        if (questions.length === 0) {
-            await client.query("ROLLBACK");
-            return res.status(400).json({
-                success: false,
-                message: "This test has no questions"
-            });
-        }
-
-        // Match submitted answers with actual test questions
-        const answerMap = new Map();
-
-        for (const item of submittedAnswers) {
             const key =
-                `${item.question_source}:${item.test_question_id}`;
+                `${question.question_source}:${question.test_question_id}`;
 
-            if (
-                !["bank", "manual"].includes(item.question_source) ||
-                !Number.isInteger(Number(item.test_question_id)) ||
-                answerMap.has(key)
-            ) {
-                await client.query("ROLLBACK");
-                return res.status(400).json({
-                    success: false,
-                    message: "Invalid or duplicate question submission"
-                });
+            const selected = answers[key];
+
+            const selectedAnswer =
+                selected == null || selected === ""
+                    ? null
+                    : String(selected).trim().toLowerCase();
+
+            const correctAnswer =
+                String(question.correct_answer).trim().toLowerCase();
+
+            if (selectedAnswer !== null) {
+                attempted++;
             }
 
-            answerMap.set(key, item.selected_answer);
-        }
+            if (
+                selectedAnswer !== null &&
+                selectedAnswer === correctAnswer
+            ) {
+                correct++;
+            }
 
-        if (answerMap.size !== questions.length) {
-            await client.query("ROLLBACK");
-            return res.status(400).json({
-                success: false,
-                message: "Submitted answers do not match the test questions"
-            });
-        }
+            return {
+                question,
+                selectedAnswer,
+                questionOrder: index + 1
+            };
+        });
 
-        let correct = 0;
+        const total = questions.length;
+        const wrong = attempted - correct;
+        const unattempted = total - attempted;
 
-        const questionMap = new Map(
-    questions.map(question => [
-        `${question.question_source}:${question.test_question_id}`,
-        question
-    ])
-);
+        const percentage = Number(
+            ((correct / total) * 100).toFixed(2)
+        );
 
-const snapshots = submittedAnswers.map((item, index) => {
-    const key =
-        `${item.question_source}:${item.test_question_id}`;
-
-    const question = questionMap.get(key);
-
-    if (!question) {
-        throw new Error("A test question is missing");
-    }
-
-    const selected = answerMap.get(key);
-
-    const selectedAnswer =
-        selected == null || selected === ""
-            ? null
-            : String(selected).trim().toLowerCase();
-
-    const correctAnswer =
-        String(question.correct_answer).trim().toLowerCase();
-
-    if (
-        selectedAnswer !== null &&
-        selectedAnswer === correctAnswer
-    ) {
-        correct++;
-    }
-
-    return {
-        question,
-        selectedAnswer,
-        questionOrder: index + 1
-    };
-});
-
-const total = questions.length;
-
-const attempted = snapshots.filter(
-    item => item.selectedAnswer !== null
-).length;
-
-const wrong = attempted - correct;
-
-const unattempted = total - attempted;
-
-const percentage = Number(
-    ((correct / total) * 100).toFixed(2)
-);
-        
-        // Save the result summary
+        // Save result summary
         const resultInsert = await client.query(
             `INSERT INTO results
             (
@@ -824,8 +989,8 @@ const percentage = Number(
             VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,'test')
             RETURNING id`,
             [
-                studentId,
-                testId,
+                attempt.student_id,
+                attempt.test_id,
                 test.subject,
                 test.chapter,
                 test.topic,
@@ -839,8 +1004,9 @@ const percentage = Number(
 
         const resultId = resultInsert.rows[0].id;
 
-        // Save every question and its answer for later review
+        // Save answers for review
         for (const item of snapshots) {
+
             const q = item.question;
 
             await client.query(
@@ -863,7 +1029,7 @@ const percentage = Number(
                 VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)`,
                 [
                     resultId,
-                    testId,
+                    attempt.test_id,
                     item.questionOrder,
                     q.question_source,
                     q.source_question_id,
@@ -879,34 +1045,258 @@ const percentage = Number(
             );
         }
 
+        // Mark attempt as submitted
+        await client.query(
+            `UPDATE test_attempts
+             SET status = $1,
+                 submitted_at = NOW(),
+                 result_id = $2
+             WHERE id = $3`,
+            [finalStatus, resultId, attemptId]
+        );
+
         await client.query("COMMIT");
 
-        return res.json({
-            success: true,
-            message: "Test submitted successfully",
+        return {
+            alreadySubmitted: false,
             resultId,
             totalQuestions: total,
             correctAnswers: correct,
             wrongAnswers: wrong,
             unattemptedAnswers: unattempted,
-            percentage
+            percentage,
+            status: finalStatus
+        };
+
+    } catch (error) {
+
+        await client.query("ROLLBACK");
+        throw error;
+
+    } finally {
+
+        client.release();
+
+    }
+
+}
+
+
+// =====================================
+// Submit Saved Test Attempt
+// =====================================
+
+exports.submitAttempt = async (req, res) => {
+
+    try {
+
+        const attemptId = Number(req.params.attemptId);
+        const studentId = Number(req.body.student_id);
+
+        if (
+            !Number.isInteger(attemptId) || attemptId <= 0 ||
+            !Number.isInteger(studentId) || studentId <= 0
+        ) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid attempt submission data."
+            });
+        }
+
+        // Verify that this attempt belongs to this student
+        const attemptResult = await db.query(
+            `SELECT id, student_id, attempt_type,
+                    status, expires_at, result_id
+             FROM test_attempts
+             WHERE id = $1
+             AND student_id = $2`,
+            [attemptId, studentId]
+        );
+
+        if (attemptResult.rows.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: "Test attempt not found."
+            });
+        }
+
+        const attempt = attemptResult.rows[0];
+
+        if (attempt.status !== "in_progress") {
+            return res.json({
+                success: true,
+                message: "This attempt has already been submitted.",
+                resultId: attempt.result_id
+            });
+        }
+
+        // If the official timer has expired, mark as auto-submitted
+        const isExpired =
+            attempt.attempt_type === "official" &&
+            new Date(attempt.expires_at) <= new Date();
+
+        const finalStatus = isExpired
+            ? "auto_submitted"
+            : "submitted";
+
+        const result = await finalizeTestAttempt(
+            attemptId,
+            finalStatus
+        );
+
+        return res.json({
+            success: true,
+            message: isExpired
+                ? "Time expired. Test submitted automatically."
+                : "Test submitted successfully.",
+            ...result
         });
 
     } catch (error) {
-        await client.query("ROLLBACK");
+
+        console.error("Submit attempt error:", error);
+
+        return res.status(500).json({
+            success: false,
+            message: "Unable to submit test attempt."
+        });
+
+    }
+
+};
+
+
+// =====================================
+// Submit Test
+// Uses the saved test attempt
+// =====================================
+
+exports.submitTest = async (req, res) => {
+
+    try {
+
+        const testId = Number(req.params.id);
+        const studentId = Number(req.body.student_id);
+        const submittedAnswers = req.body.answers;
+
+        if (
+            !Number.isInteger(testId) || testId <= 0 ||
+            !Number.isInteger(studentId) || studentId <= 0 ||
+            !Array.isArray(submittedAnswers)
+        ) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid test submission data."
+            });
+        }
+
+        // Find the student's active attempt
+        const attemptResult = await db.query(
+            `SELECT *
+             FROM test_attempts
+             WHERE test_id = $1
+             AND student_id = $2
+             AND status = 'in_progress'
+             ORDER BY started_at DESC
+             LIMIT 1`,
+            [testId, studentId]
+        );
+
+        if (attemptResult.rows.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: "No active test attempt found."
+            });
+        }
+
+        const attempt = attemptResult.rows[0];
+        const questions = attempt.questions_snapshot || [];
+
+        // Convert submitted answers into the saved-answer format
+        const answerMap = {};
+
+        for (const item of submittedAnswers) {
+
+            if (
+                !item ||
+                !["bank", "manual"].includes(item.question_source) ||
+                !Number.isInteger(Number(item.test_question_id))
+            ) {
+                return res.status(400).json({
+                    success: false,
+                    message: "Invalid question submission."
+                });
+            }
+
+            const key =
+                `${item.question_source}:${item.test_question_id}`;
+
+            if (
+                !questions.some(question =>
+                    `${question.question_source}:${question.test_question_id}` === key
+                ) ||
+                Object.prototype.hasOwnProperty.call(answerMap, key)
+            ) {
+                return res.status(400).json({
+                    success: false,
+                    message: "Invalid or duplicate question submission."
+                });
+            }
+
+            answerMap[key] = item.selected_answer == null ||
+                item.selected_answer === ""
+                ? null
+                : String(item.selected_answer).trim().toLowerCase();
+        }
+
+        if (Object.keys(answerMap).length !== questions.length) {
+            return res.status(400).json({
+                success: false,
+                message: "Submitted answers do not match the test questions."
+            });
+        }
+
+        // Save answers before finalization
+        await db.query(
+            `UPDATE test_attempts
+             SET answers = $1::jsonb
+             WHERE id = $2
+             AND student_id = $3
+             AND status = 'in_progress'`,
+            [
+                JSON.stringify(answerMap),
+                attempt.id,
+                studentId
+            ]
+        );
+
+        const isExpired =
+            attempt.attempt_type === "official" &&
+            new Date(attempt.expires_at) <= new Date();
+
+        const result = await finalizeTestAttempt(
+            attempt.id,
+            isExpired ? "auto_submitted" : "submitted"
+        );
+
+        return res.json({
+            success: true,
+            message: "Test submitted successfully.",
+            ...result
+        });
+
+    } catch (error) {
 
         console.error("Test submission error:", error);
 
         return res.status(500).json({
             success: false,
-            message: "Unable to submit test"
+            message: "Unable to submit test."
         });
 
-    } finally {
-        client.release();
     }
-};
 
+};
 
 
 // =====================================
@@ -937,10 +1327,16 @@ exports.testHistory = async (req, res) => {
                 r.total_questions,
                 r.correct_answers,
                 r.wrong_answers,
-                r.percentage
+                r.unattempted_answers,
+                r.percentage,
+                ta.attempt_type,
+                ta.status AS attempt_status,
+                ta.submitted_at
              FROM results r
              LEFT JOIN tests t
                 ON t.id = r.test_id
+             LEFT JOIN test_attempts ta
+                ON ta.result_id = r.id
              WHERE r.student_id = $1
              AND r.result_type = 'test'
              ORDER BY r.id DESC`,
@@ -966,7 +1362,7 @@ exports.testHistory = async (req, res) => {
 
 
 // =====================================
-// Leaderboard
+// Leaderboard - Official Attempts Only
 // =====================================
 
 exports.leaderboard = async (req, res) => {
@@ -986,16 +1382,23 @@ exports.leaderboard = async (req, res) => {
             `SELECT
                 s.id AS student_id,
                 s.fullname AS student_name,
-                ROUND(AVG(r.percentage)::numeric, 2) AS average_percentage,
-                COUNT(r.id) AS attempts
-             FROM results r
+                r.percentage AS average_percentage,
+                r.correct_answers,
+                r.wrong_answers,
+                r.unattempted_answers,
+                r.total_questions,
+                ta.status AS attempt_status
+             FROM test_attempts ta
+             INNER JOIN results r
+                ON r.id = ta.result_id
              INNER JOIN students s
-                ON s.id = r.student_id
-             WHERE r.test_id = $1
+                ON s.id = ta.student_id
+             WHERE ta.test_id = $1
+             AND ta.attempt_type = 'official'
+             AND ta.status IN ('submitted', 'auto_submitted')
              AND r.result_type = 'test'
-             GROUP BY s.id, s.fullname
-             ORDER BY average_percentage DESC,
-                      student_name ASC`,
+             ORDER BY r.percentage DESC,
+                      s.fullname ASC`,
             [testId]
         );
 
@@ -1003,8 +1406,12 @@ exports.leaderboard = async (req, res) => {
             rank: index + 1,
             student_id: student.student_id,
             student_name: student.student_name,
-            average_percentage: Number(student.average_percentage),
-            attempts: Number(student.attempts)
+            percentage: Number(student.average_percentage),
+            correct: Number(student.correct_answers),
+            wrong: Number(student.wrong_answers),
+            unattempted: Number(student.unattempted_answers),
+            total_questions: Number(student.total_questions),
+            status: student.attempt_status
         }));
 
         return res.json({
