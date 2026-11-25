@@ -16,8 +16,13 @@ Test.initializeManualQuestionsTable()
 
         return Test.initializeTestAttemptAnswersTable();
     })
-         .then(() => {
+             .then(() => {
         console.log("Test attempt answers table is ready.");
+
+        return Test.initializeUnattemptedAnswersColumn();
+    })
+    .then(() => {
+        console.log("Unattempted answers column is ready.");
 
         return Test.initializeTestAttemptsTable();
     })
