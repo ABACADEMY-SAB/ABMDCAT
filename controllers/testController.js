@@ -7,6 +7,64 @@ const Test = require("../models/test");
 const db = require("../config/database");
 
 // =====================================
+// PREPARE FIXED TEST QUESTIONS
+// =====================================
+
+async function createQuestionsSnapshot(testId) {
+
+    const result = await db.query(
+        `SELECT
+            tq.id AS test_question_id,
+            tq.mcq_id AS source_question_id,
+            'bank' AS question_source,
+            m.subject,
+            m.chapter,
+            m.topic,
+            m.question,
+            m.optiona,
+            m.optionb,
+            m.optionc,
+            m.optiond,
+            m.answer AS correct_answer,
+            m.explanation
+         FROM test_questions tq
+         INNER JOIN mcqs m ON m.id = tq.mcq_id
+         WHERE tq.test_id = $1
+
+         UNION ALL
+
+         SELECT
+            tmq.id AS test_question_id,
+            tmq.id AS source_question_id,
+            'manual' AS question_source,
+            tmq.subject,
+            tmq.chapter,
+            tmq.topic,
+            tmq.question,
+            tmq.optiona,
+            tmq.optionb,
+            tmq.optionc,
+            tmq.optiond,
+            tmq.answer AS correct_answer,
+            tmq.explanation
+         FROM test_manual_questions tmq
+         WHERE tmq.test_id = $1`,
+        [testId]
+    );
+
+    const questions = result.rows;
+
+    // Randomize once when the attempt is created
+    questions.sort(() => Math.random() - 0.5);
+
+    return questions.map((question, index) => ({
+        ...question,
+        question_order: index + 1
+    }));
+}
+
+
+// =====================================
 // Get All Tests
 // =====================================
 
