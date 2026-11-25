@@ -348,53 +348,201 @@ exports.deleteTest = (req, res) => {
 
 
 // =====================================
-// Start Test
+// Start or Resume Test
 // =====================================
 
-exports.startTest = (req, res) => {
+exports.startTest = async (req, res) => {
 
-    const { id } = req.params;
+    try {
 
-    Test.getById(
-        id,
-        (err, result) => {
+        const { id } = req.params;
+        const { student_id } = req.body;
 
-            if (err) {
-
-                console.error(
-                    "Start test error:",
-                    err
-                );
-
-                return res.status(500).json({
-                    success: false,
-                    message: "Database error"
-                });
-
-            }
-
-            if (result.rows.length === 0) {
-
-                return res.status(404).json({
-                    success: false,
-                    message: "Test not found"
-                });
-
-            }
-
-            return res.json({
-
-                success: true,
-
-                status: "Test Started",
-
-                test:
-                    result.rows[0]
-
+        if (!student_id || !Number.isInteger(Number(student_id))) {
+            return res.status(400).json({
+                success: false,
+                message: "Valid student ID is required."
             });
+        }
+
+        // Get test details
+        const testResult = await db.query(
+            "SELECT * FROM tests WHERE id = $1",
+            [id]
+        );
+
+        if (testResult.rows.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: "Test not found."
+            });
+        }
+
+        const test = testResult.rows[0];
+
+        if (test.status !== "published") {
+            return res.status(400).json({
+                success: false,
+                message: "This test is not available."
+            });
+        }
+
+        if (!test.start_time || !test.end_time) {
+            return res.status(400).json({
+                success: false,
+                message: "Test schedule is not configured."
+            });
+        }
+
+        const now = new Date();
+        const startTime = new Date(test.start_time);
+        const endTime = new Date(test.end_time);
+
+        if (now < startTime) {
+            return res.status(400).json({
+                success: false,
+                message: "This test has not started yet."
+            });
+        }
+
+        const isOfficial = now <= endTime;
+
+        // Find existing official attempt
+        const officialResult = await db.query(
+            `SELECT *
+             FROM test_attempts
+             WHERE student_id = $1
+             AND test_id = $2
+             AND attempt_type = 'official'
+             LIMIT 1`,
+            [student_id, id]
+        );
+
+        const officialAttempt = officialResult.rows[0];
+
+        if (officialAttempt) {
+
+            if (officialAttempt.status === "submitted" ||
+                officialAttempt.status === "auto_submitted") {
+
+                if (isOfficial) {
+                    return res.status(409).json({
+                        success: false,
+                        message: "You have already submitted this test."
+                    });
+                }
+
+            } else if (officialAttempt.status === "in_progress") {
+
+                // Resume the same official attempt,
+                // even if the official test period has ended.
+                return res.json({
+                    success: true,
+                    message: "Resuming your official attempt.",
+                    attempt: officialAttempt,
+                    test,
+                    attempt_type: "official"
+                });
+
+            }
 
         }
-    );
+
+        // After official end time, allow practice
+        if (!isOfficial) {
+
+            const practiceResult = await db.query(
+                `SELECT *
+                 FROM test_attempts
+                 WHERE student_id = $1
+                 AND test_id = $2
+                 AND attempt_type = 'practice'
+                 AND status = 'in_progress'
+                 ORDER BY started_at DESC
+                 LIMIT 1`,
+                [student_id, id]
+            );
+
+            if (practiceResult.rows.length > 0) {
+                return res.json({
+                    success: true,
+                    message: "Resuming practice attempt.",
+                    attempt: practiceResult.rows[0],
+                    test,
+                    attempt_type: "practice"
+                });
+            }
+
+        }
+
+        // Create a fixed question snapshot
+        const questions = await createQuestionsSnapshot(id);
+
+        if (!questions.length) {
+            return res.status(400).json({
+                success: false,
+                message: "This test has no questions."
+            });
+        }
+
+        const attemptType = isOfficial ? "official" : "practice";
+
+        const insertResult = await db.query(
+            `INSERT INTO test_attempts
+             (
+                student_id,
+                test_id,
+                attempt_type,
+                expires_at,
+                questions_snapshot
+             )
+             VALUES (
+                $1,
+                $2,
+                $3,
+                CASE
+                    WHEN $3 = 'official'
+                    THEN NOW() + ($4 * INTERVAL '1 minute')
+                    ELSE 'infinity'::timestamptz
+                END,
+                $5::jsonb
+             )
+             RETURNING *`,
+            [
+                student_id,
+                id,
+                attemptType,
+                test.duration_minutes,
+                JSON.stringify(questions)
+            ]
+        );
+
+        return res.status(201).json({
+            success: true,
+            message: "Test attempt created successfully.",
+            attempt: insertResult.rows[0],
+            test,
+            attempt_type: attemptType
+        });
+
+    } catch (err) {
+
+        console.error("Start test error:", err);
+
+        // Handle duplicate official attempt
+        if (err.code === "23505") {
+            return res.status(409).json({
+                success: false,
+                message: "An official attempt already exists."
+            });
+        }
+
+        return res.status(500).json({
+            success: false,
+            message: "Unable to start test."
+        });
+
+    }
 
 };
 
