@@ -643,8 +643,15 @@ const snapshots = submittedAnswers.map((item, index) => {
     };
 });
 
- const total = questions.length;
-const wrong = total - correct;
+const total = questions.length;
+
+const attempted = snapshots.filter(
+    item => item.selectedAnswer !== null
+).length;
+
+const wrong = attempted - correct;
+
+const unattempted = total - attempted;
 
 const percentage = Number(
     ((correct / total) * 100).toFixed(2)
@@ -662,10 +669,11 @@ const percentage = Number(
                 total_questions,
                 correct_answers,
                 wrong_answers,
+                unattempted_answers,
                 percentage,
                 result_type
             )
-            VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,'test')
+            VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,'test')
             RETURNING id`,
             [
                 studentId,
@@ -676,6 +684,7 @@ const percentage = Number(
                 total,
                 correct,
                 wrong,
+                unattempted,
                 percentage
             ]
         );
@@ -731,6 +740,7 @@ const percentage = Number(
             totalQuestions: total,
             correctAnswers: correct,
             wrongAnswers: wrong,
+            unattemptedAnswers: unattempted,
             percentage
         });
 
