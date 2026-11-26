@@ -71,6 +71,26 @@ router.post(
 
 
 // =====================================
+// Save Attempt Answers
+// =====================================
+
+router.put(
+    "/attempt/:attemptId/answers",
+    testController.saveAttemptAnswers
+);
+
+
+// =====================================
+// Submit Attempt
+// =====================================
+
+router.post(
+    "/attempt/:attemptId/submit",
+    testController.submitAttempt
+);
+
+
+// =====================================
 // Submit Test
 // =====================================
 
