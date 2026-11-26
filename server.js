@@ -9,6 +9,8 @@ require("./config/database");
 
 const Test = require("./models/test");
 
+const testController = require("./controllers/testController");
+
 // Create the manual questions table automatically
 Test.initializeManualQuestionsTable()
     .then(() => {
@@ -26,8 +28,16 @@ Test.initializeManualQuestionsTable()
 
         return Test.initializeTestAttemptsTable();
     })
-    .then(() => {
+        .then(() => {
         console.log("Official and practice test attempts table is ready.");
+
+        // Process expired attempts immediately
+        testController.processExpiredAttempts();
+
+        // Check for expired attempts every 30 seconds
+        setInterval(() => {
+            testController.processExpiredAttempts();
+        }, 30000);
     })
     .catch((err) => {
         console.error("Test tables initialization failed:", err);
