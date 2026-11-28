@@ -2210,88 +2210,223 @@ async function loadAvailableTests() {
 }
   
 
-
 async function startOnlineTest(testId) {
+
     const container = document.querySelector("#tests .module");
 
     if (!container) return;
 
     container.innerHTML = "<h3>Loading test...</h3>";
 
+    let timerInterval = null;
+    let saveTimer = null;
+    let saveQueue = Promise.resolve();
+    let submitting = false;
+
     try {
-        const testResponse = await fetch(`/api/test/${testId}`);
-        const testData = await testResponse.json();
 
-        if (!testResponse.ok || !testData.success) {
-            throw new Error(testData.message || "Could not load test.");
-        }
-
-        const test = testData.test;
-
-        if ((test.status || "").toLowerCase() !== "published") {
-            throw new Error("This test is not published.");
-        }
-
-        const questionResponse = await fetch(
-            `/api/test-question/test/${testId}`
+        const student = JSON.parse(
+            localStorage.getItem("student") || "null"
         );
-        const questionData = await questionResponse.json();
 
-        if (!questionResponse.ok || !questionData.success) {
+        if (!student || !student.id) {
+            throw new Error("Student login information not found.");
+        }
+
+        // Start or resume the attempt
+        const response = await fetch(
+            `/api/test/start/${testId}`,
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    student_id: student.id
+                })
+            }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
             throw new Error(
-                questionData.message || "Could not load questions."
+                data.message || "Unable to start test."
             );
         }
 
-        const questions = questionData.questions || [];
+        const test = data.test;
+        const attempt = data.attempt;
+        const questions = attempt.questions_snapshot || [];
 
-        if (questions.length === 0) {
-            throw new Error("No questions have been added to this test.");
+        if (!attempt.id || questions.length === 0) {
+            throw new Error("Invalid test attempt data.");
         }
 
+        const attemptId = attempt.id;
+        const isOfficial = data.attempt_type === "official";
+
         window.currentOnlineTest = test;
+        window.currentOnlineAttempt = attempt;
         window.currentOnlineQuestions = questions;
-        window.currentOnlineAnswers = {};
+
+        // Restore previously saved answers
+        window.currentOnlineAnswers = {
+            ...(attempt.answers || {})
+        };
 
         let currentIndex = 0;
-        let submitting = false;
+
+        // Calculate official remaining time
+        let expiresAt = null;
+
+        if (isOfficial) {
+
+            expiresAt = new Date(attempt.expires_at).getTime();
+
+            if (!Number.isFinite(expiresAt)) {
+                throw new Error("Invalid test expiration time.");
+            }
+
+        }
 
         container.innerHTML = `
             <div class="module">
+
                 <h3 id="onlineTestTitle"></h3>
+
+                <p id="onlineTestType"></p>
+
+                <h3 id="onlineTestTimer"></h3>
+
+                <p id="onlineSaveStatus">
+                    Answers will be saved automatically.
+                </p>
+
                 <p id="onlineTestProgress"></p>
+
                 <h4 id="onlineQuestionText"></h4>
+
                 <div id="onlineOptions"></div>
 
                 <div style="display:flex; gap:10px; margin-top:20px;">
-                    <button type="button" class="button secondary"
+
+                    <button type="button"
+                        class="button secondary"
                         id="previousQuestion">
                         Previous
                     </button>
 
-                    <button type="button" class="button primary"
+                    <button type="button"
+                        class="button primary"
                         id="nextQuestion">
                         Next
                     </button>
 
-                    <button type="button" class="button primary"
-                        id="submitOnlineTest" style="display:none;">
+                    <button type="button"
+                        class="button primary"
+                        id="submitOnlineTest"
+                        style="display:none;">
                         Submit Test
                     </button>
+
                 </div>
 
-                <button type="button" class="button secondary"
-                    id="backToTests" style="margin-top:15px;">
+                <button type="button"
+                    class="button secondary"
+                    id="backToTests"
+                    style="margin-top:15px;">
                     Back to Tests
                 </button>
+
             </div>
         `;
 
         document.getElementById("onlineTestTitle").textContent =
             test.title;
 
+        document.getElementById("onlineTestType").textContent =
+            isOfficial ? "Official Test" : "Practice Test";
+
+        // =====================================
+        // SAVE ANSWERS
+        // =====================================
+
+        async function saveAnswers() {
+
+            const savedAnswers = {
+                ...window.currentOnlineAnswers
+            };
+
+            saveQueue = saveQueue.catch(() => {}).then(async () => {
+
+                const saveResponse = await fetch(
+                    `/api/test/attempt/${attemptId}/answers`,
+                    {
+                        method: "PUT",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            student_id: student.id,
+                            answers: savedAnswers
+                        })
+                    }
+                );
+
+                const saveData = await saveResponse.json();
+
+                if (!saveResponse.ok || !saveData.success) {
+                    throw new Error(
+                        saveData.message || "Unable to save answers."
+                    );
+                }
+
+                document.getElementById("onlineSaveStatus").textContent =
+                    "All answers saved.";
+
+            });
+
+            return saveQueue;
+        }
+
+        function scheduleSave() {
+
+            clearTimeout(saveTimer);
+
+            document.getElementById("onlineSaveStatus").textContent =
+                "Saving answers...";
+
+            saveTimer = setTimeout(() => {
+
+                saveAnswers().catch(error => {
+
+                    console.error("Answer saving error:", error);
+
+                    const status =
+                        document.getElementById("onlineSaveStatus");
+
+                    if (status) {
+                        status.textContent =
+                            "Answer saving failed. Check your connection.";
+                    }
+
+                });
+
+            }, 400);
+
+        }
+
+        // =====================================
+        // RENDER QUESTION
+        // =====================================
+
         function renderQuestion() {
+
             const question = questions[currentIndex];
+
+            const questionKey =
+                `${question.question_source}:${question.test_question_id}`;
 
             document.getElementById("onlineTestProgress").textContent =
                 `Question ${currentIndex + 1} of ${questions.length}`;
@@ -2305,9 +2440,11 @@ async function startOnlineTest(testId) {
             optionsContainer.innerHTML = "";
 
             ["a", "b", "c", "d"].forEach(letter => {
+
                 const optionKey = `option${letter}`;
 
                 const label = document.createElement("label");
+
                 label.style.display = "block";
                 label.style.padding = "12px";
                 label.style.margin = "8px 0";
@@ -2316,18 +2453,24 @@ async function startOnlineTest(testId) {
                 label.style.borderRadius = "8px";
 
                 const radio = document.createElement("input");
+
                 radio.type = "radio";
                 radio.name = "onlineAnswer";
                 radio.value = letter;
 
                 radio.checked =
-                    window.currentOnlineAnswers[currentIndex] === letter;
+                    window.currentOnlineAnswers[questionKey] === letter;
 
                 radio.addEventListener("change", () => {
-                    window.currentOnlineAnswers[currentIndex] = letter;
+
+                    window.currentOnlineAnswers[questionKey] = letter;
+
+                    scheduleSave();
+
                 });
 
                 label.appendChild(radio);
+
                 label.appendChild(
                     document.createTextNode(
                         ` ${letter.toUpperCase()}. ${question[optionKey] || ""}`
@@ -2335,109 +2478,133 @@ async function startOnlineTest(testId) {
                 );
 
                 optionsContainer.appendChild(label);
-            });
 
-            const isLastQuestion =
-                currentIndex === questions.length - 1;
+            });
 
             document.getElementById("previousQuestion").disabled =
                 currentIndex === 0;
+
+            const isLastQuestion =
+                currentIndex === questions.length - 1;
 
             document.getElementById("nextQuestion").style.display =
                 isLastQuestion ? "none" : "inline-block";
 
             document.getElementById("submitOnlineTest").style.display =
                 isLastQuestion ? "inline-block" : "none";
+
         }
 
-        document.getElementById("previousQuestion").onclick = () => {
-            if (currentIndex > 0) {
-                currentIndex--;
-                renderQuestion();
-            }
-        };
+        // =====================================
+        // SUBMIT ATTEMPT
+        // =====================================
 
-        document.getElementById("nextQuestion").onclick = () => {
-            if (currentIndex < questions.length - 1) {
-                currentIndex++;
-                renderQuestion();
-            }
-        };
+        async function submitCurrentAttempt(isAutomatic = false) {
 
-        document.getElementById("submitOnlineTest").onclick = async () => {
             if (submitting) return;
 
-            const student = JSON.parse(
-                localStorage.getItem("student") || "null"
-            );
-
-            if (!student || !student.id) {
-                alert("Student login information not found. Please log in again.");
-                return;
-            }
-
-            const confirmed = confirm(
-                "Are you sure you want to submit this test?"
-            );
-
-            if (!confirmed) return;
-
             submitting = true;
+
+            clearTimeout(saveTimer);
 
             const submitButton =
                 document.getElementById("submitOnlineTest");
 
-            submitButton.disabled = true;
-            submitButton.textContent = "Submitting...";
-
-            const answers = questions.map((question, index) => ({
-                test_question_id: Number(question.test_question_id),
-                question_source: question.question_source,
-                selected_answer:
-                    window.currentOnlineAnswers[index] || null
-            }));
+            if (submitButton) {
+                submitButton.disabled = true;
+                submitButton.textContent = "Submitting...";
+            }
 
             try {
-                const response = await fetch(
-                    `/api/test/submit/${testId}`,
+
+                // Save the latest answers before submission
+                try {
+
+                    await saveAnswers();
+
+                } catch (saveError) {
+
+                    console.error("Final answer save error:", saveError);
+
+                    if (!isAutomatic) {
+                        throw saveError;
+                    }
+
+                }
+
+                const submitResponse = await fetch(
+                    `/api/test/attempt/${attemptId}/submit`,
                     {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json"
                         },
                         body: JSON.stringify({
-                            student_id: student.id,
-                            answers: answers
+                            student_id: student.id
                         })
                     }
                 );
 
-                const data = await response.json();
+                const result = await submitResponse.json();
 
-                if (!response.ok || !data.success) {
+                if (!submitResponse.ok || !result.success) {
                     throw new Error(
-                        data.message || "Test submission failed."
+                        result.message || "Test submission failed."
                     );
                 }
 
+                clearInterval(timerInterval);
+
+                const resultId = result.resultId;
+
                 container.innerHTML = `
                     <div class="module">
-                        <h3>Test Submitted Successfully!</h3>
-                        <h4 id="submittedTestTitle"></h4>
-                        <p>Total Questions: ${data.totalQuestions}</p>
-                        <p>Correct Answers: ${data.correctAnswers}</p>
-                        <p>Wrong Answers: ${data.wrongAnswers}</p>
-                        <h3>Score: ${data.percentage}%</h3>
 
-                        <button type="button" class="button primary"
+                        <h3>Test Submitted Successfully!</h3>
+
+                        <h4 id="submittedTestTitle"></h4>
+
+                        <p>Total Questions:
+                            ${result.totalQuestions ?? "See review"}
+                        </p>
+
+                        <p>Correct Answers:
+                            ${result.correctAnswers ?? "See review"}
+                        </p>
+
+                        <p>Wrong Answers:
+                            ${result.wrongAnswers ?? "See review"}
+                        </p>
+
+                        <p>Unattempted:
+                            ${result.unattemptedAnswers ?? "See review"}
+                        </p>
+
+                        <h3>Score:
+                            ${result.percentage !== undefined
+                                ? result.percentage + "%"
+                                : "Submitted"}
+                        </h3>
+
+                        <p>
+                            ${result.status === "auto_submitted" || isAutomatic
+                                ? "Automatically submitted."
+                                : "Your answers have been saved."}
+                        </p>
+
+                        <button type="button"
+                            class="button primary"
                             id="reviewSubmittedTest">
                             Review Test
                         </button>
 
-                        <button type="button" class="button secondary"
-                            id="backToTests" style="margin-top:10px;">
+                        <button type="button"
+                            class="button secondary"
+                            id="backToTests"
+                            style="margin-top:10px;">
                             Back to Tests
                         </button>
+
                     </div>
                 `;
 
@@ -2445,34 +2612,132 @@ async function startOnlineTest(testId) {
                     test.title;
 
                 document.getElementById("reviewSubmittedTest").onclick = () => {
-                    loadTestReview(data.resultId);
+
+                    if (resultId) {
+                        loadTestReview(resultId);
+                    } else {
+                        alert("Result ID not found. Please refresh Test History.");
+                    }
+
                 };
 
                 document.getElementById("backToTests").onclick =
                     loadAvailableTests;
 
             } catch (error) {
+
                 console.error("Test submission error:", error);
+
                 alert(error.message);
 
                 submitting = false;
-                submitButton.disabled = false;
-                submitButton.textContent = "Submit Test";
+
+                if (submitButton && submitButton.isConnected) {
+                    submitButton.disabled = false;
+                    submitButton.textContent = "Submit Test";
+                }
+
             }
+
+        }
+
+        // =====================================
+        // NAVIGATION
+        // =====================================
+
+        document.getElementById("previousQuestion").onclick = () => {
+
+            if (currentIndex > 0) {
+                currentIndex--;
+                renderQuestion();
+            }
+
+        };
+
+        document.getElementById("nextQuestion").onclick = () => {
+
+            if (currentIndex < questions.length - 1) {
+                currentIndex++;
+                renderQuestion();
+            }
+
+        };
+
+        document.getElementById("submitOnlineTest").onclick = () => {
+
+            if (confirm("Are you sure you want to submit this test?")) {
+                submitCurrentAttempt(false);
+            }
+
         };
 
         document.getElementById("backToTests").onclick =
             loadAvailableTests;
 
+        // =====================================
+        // OFFICIAL TEST COUNTDOWN
+        // =====================================
+
+        function updateTimer() {
+
+            const timerElement =
+                document.getElementById("onlineTestTimer");
+
+            if (!timerElement || !isOfficial) return;
+
+            const remaining = Math.max(
+                0,
+                Math.floor((expiresAt - Date.now()) / 1000)
+            );
+
+            const minutes = Math.floor(remaining / 60);
+            const seconds = remaining % 60;
+
+            timerElement.textContent =
+                `Time Remaining: ${minutes}:${String(seconds).padStart(2, "0")}`;
+
+            if (remaining <= 0) {
+
+                clearInterval(timerInterval);
+
+                timerElement.textContent = "Time expired. Submitting...";
+
+                submitCurrentAttempt(true);
+
+            }
+
+        }
+
+        if (isOfficial) {
+
+            updateTimer();
+
+            timerInterval = setInterval(updateTimer, 1000);
+
+        } else {
+
+            document.getElementById("onlineTestTimer").textContent =
+                "Unlimited Practice";
+
+        }
+
         renderQuestion();
 
     } catch (error) {
+
         console.error("Start test error:", error);
+
+        if (timerInterval) {
+            clearInterval(timerInterval);
+        }
 
         container.innerHTML = `
             <h3>Unable to open test</h3>
+
             <p id="testErrorMessage"></p>
-            <button type="button" class="button secondary"
+
+            <button type="button"
+                class="button secondary"
                 id="backToTests">
                 Back to Tests
             </button>
@@ -2483,7 +2748,9 @@ async function startOnlineTest(testId) {
 
         document.getElementById("backToTests").onclick =
             loadAvailableTests;
+
     }
+
 }
 
 
